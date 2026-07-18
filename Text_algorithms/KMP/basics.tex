@@ -95,9 +95,14 @@ of~\(\ind{x}{0}\) in~\(y\).
 The end of the factor can also be given; for example, \(x=\word{sit}\)
 is a factor of \(y=\word{curiosity}\) at index~\(5\), written
 \(\ind{y}{5,7} = x\). This is sometimes called a \textbf{slice} in
-some programming languages. Sometimes the upper bound can be left
-unspecified: \(\ind{y}{i\ldots}\), meaning \(\ind{y}{i,\len{y}-1}\),
-if \(i < \len{y}\).
+some programming languages.
+
+\bigskip
+
+Sometimes the upper bound can be left unspecified:
+\(\ind{y}{i\ldots}\), meaning \(\ind{y}{i,\len{y}-1}\), if \(i <
+\len{y}\). That is, \(\ind{y}{i\ldots}\) is a \textbf{suffix}
+of~\(y\).
 
 \end{frame}
 
@@ -258,18 +263,83 @@ In case of mismatch, the na\"{\i}ve algorithm resumes comparing the
 first letters of~\(p\) without using the information of the partial
 success, to wit, we know \(\ind{p}{0,i-1} = \ind{t}{j-i,j-1}\) and
 \(\ind{p}{i} \neq \ind{t}{j}\).
+\[
+\begin{array}{@{}rcc@{\,}c@{}ccr@{}r@{\,}c@{}ccc@{}ccc@{}}
+  & & & \scriptstyle j-i
+  & & &
+  & & \multicolumn{2}{@{}l}{\scriptstyle j-i+k}
+  & &
+  & \multicolumn{1}{r@{}}{\scriptstyle j-1}
+  & \multicolumn{1}{c}{\scriptstyle j}\\
+\cline{2-15}
+    \multicolumn{1}{r|}{t:}
+  & \multicolumn{2}{c}{\phantom{H}\ldots\phantom{H}}
+  & \multicolumn{1}{|c|}{a}
+  & \multicolumn{1}{c|}{b}
+  & \multicolumn{1}{c|}{c}
+  & \multicolumn{2}{c|}{\ldots}
+  &
+  &
+  &
+  & \phantom{HHHH}
+  &
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{b}}}
+  & \phantom{HHHH}\\
+\cline{2-15}
+  &
+  &
+  & \multicolumn{1}{:c}{\scriptstyle 0}
+  &
+  &
+  &
+  &
+  & \multicolumn{1}{:l@{\,}}{\scriptstyle i-k}
+  &
+  &
+  &
+  & \multicolumn{1}{c@{}:}{\scriptstyle i-1}
+  & \multicolumn{1}{c}{\scriptstyle i}\\
+\cline{4-15}
+    \multicolumn{1}{r}{p:}
+  &
+  &
+  & \multicolumn{1}{|c|}{a}
+  & \multicolumn{1}{c|}{b}
+  & \multicolumn{1}{c|}{c}
+  & \multicolumn{2}{c}{\ldots}
+  &
+  &
+  &
+  &
+  &
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{a}}}
+  & \\
+\cline{4-15}
+  &&&&&&
+  &
+  & \multicolumn{1}{:c}{\scriptstyle 0}
+  &
+  &
+  &
+  & \multicolumn{1}{c:}{}\\
+\cline{9-15}
+  &&&&&
+  & \text{shifted}
+  & \multicolumn{1}{c}{p:}
+  & \multicolumn{1}{|c|}{a}
+  & \multicolumn{1}{c|}{b}
+  & \multicolumn{1}{c|}{c}
+  & \multicolumn{2}{c}{\ldots}\\
+\cline{9-15}
+\end{array}
+\]
 
 \bigskip
 
-If we know an index~\(k\) such that \(\ind{p}{0,k-1} =
-\ind{p}{i-k,i-1}\), that is, \(\ind{p}{0,k-1}\)~is a \emph{border}
-of~\(\ind{p}{0,i-1}\) (also known as a \emph{side}), then we can
-resume by comparing~\(\ind{t}{j}\) with~\(\ind{p}{k}\).
-
-\bigskip
-
-Clearly, the greater~\(k\), the more comparisons are skipped, so we
-want to find the \textbf{maximum borders} of the prefixes of~\(p\).
+If a new search starts in \(t\) at position \(j-i+k\), with \(1
+\leqslant k \leqslant i\), it compares \(p\) to \(t[j-i+k
+  \dots]\). Since \(t[j-i+k \dots j-1] = p[i-k,i-1]\), it compares
+\(p\) to a suffix of \(p[0 \dots i-1]\), that is, to a part of itself!
 
 \end{frame}
 
@@ -281,20 +351,53 @@ want to find the \textbf{maximum borders} of the prefixes of~\(p\).
 \includegraphics[bb=74 621 367 717]{mp}
 \end{figure}
 
-where \(\Border{}{p}\) is the maximum border of~\(p\).
+where \(\Border{}{p}\) is the \textbf{maximum border} of~\(p\).
+
+\begin{enumerate}
+
+  \item The important point here is that these comparisons are
+    \emph{independent} of the text~\(t\), since they apply to part of
+    the pattern~\(p\) itself.
+
+  \item Contrary to na\"{\i}ve factoring, letters in the text are
+    compared in a strictly increasing order (never having to
+    backtrack).
+
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Morris-Pratt algorithm}
+
+The strategy devised here is to compute all the comparisons on~\(p\)
+\emph{before} we start the search in the text, and then use this
+information to avoid repeating the same comparisons at different
+positions in the text.
 
 \bigskip
 
-Contrary to na\"{\i}ve factoring, letters in the text are compared in
-a strictly increasing order (never having to backtrack).
+This \textbf{preprocessing} on~\(p\) will indeed allow to recognise
+the sole configurations where the search may succeed.
+
+\bigskip
+
+Therefore the subproblem now is to determine the positions \(i\) where
+the word \(p[0 \dots i-1]\) ends with a prefix of~\(p\).
+
+\bigskip
+
+In other words, we need to understand borders.
 
 \end{frame}
+
 
 \begin{frame}
   \frametitle{Morris-Pratt algorithm}
 
-The border of a non\hyp{}empty word~\(y\) is a proper prefix of~\(y\)
-which is also a suffix.
+The \textbf{border} of a non\hyp{}empty word~\(y\) is a proper prefix
+of~\(y\) which is also a suffix.
 
 \bigskip
 
@@ -321,11 +424,42 @@ Note that maximum borders can overlap; consider, for example,
 \begin{frame}
   \frametitle{Morris-Pratt algorithm}
 
-Let us consider a run ending in a failure:
+Let us consider a run ending in a mismatch:
 
 \begin{figure}
 \centering
 \includegraphics{mp_ex}
 \end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+We now have the choice of finding either \(\Border{}{ay}\) or
+\(\Border{}{ya}\), where \(y\)~is a non\hyp{}empty word.
+
+\bigskip
+
+Since we are interested in knowing the maximum borders of all the
+prefixes of a given pattern, the latter is more suitable (\(y \pref
+ya\)).
+
+\bigskip
+
+The idea is to recursively consider \(\Border{}{y} \cdot a\):
+
+\begin{itemize}
+
+  \item if it is a prefix of~\(y\), then \(\Border{}{ya} =
+    \Border{}{y} \cdot a\);
+
+  \item otherwise, we seek the maximum border of the maximum border
+    of~\(y\), namely, \(\Border{2}{y} \cdot a\) etc. until
+    \(\Border{q}{y} \cdot a\) is a prefix of~\(y\) or else
+    \(\Border{q}{y} = \varepsilon\).
+
+\end{itemize}
 
 \end{frame}
