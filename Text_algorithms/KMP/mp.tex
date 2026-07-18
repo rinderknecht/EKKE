@@ -1,0 +1,87 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-eps}
+
+% Color in tables 
+%
+\usepackage{colortbl}
+\definecolor{mygrey}{gray}{0.5}
+
+% Tables
+%
+\usepackage{arydshln}
+\setlength\dashlinedash{1pt}
+\setlength\dashlinegap{1pt}
+
+% AMS Maths
+%
+\usepackage{amssymb,amsmath}
+
+% Enlarging vertically the array rows
+%
+\renewcommand\arraystretch{1.2}
+
+\input{commands}
+
+\begin{document}
+
+\TeXtoEPS
+\(%\small
+\begin{array}{rcc@{\,}c@{}ccr@{}r@{\,}c@{}ccc@{}ccc}
+  & \multicolumn{1}{@{}l}{\scriptstyle 0}
+  & & \scriptstyle j-i & & & 
+  &&&
+  & &
+  & \multicolumn{1}{r@{}}{\scriptstyle j-1}
+  & \multicolumn{1}{c}{\scriptstyle j}\\
+\cline{2-15}
+    \multicolumn{1}{r|}{t\colon}
+  & \multicolumn{2}{c}{\ldots}
+  & \multicolumn{3}{|c|}{\Border{}{\ind{p}{0,i-1}}}
+  & \multicolumn{2}{c|}{\ldots}
+  & \multicolumn{5}{c}{\Border{}{\ind{p}{0,i-1}}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\word{b}}}
+  & \phantom{ll}\\
+\cline{2-15}
+  &
+  & 
+  & \multicolumn{1}{:@{\,}l}{\scriptstyle 0}
+  &
+  & \multicolumn{1}{c:}{}
+  & \multicolumn{1}{@{\,}l}{\scriptstyle k}
+  & 
+  & \multicolumn{1}{:@{\,}l}{\scriptstyle i-k}
+  &
+  &
+  &
+  & \multicolumn{1}{r@{}:}{\scriptstyle i-1}
+  & \scriptstyle i\\ 
+\cline{4-15}
+    \multicolumn{1}{r}{p\colon}
+  &
+  &
+  & \multicolumn{3}{|c|}{\Border{}{\ind{p}{0,i-1}}}
+  & \multicolumn{2}{c}{\ldots}
+  & \multicolumn{5}{|c}{\Border{}{\ind{p}{0,i-1}}}
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\word{a}}}
+  & \\
+\cline{4-15}
+  &&&&&&
+  & 
+  &\multicolumn{1}{:@{\,}l}{\scriptstyle 0}
+  && 
+  &&& \multicolumn{1}{:c}{\scriptstyle k}\\
+\cline{9-15}
+  \multicolumn{2}{l}{\text{shifted \(p\colon\)}}
+  &
+  & \multicolumn{5}{@{}c@{}}{\xrightarrow{\hspace{4cm}}}
+  & \multicolumn{5}{|c}{\Border{}{\ind{p}{0,i-1}}}
+  & \multicolumn{1}{|c|}{a}\\
+\cline{9-15}
+\end{array}
+\)
+\endTeXtoEPS
+
+\end{document}

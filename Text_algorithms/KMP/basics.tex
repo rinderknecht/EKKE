@@ -1,0 +1,331 @@
+%%-*-latex-*-
+
+\begin{frame}
+\frametitle{Basic definitions}
+
+An \textbf{alphabet} is a non\hyp{}empty, finite set of symbols, called
+\textbf{letters}, for example \word{a}, \word{b} etc.
+
+\bigskip
+
+A \textbf{word} is a finite series of letters from an alphabet, like
+\word{abracadabra}. A letter is a word.
+
+\bigskip
+
+Just as letters can be joined to make up words, so can words: the word
+\(u \cdot v\) is made of the letters of word~\(u\) followed by the
+letters of word~\(v\), for instance, if \(u=\word{back}\) and
+\(v=\word{up}\), then \(u \cdot v = \word{backup}\). This operation is
+called \textbf{concatenation}.
+
+\bigskip
+
+Concatenation is associative: \((u \cdot v) \cdot w = u \cdot (v \cdot
+w)\). The operator may be omitted: \((uv)w = u(vw)\). Concatenation is
+a non\hyp{}commutative product, so it has a neutral element
+\(\varepsilon\), called the \textbf{empty word}: \(u \cdot \varepsilon
+= \varepsilon \cdot u = u\).
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Basic definitions}
+
+We denote the \textbf{repetition} of a word with an exponent, e.g.
+\(\word{a}^3 = \word{aaa}\). The \textbf{length} of a string \(x\) is
+the length of the associated sequence and is noted \(\len{x}\). So
+\(\len{\word{a}^3} = 3\).
+
+\bigskip
+
+A word~\(x\) is a \textbf{factor} of a word~\(y\) if there exists two
+words \(u\)~and~\(v\) (possibly empty) such that \(y = uxv\). In other
+words, \(u\)~occurs in~\(y\).
+
+\bigskip
+
+The word~\(x\) is a \textbf{prefix} of~\(y\), noted \(x \prefeq y\),
+if~\(u=\varepsilon\), that is, if \(y = xv\). Moreover, it is a
+\textbf{proper prefix}, noted \(x \pref y\), if \(v \neq \varepsilon\).
+
+\bigskip
+
+Given \(y = uxv\), the word~\(x\) is a \textbf{suffix} of~\(y\) if \(v
+= \varepsilon\). Furthermore, it is a \textbf{proper suffix} if \(u
+\neq \varepsilon\).
+
+\bigskip
+
+Let \(a\)~range over letters, and \(x\) and \(y\) over words. The
+prefix relation is easy to define inductively:
+\begin{itemize}
+
+  \item \(\forall y. \, \varepsilon \prefeq y\);
+
+  \item \(\forall a, x, y. \, x \prefeq y \Rightarrow a \cdot x \prefeq a
+    \cdot y\).
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Basic definitions}
+
+A letter in a word can be uniquely characterised by a natural number,
+called \textbf{index}, assuming that the first letter has
+index~\(0\). Read
+{\small\url{https://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD831.html}}
+
+\bigskip
+
+For example, if \(x=\word{top}\), then the letter at index~\(0\) is
+written \(\ind{x}{0}=\word{t}\) and the one at index~\(2\) is
+\(\ind{x}{2}=\word{p}\).
+
+\bigskip
+
+A factor~\(x\) of~\(y\) can be identified by the index
+of~\(\ind{x}{0}\) in~\(y\).
+
+\bigskip
+
+The end of the factor can also be given; for example, \(x=\word{sit}\)
+is a factor of \(y=\word{curiosity}\) at index~\(5\), written
+\(\ind{y}{5,7} = x\). This is sometimes called a \textbf{slice} in
+some programming languages. Sometimes the upper bound can be left
+unspecified: \(\ind{y}{i\ldots}\), meaning \(\ind{y}{i,\len{y}-1}\),
+if \(i < \len{y}\).
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The prefix predicate}
+
+An imperative definition:
+
+\begin{codebox}
+\(\proc{Prefix} (x, t)\)\\
+\li \(i \gets 0\)
+\li \While \(i < \len{x}\) \LogAnd \(i < \len{t}\)
+\li \Do \If \(x[i] = t[i]\)
+\li \Then \(i \gets i + 1\)
+\li \Else \(i \gets \len{x} + 1\) \End \End
+\li \(\proc{Prefix} \gets i = \len{x}\) \End
+\end{codebox}
+
+Does it terminate? What test cases would be meaningful? Is it correct?
+Is it optimal?
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The prefix predicate}
+
+A single static assignment definition:
+
+\begin{codebox}
+\(\proc{Prefix} (x, t)\)\\
+\li \(\proc{Prefix} \gets \proc{Prefix'}(0,x,t)\)
+\end{codebox}
+
+\begin{codebox}
+\(\proc{Prefix'} (i,x, t)\)\\
+\li \If \(i < \len{x}\) \LogAnd \(i < \len{t}\)
+\li \Then \If \(x[i] = t[i]\)
+\li       \Then \(\proc{Prefix'}(i + 1, x, t)\)
+\li       \Else \(\proc{Prefix'}(\len{x} + 1, x, t)\) \End
+\li \Else \(\proc{Prefix'} \gets i = \len{x}\) \End
+\end{codebox}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Na\"{\i}ve search}
+
+Factor matching is common in text editing, although it is usually
+better known as \textbf{exact string matching} in the academic field
+of \emph{text algorithmics} (sometimes called \emph{stringology}).
+
+\bigskip
+
+Because of the asymmetric nature of the search, the word~\(p\) to find
+will from now on be called the \textbf{pattern}, and the word~\(t\)
+the \textbf{text}.
+
+\bigskip
+
+Assuming \(p\)~and~\(t\) are not empty, the na\"{\i}ve search simply
+consists in checking whether \(p\)~is a prefix of~\(t\): if so, we are
+done, otherwise, the pattern is shifted by one letter to the right
+and, again, it is checked whether it is a prefix of that text suffix.
+
+\bigskip
+
+If \(p\)~cannot be shifted anymore because its end would surpass the
+end of~\(t\), then it is not a factor: the search failed.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Na\"{\i}ve search}
+
+\begin{figure}
+\centering
+\includegraphics[bb=75 621 352 715]{naive}
+\end{figure}
+Na\"{\i}vely matching pattern~\(p\) against text~\(t\)
+  (failure in grey), where \(\ind{p}{i} \neq \ind{t}{j}\) (the letters
+`\word{a}'~and~`\word{b}' are not relevant in themselves).
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Na\"{\i}ve search}
+
+  An imperative program:
+
+\begin{codebox}
+\(\proc{Naive} (p, t)\)\\
+\li \(i \gets 0\); \(j \gets 0\)
+\li \While \(i < \len{p}\) \LogAnd \(j < \len{t}\)
+\li \Do \If \(t[j] = p[i]\)
+\li \Then \(j \gets j + 1\); \(i \gets i + 1\)
+\li \Else \(j \gets j + 1 - i\); \(i \gets 0\)\>\>\>\>\>\>\Comment We
+slide \(p\) by 1. \End \End
+\li \(\proc{Naive} \gets i = \len{p}\)
+\end{codebox}
+
+What test cases would be meaningful?
+
+\bigskip
+
+Would it be clearer to use two loops?
+
+\bigskip
+
+How about a version with single static assignments and slices? Without
+slices?
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Na\"{\i}ve search/Analysis}
+
+The input is a pattern~\(p\) of length~\(m\) and a text~\(t\) of
+length~\(n\)
+
+\bigskip
+
+What configuration of the input leads to the minimal number of
+comparisons? What is that number?
+
+\bigskip
+
+In the worst case, \(p\) is not in \(t\) and the test at line \(3\)
+always fails on the last letter of \(p\), leading to make \(p\)
+slide of one position at line \(5\) the latest as possible.
+
+\bigskip
+
+An example of positive match in the worst case is \(p =
+\texttt{a}^{m-1}\texttt{b}\) and \(t = \texttt{a}^{n-1}\texttt{b}\),
+with \(m \leq n\).
+
+\bigskip
+
+There are \(n - m + 1\) positions in \(t\) to compare with the first
+letter of \(p\), and since there are \(m\) letters in \(p\), it makes
+a total of \((n - m + 1) m = nm - m^2 + m < \len{t} \times \len{p}\)
+positions.
+
+\bigskip
+
+What about the worst case when there is no match?
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+In case of mismatch, the na\"{\i}ve algorithm resumes comparing the
+first letters of~\(p\) without using the information of the partial
+success, to wit, we know \(\ind{p}{0,i-1} = \ind{t}{j-i,j-1}\) and
+\(\ind{p}{i} \neq \ind{t}{j}\).
+
+\bigskip
+
+If we know an index~\(k\) such that \(\ind{p}{0,k-1} =
+\ind{p}{i-k,i-1}\), that is, \(\ind{p}{0,k-1}\)~is a \emph{border}
+of~\(\ind{p}{0,i-1}\) (also known as a \emph{side}), then we can
+resume by comparing~\(\ind{t}{j}\) with~\(\ind{p}{k}\).
+
+\bigskip
+
+Clearly, the greater~\(k\), the more comparisons are skipped, so we
+want to find the \textbf{maximum borders} of the prefixes of~\(p\).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+\begin{figure}
+\centering
+\includegraphics[bb=74 621 367 717]{mp}
+\end{figure}
+
+where \(\Border{}{p}\) is the maximum border of~\(p\).
+
+\bigskip
+
+Contrary to na\"{\i}ve factoring, letters in the text are compared in
+a strictly increasing order (never having to backtrack).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+The border of a non\hyp{}empty word~\(y\) is a proper prefix of~\(y\)
+which is also a suffix.
+
+\bigskip
+
+For example, the word `\word{abacaba}' has three borders:
+\(\varepsilon\), `\word{a}'~and~`\word{aba}'. The last one is the
+maximum border and we write
+\(\Border{}{\underline{\word{aba}}\word{c}\underline{\word{aba}}} =
+\word{aba}\).
+
+\bigskip
+
+Another example is \(\Border{}{\word{abac}} = \varepsilon\), simply
+because we have \(\word{abac} =
+\underline{\varepsilon}\word{abac}\underline{\varepsilon}\).
+
+\bigskip
+
+Note that maximum borders can overlap; consider, for example,
+\(\Border{}{\underline{\word{aaa}}\word{a}} =
+\Border{}{\word{a}\underline{\word{aaa}}} = \word{aaa}\).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Let us consider a run ending in a failure:
+
+\begin{figure}
+\centering
+\includegraphics{mp_ex}
+\end{figure}
+
+\end{frame}

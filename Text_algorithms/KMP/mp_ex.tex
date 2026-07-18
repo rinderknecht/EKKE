@@ -1,0 +1,162 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-eps}
+
+% Color in tables 
+%
+\usepackage{colortbl}
+\definecolor{mygrey}{gray}{0.5}
+
+% Tables and arrays
+%
+\usepackage{arydshln}
+\setlength\dashlinedash{1pt}
+\setlength\dashlinegap{1pt}
+
+\renewcommand\arraystretch{0.95}
+
+% AMS Maths and St Mary's Road nice symbols
+%
+%\usepackage{amssymb,amsmath}%,stmaryrd}
+
+\input{commands}
+
+\begin{document}
+
+\setlength\arraycolsep{3pt}
+
+\TeXtoEPS
+\(
+\begin{array}{rc|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+  & \multicolumn{1}{c}{\scriptstyle 0}
+  & \multicolumn{1}{c}{\scriptstyle 1}
+  & \multicolumn{1}{c}{\scriptstyle 2}
+  & \multicolumn{1}{c}{\scriptstyle 3}
+  & \multicolumn{1}{c}{\scriptstyle 4}
+  & \multicolumn{1}{c}{\scriptstyle 5}
+  & \multicolumn{1}{c}{\scriptstyle 6}
+  & \multicolumn{1}{c}{\scriptstyle 7}
+  & \multicolumn{1}{c}{\scriptstyle 8}
+  & \multicolumn{1}{c}{\scriptstyle 9}
+  & \multicolumn{1}{c}{\scriptstyle 10}
+  & \multicolumn{1}{c}{\scriptstyle 11}
+  & \multicolumn{1}{c}{\scriptstyle 12}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}\\
+\cline{2-14}
+    \multicolumn{1}{r|}{t\colon}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\word{b}}}
+  & \word{a} 
+  & \word{b} 
+  & \word{a} 
+  & \word{c} 
+  & \word{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\word{a}}}
+  & \word{b} 
+  & \word{a} 
+  & \word{c} 
+  & \word{a} 
+  & \word{b} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c|}{\textcolor{white}{\word{b}}}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}\\
+\cline{2-14}
+  & \multicolumn{12}{c}{}
+  & \multicolumn{1}{c:}{}\\
+\cline{2-9}
+    \multicolumn{1}{r|}{p\colon}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\word{a}}}
+  & \word{b} 
+  & \word{a} 
+  & \word{c} 
+  & \word{a} 
+  & \word{b} 
+  & \word{a} 
+  & \word{c}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c:}{}\\
+\cline{2-10}
+  &
+  & \word{a} 
+  & \word{b} 
+  & \word{a} 
+  & \word{c} 
+  & \word{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\word{b}}}
+  & \word{a} 
+  & \word{c}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c}{}
+  & \multicolumn{1}{c:}{}\\
+\cline{3-14}
+    \multicolumn{6}{c|}{}
+  & \word{a} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\word{b}}}
+  & \word{a} 
+  & \word{c} 
+  & \word{a} 
+  & \word{b} 
+  & \word{a} 
+  & \word{c}\\
+\cline{7-15}
+    \multicolumn{7}{c|}{}
+  & \word{a}
+  & \word{b} 
+  & \word{a} 
+  & \word{c} 
+  & \word{a} 
+  & \word{b} 
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\word{a}}}
+  & \word{c}\\
+\cline{8-19}
+    \multicolumn{11}{c|}{}
+  & \word{a} 
+  & \word{b}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\word{a}}} 
+  & \word{c} 
+  & \word{a} 
+  & \word{b} 
+  & \word{a} 
+  & \word{c}\\
+\cline{12-21}
+    \multicolumn{13}{c|}{}
+  & \multicolumn{1}{>{\columncolor{mygrey}}c}{\textcolor{white}{\word{a}}}
+  & \word{b}
+  & \word{a} 
+  & \word{c}
+  & \word{a} 
+  & \word{b} 
+  & \word{a} 
+  & \word{c}\\
+\cline{14-22}
+    \multicolumn{14}{c:}{}
+  & \word{a}
+  & \word{b}
+  & \word{a} 
+  & \word{c}
+  & \word{a} 
+  & \word{b} 
+  & \word{a} 
+  & \word{c}\\
+\cline{15-22}
+\end{array}
+\)
+\endTeXtoEPS
+
+\end{document}
