@@ -1,0 +1,49 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-eps}
+\usepackage{amssymb,amsmath}
+
+% Enlarging vertically the rows
+%
+\renewcommand\arraystretch{1.2}
+
+\input{commands}
+
+\begin{document}
+
+\TeXtoEPS
+\(
+\begin{array}{r@{}ccccc}
+\cline{2-6}
+  \multicolumn{1}{r|}{y \cdot \word{a} =}
+& \multicolumn{1}{c|}{\Border{}{y}}
+& \multicolumn{1}{c|}{\word{b}}
+& \phantom{HHHH}\ldots\phantom{HHHH}
+& \multicolumn{1}{|c|}{\Border{}{y}}
+& \multicolumn{1}{c|}{\word{a}}\\
+\cline{2-6}
+&&&&&\\
+\cline{2-6}
+  \multicolumn{1}{r|}{\Border{}{y} \cdot \word{a} =}
+& \multicolumn{1}{c|}{\Border{2}{y}}
+& \multicolumn{1}{c|}{\word{c}}
+& \ldots
+& \multicolumn{1}{|c|}{\Border{2}{y}}
+& \multicolumn{1}{c|}{\word{a}}\\
+\cline{2-6}
+&&&&&\\
+\cline{2-6}
+  \multicolumn{1}{r|}{\Border{2}{y} \cdot \word{a} =}
+& \multicolumn{1}{c|}{\Border{3}{y}}
+& \multicolumn{1}{c|}{\word{a}}
+& \ldots
+& \multicolumn{1}{|c|}{\Border{3}{y}}
+& \multicolumn{1}{c|}{\word{a}}\\
+\cline{2-6}
+\end{array}
+\)
+\endTeXtoEPS
+
+\end{document}

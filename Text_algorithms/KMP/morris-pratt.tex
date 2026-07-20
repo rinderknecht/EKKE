@@ -1,0 +1,478 @@
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+In case of mismatch, the na\"{\i}ve algorithm resumes comparing the
+first letters of~\(p\) without using the information of the partial
+success, to wit, we know \(\ind{p}{0,i-1} = \ind{t}{j-i,j-1}\) and
+\(\ind{p}{i} \neq \ind{t}{j}\).
+\[
+\begin{array}{@{}rcc@{\,}c@{}ccr@{}r@{\,}c@{}ccc@{}ccc@{}}
+  & & & \scriptstyle j-i
+  & & &
+  & & \multicolumn{2}{@{}l}{\scriptstyle j-i+k}
+  & &
+  & \multicolumn{1}{r@{}}{\scriptstyle j-1}
+  & \multicolumn{1}{c}{\scriptstyle j}\\
+\cline{2-15}
+    \multicolumn{1}{r|}{t:}
+  & \multicolumn{2}{c}{\phantom{H}\ldots\phantom{H}}
+  & \multicolumn{1}{|c|}{a}
+  & \multicolumn{1}{c|}{b}
+  & \multicolumn{1}{c|}{c}
+  & \multicolumn{2}{c|}{\ldots}
+  &
+  &
+  &
+  & \phantom{HHHH}
+  &
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{b}}}
+  & \phantom{HHHH}\\
+\cline{2-15}
+  &
+  &
+  & \multicolumn{1}{:c}{\scriptstyle 0}
+  &
+  &
+  &
+  &
+  & \multicolumn{1}{:l@{\,}}{\scriptstyle i-k}
+  &
+  &
+  &
+  & \multicolumn{1}{c@{}:}{\scriptstyle i-1}
+  & \multicolumn{1}{c}{\scriptstyle i}\\
+\cline{4-15}
+    \multicolumn{1}{r}{p:}
+  &
+  &
+  & \multicolumn{1}{|c|}{a}
+  & \multicolumn{1}{c|}{b}
+  & \multicolumn{1}{c|}{c}
+  & \multicolumn{2}{c}{\ldots}
+  &
+  &
+  &
+  &
+  &
+  & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{a}}}
+  & \\
+\cline{4-15}
+  &&&&&&
+  &
+  & \multicolumn{1}{:c}{\scriptstyle 0}
+  &
+  &
+  &
+  & \multicolumn{1}{c:}{}\\
+\cline{9-15}
+  &&&&&
+  & \text{shifted}
+  & \multicolumn{1}{c}{p:}
+  & \multicolumn{1}{|c|}{a}
+  & \multicolumn{1}{c|}{b}
+  & \multicolumn{1}{c|}{c}
+  & \multicolumn{2}{c}{\ldots}\\
+\cline{9-15}
+\end{array}
+\]
+
+\bigskip
+
+If a new search starts in \(t\) at position \(j-i+k\), with \(1
+\leqslant k \leqslant i\), it compares a prefix of~\(p\) to \(t[j-i+k
+  \dots]\). Since \(t[j-i+k \dots j-1] = p[i-k,i-1]\), it compares a
+prefix of~\(p\) to a suffix of \(p[\dots i-1]\), that is, to a part
+of itself!
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+The important point here is that these comparisons are
+\emph{independent} of the text~\(t\), since they apply to part of the
+pattern~\(p\) itself.
+
+\bigskip
+
+Contrary to na\"{\i}ve factoring, letters in the text are compared in
+a strictly increasing order (never having to backtrack).
+
+\begin{figure}
+\centering
+\includegraphics[bb=74 621 367 717]{mp}
+\end{figure}
+
+where \(\Border{}{p}\) is the \textbf{maximum border} of~\(p\): the
+longest prefix of \(p\) that is also a suffix of \(p[\dots i-1]\).
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Morris-Pratt algorithm}
+
+The strategy devised here is to \textbf{compute the maximum borders of
+  all prefixes of~\(p\) \emph{before} we start the search} in the
+text, and then use this information to avoid repeating the same
+comparisons at different positions in the text.
+
+\bigskip
+
+This \textbf{preprocessing} on~\(p\) will indeed allow to recognise
+the sole configurations where the search may succeed.
+
+\bigskip
+
+In other words, we need to understand borders.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+But before that, let us consider an example where, in the end,
+\(p\)~is not found to be a factor of~\(t\). As usual, letters on a
+grey background correspond to mismatches. It is clear that
+\(\Border{}{a} = \varepsilon\), for all letters~\(a\).
+\begin{figure}
+\centering
+\includegraphics{mp_ex}
+\end{figure}
+
+(The text is not shown in its entirety.)
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+The \textbf{border} of a non\hyp{}empty word~\(y\) is a prefix
+of~\(y\) which is also a suffix.
+
+\bigskip
+
+To understand the case of the \textbf{empty border}, consider
+\(\Border{}{\word{abac}} = \varepsilon\), simply because we have
+\(\word{abac} =
+\underline{\varepsilon}\word{abac}\underline{\varepsilon}\).
+
+\bigskip
+
+For example, the word `\word{abacaba}' has three borders:
+\(\varepsilon\), `\word{a}'~and~`\word{aba}'. The last one is the
+\textbf{maximum border} and we write
+\(\Border{}{\underline{\word{aba}}\word{c}\underline{\word{aba}}} =
+\word{aba}\).
+
+\bigskip
+
+Note that \textbf{borders can overlap}; for example,
+\(\Border{}{\underline{\word{aaa}}\word{a}} =
+\Border{}{\word{a}\underline{\word{aaa}}} = \word{aaa}\).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+As often when working at the level of specifications, we seek an
+inductive definition for the function at hand, in this instance, the
+maximum border of a word.
+
+\bigskip
+
+We then have the choice of finding either \(\Border{}{ay}\) or
+\(\Border{}{ya}\), with \(y \neq \varepsilon\), assuming that we know
+\(\Border{}{y}\).
+
+\bigskip
+
+Since we are interested in knowing the maximum borders of all the
+\emph{prefixes} of a given pattern, the \(ya\) is more suitable (\(y
+\pref ya\)).
+
+\bigskip
+
+The idea is to recursively consider \(\Border{}{y} \cdot a\):
+
+\begin{itemize}
+
+  \item if it is a prefix of~\(y\), then \(\Border{}{ya} =
+    \Border{}{y} \cdot a\);
+
+  \item otherwise, we consider the border of \(\Border{}{y} \cdot a\).
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Consider the following examples where \(y\)~and~\(\Border{}{y}\) are
+given:
+\begin{align*}
+  y             &= \word{abaabb},
+& \Border{}{y}  &= \varepsilon,
+& \Border{}{y \cdot \word{b}}
+                &= \Border{}{\Border{}{y} \cdot \word{b}}
+                 = \Border{}{\word{b}} = \varepsilon;\\
+  y             &= \word{baaaba},
+& \Border{}{y}  &= \word{ba},
+& \Border{}{y \cdot \word{a}}
+                &= \Border{}{y} \cdot \word{a}
+                 = \word{baa};\\
+  y             &= \word{abbbab},
+& \Border{}{y}  &= \word{ab},
+& \Border{}{y \cdot \word{a}}
+                &= \Border{}{\Border{}{y} \cdot \word{a}}
+                 = \Border{2}{y} \cdot \word{a}
+                 = \word{a}.
+\end{align*}
+
+For example,
+\(\Border{}{y \cdot \word{a}}
+   = \Border{}{\Border{}{y} \cdot \word{a}}
+   = \Border{}{\Border{2}{y} \cdot \word{a}}
+   = \Border{3}{y} \cdot \word{a}\):
+\begin{figure}
+\centering
+\includegraphics{max_B}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Formally, for all words~\({y \neq \varepsilon}\) and any
+letter~\(a\),
+\begin{equation*}
+  \Border{}{a}         := \varepsilon;\qquad
+  \Border{}{y \cdot a} := \left\{
+    \begin{aligned}
+      & \Border{}{y} \cdot a,
+      && \text{if \(\Border{}{y} \cdot a \prefeq y\)};\\
+      & \Border{}{\Border{}{y} \cdot a},
+      && \text{otherwise.}
+    \end{aligned}
+  \right.
+\end{equation*}
+
+Unfolding the equations yields:
+\begin{align*}
+   \Border{}{ya}
+&= \Border{}{\Border{}{y} \cdot a},
+& \Border{}{y} \cdot a &\nprefeq y;\\
+   \Border{}{\Border{}{y} \cdot a}
+&= \Border{}{\Border{2}{y} \cdot a},
+&  \Border{2}{y} \cdot a &\nprefeq \Border{}{y};\\
+&\;\;\smash{\vdots} & &\;\;\smash{\vdots}\\
+   \smash{\Border{}{\Border{p-1}{y} \cdot a}}
+&= \smash{\Border{}{\Border{p}{y} \cdot a}},
+& \smash{\Border{p}{y} \cdot a} &\nprefeq \smash{\Border{p-1}{y}};
+\end{align*}
+and \(\varepsilon \not\in \{y,\Border{}{y}, \dots,
+\Border{p-1}{y}\}\).
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Therefore, an equivalent definition is:
+\begin{equation*}
+\Border{}{ya} =
+\left\{
+  \begin{aligned}
+   & \Border{q}{y} \cdot a,
+   && \text{if \(\Border{q}{y} \cdot a \prefeq y\)};\\
+   & \varepsilon,
+   && \text{otherwise;}
+  \end{aligned}
+\right.
+\end{equation*}
+with the additional constraint that \textbf{\(q\)~must be as small as
+  possible} (so we define the maximum border).
+
+\bigskip
+
+This form of the definition of~\(\BorderName\) is simpler because it
+does not contain an embedded call.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+We do not actually need to compute the maximum borders of all the
+prefixes of the pattern. Let us have a look back at
+\begin{figure}
+\centering
+\includegraphics[bb=74 621 367 717]{mp}
+\end{figure}
+
+What we need is the offset corresponding to the \textbf{length of the
+  maximum border} being considered (\(k\), in the figure).
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Let us define a function \(\MPfailureName_{x}\) on all the prefixes of
+a word~\(x\) as follows:
+\begin{equation}
+  \MPfailure{x}{}{\len{y}}
+:= \len{\Border{}{y}},\,\; \text{for
+    all \(x\) and \(y \neq \varepsilon\) such
+    that \(y \prefeq x\)}.\label{eq:MP_failure}
+\end{equation}
+For reasons which will be clear soon, this function is called the
+\textbf{failure function} of~\(x\). An equivalent definition is
+\begin{equation*}
+  \MPfailure{x}{}{i}
+= \len{\Border{}{\ind{x}{\dots i-1}}}, \,\;
+\text{for all \(x\) and  \(i\) such that
+\(0 < i \leqslant \len{x}\)}.
+\end{equation*}
+
+Let's take the equations deining of the maximum borders and take the
+lengths on both sides:
+
+\begin{equation*}
+\len{\Border{}{ya}} =
+\left\{
+  \begin{aligned}
+   & \len{\Border{q}{y} \cdot a} = 1 + \len{\Border{q}{y}},
+   && \text{if \(\Border{q}{y} \cdot a \prefeq y\)};\\
+   & \len{\varepsilon} = 0,
+   && \text{otherwise.}
+  \end{aligned}
+\right.
+\end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+If~\({ya \prefeq x}\), then \(\len{\Border{}{ya}} =
+\MPfailure{x}{}{\len{ya}} = \MPfailure{x}{}{\len{y}+1}\). Let \(i :=
+\len{y} > 0\).
+\begin{equation*}
+\MPfailure{x}{}{i+1} =
+\left\{
+  \begin{aligned}
+   & 1 + \len{\Border{q}{y}},
+   && \text{if \(\Border{q}{y} \cdot a \prefeq y\)};\\
+   & 0,
+   && \text{otherwise.}
+  \end{aligned}
+\right.
+\end{equation*}
+
+Let's set aside for a moment \(\Border{q}{y} \cdot a \prefeq y\) and
+return to the definition of~\(\MPfailureName\), from which we deduce:
+\begin{equation*}
+\MPfailure{x}{q}{\len{y}} = \len{\Border{q}{y}},
+\,\; \text{with \(y \prefeq x\)},
+\end{equation*}
+which we can prove by complete induction on~\(q\). Let us call this
+property \(\pred{P}{q}\). Trivially, we have \(\pred{P}{0}\). Let us
+suppose \(\pred{P}{n}\) for all \(n \leqslant q\): this is the
+induction hypothesis. We suppose \(y \prefeq x\) and prove now
+\(\pred{P}{q+1}\):
+\begin{equation*}
+  \MPfailure{x}{q+1}{\len{y}}
+= \MPfailure{x}{q}{\MPfailure{x}{}{\len{y}}}
+= \MPfailure{x}{q}{\len{\Border{}{y}}}
+\doteq \len{\Border{q}{\Border{}{y}}}
+= \len{\Border{q+1}{y}},
+\end{equation*}
+where \((\smash{\doteq})\)~is a valid application of the induction
+hypothesis because \(\Border{}{y} \pref y \prefeq x\). This proves
+\(\pred{P}{q+1}\) and the induction principle entails that
+\(\pred{P}{n}\) holds for all \(n \geqslant 0\).
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+  So
+  \begin{equation*}
+\MPfailure{x}{}{i+1} =
+\left\{
+  \begin{aligned}
+   & 1 + \MPfailure{x}{q}{i},
+   && \text{if \(\Border{q}{y} \cdot a \prefeq y\)};\\
+   & 0,
+   && \text{otherwise.}
+  \end{aligned}
+\right.
+\end{equation*}
+There is one part of the definition that we did not use:
+\({\Border{}{a} := \varepsilon}\). It implies \(\MPfailure{x}{}{1} =
+\MPfailure{x}{}{\len{a}} = \len{\Border{}{a}} = \len{\varepsilon} =
+0\) and, since the definition of~\(\MPfailureName\) implies
+\(\MPfailure{x}{}{1} = 1 + \MPfailure{x}{}{0}\), so
+\(\MPfailure{x}{}{0} = -1\).
+
+\bigskip
+
+We can now return to the last missing bit:
+\begin{equation*}
+\Border{q}{y} \cdot a \prefeq y
+\,\; \text{and} \,\; ya \prefeq x \,\;\text{and}\,\; \len{y} = i.
+\end{equation*}
+It is equivalent to the following:
+\begin{equation*}
+  \smash{\Ind{y}{\len{\Border{q}{y}}}} = a \Leftrightarrow
+\smash{\Ind{y}{\MPfailure{x}{q}{i}}} = a \Leftrightarrow
+\smash{\Ind{x}{\MPfailure{x}{q}{i}}} = \smash{\Ind{x}{\len{y}}}
+\Leftrightarrow \smash{\Ind{x}{\MPfailure{x}{q}{i}}} = \ind{x}{i}.
+\end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Gathering everything:
+\begin{equation*}
+ \MPfailure{x}{}{0}   = -1\quad\text{and}\quad
+ \MPfailure{x}{}{i+1} =
+   \left\{
+     \begin{aligned}
+       & 1 + \MPfailure{x}{q}{i},
+       && \text{if \(\Ind{x}{\MPfailure{x}{q}{i}} = \ind{x}{i}\)};\\
+       & 0,
+       && \text{otherwise;}
+     \end{aligned}
+   \right.
+\end{equation*}
+where \(q\)~is the smallest nonzero natural satisfying the
+condition.
+
+\bigskip
+
+This can be further simplified into
+\begin{equation*}
+\MPfailure{x}{}{0} = -1
+\quad \text{and} \quad
+\MPfailure{x}{}{i+1} = 1 + \MPfailure{x}{q}{i}, \,\;\text{with}\,\; i \geqslant 0,
+\end{equation*}
+and \(q>0\)~is the smallest natural such that
+\(\MPfailure{x}{q}{i} = -1\) or \(\smash{\Ind{x}{\MPfailure{x}{q}{i}}}
+= \ind{x}{i}\).
+
+\end{frame}
