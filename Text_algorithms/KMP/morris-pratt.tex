@@ -147,7 +147,7 @@ grey background correspond to mismatches. It is clear that
 \begin{frame}
   \frametitle{Morris-Pratt algorithm}
 
-The \textbf{border} of a non\hyp{}empty word~\(y\) is a prefix
+The \textbf{border} of a non\hyp{}empty word~\(y\) is a proper prefix
 of~\(y\) which is also a suffix.
 
 \bigskip
@@ -170,6 +170,11 @@ For example, the word `\word{abacaba}' has three borders:
 Note that \textbf{borders can overlap}; for example,
 \(\Border{}{\underline{\word{aaa}}\word{a}} =
 \Border{}{\word{a}\underline{\word{aaa}}} = \word{aaa}\).
+
+\bigskip
+
+The border above must be a proper prefix, so it cannot equal
+`\word{aaaa}'.
 
 \end{frame}
 
@@ -336,13 +341,13 @@ a word~\(x\) as follows:
 For reasons which will be clear soon, this function is called the
 \textbf{failure function} of~\(x\). An equivalent definition is
 \begin{equation*}
-  \MPfailure{x}{}{i}
-= \len{\Border{}{\ind{x}{\dots i-1}}}, \,\;
+  \MPfailure{x}{}{i+1}
+= \len{\Border{}{\ind{x}{\dots i}}}, \,\;
 \text{for all \(x\) and  \(i\) such that
-\(0 < i \leqslant \len{x}\)}.
+\(0 \leqslant i < \len{x}\)}.
 \end{equation*}
 
-Let's take the equations deining of the maximum borders and take the
+Let's take the equations defining the maximum borders and take the
 lengths on both sides:
 
 \begin{equation*}
@@ -475,4 +480,138 @@ and \(q>0\)~is the smallest natural such that
 \(\MPfailure{x}{q}{i} = -1\) or \(\smash{\Ind{x}{\MPfailure{x}{q}{i}}}
 = \ind{x}{i}\).
 
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Assuming \(0 \leqslant i < \len{x}\),
+\begin{codebox}
+\(\proc{Fail} (x, i)\)\RComment \(\MPfailure{x}{}{i}\)\\
+\li \If \(i = 0\)
+\li \Then \(\proc{Fail} \gets -1\)\RComment \(\MPfailure{x}{}{0} = -1\)
+\li \Else \(j \gets i - 1\)
+\li       \Repeat
+\li         \(j \gets \proc{Fail}(x,j)\)
+\li       \Until \(j = -1\) \LogOr \(x[j] = x[i-1]\)
+\li       \(\proc{Fail} \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
+= 1+\MPfailure{x}{q}{i-1}\)
+    \End
+\end{codebox}
+
+The table of the maximum borders for the proper prefixes of the word
+`\word{abacabac}':
+\begin{figure}
+\centering
+\includegraphics{mp_fail}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Static single-assignment form, assuming \(0 \leqslant i < \len{x}\):
+\begin{codebox}
+\(\proc{Fail}(x, i)\)\\
+\li \If \(i = 0\)
+\li \Then \(\proc{Fail} \gets -1\)
+\li \Else \(\proc{Fail} \gets 1 + \proc{Fix}(x, \proc{Fail}(x, i, i-1))\)
+\End
+\end{codebox}
+
+
+\begin{codebox}
+\(\proc{Fix}(x, i, j)\)\\
+\li \If \(j = -1\) \LogOr \(x[j] = x[i-1]\)
+\li \Then \(\proc{Fix} \gets j\)
+\li \Else \(\proc{Fix}(x, i, \proc{Fail}(x, j))\) \End
+\end{codebox}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+The problem here is inefficiency:
+\begin{enumerate}
+
+  \item successive calls with the same arguments trigger again the
+    same computations,
+
+  \item the recursive calls are costly.
+
+\end{enumerate}
+
+\bigskip
+
+It is much preferable to have \(\MPfailureName\) as an array than as a
+function:
+\begin{enumerate}
+
+  \item the values of \(\MPfailureName\) are computed only once each
+
+  \item and are accessed in constant time instead of relying on
+    function calls.
+
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+The idea is to compute all the values of \(\MPfailure{x}{}{i}\) for \emph{increasing} values of \(i\):
+\begin{codebox}
+\(\proc{Make}(x)\)\\
+\li \(\MPfailureName_{x}[0] \gets -1\)
+\li \For \(i \gets 1\) \To \(\len{x} - 1\)
+\li \Do \(j \gets i - 1\)
+\li     \Repeat
+\li       \(j \gets \MPfailureName_{x}[j]\)\RComment
+\(\MPfailureName_{x}[j] < j\)
+\li       \Until \(j = -1\) \LogOr \(x[j] = x[i-1]\)
+\li     \(\MPfailureName_{x}[i] \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
+= 1+\MPfailure{x}{k}{i-1}\)
+    \End
+\li \(\proc{Make} \gets \MPfailureName_{x}\)
+\end{codebox}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Let us determine the maximum cost of computing the maximum borders of
+all the proper prefixes of a given word.
+
+\bigskip
+
+First, let us come back to the definition, so we can find out the
+configurations of the word that yield the maximum number of
+comparisons.
+
+\bigskip
+
+For all words~\({y \neq \varepsilon}\) and any letter~\(a\),
+\begin{equation*}
+  \Border{}{a}         := \varepsilon;\qquad
+  \Border{}{y \cdot a} := \left\{
+    \begin{aligned}
+      & \Border{}{y} \cdot a,
+      && \text{if \(\Border{}{y} \cdot a \prefeq y\)};\\
+      & \Border{}{\Border{}{y} \cdot a},
+      && \text{otherwise.}
+    \end{aligned}
+  \right.
+\end{equation*}
+
+Since we compute the maximum borders for increasing prefixes, and it
+is easy to prove that \(\Border{}{y} \pref y\), we consider
+\(\Border{}{y} \cdot a\) to incur no cost (no comparison). So, we
+only want to maximise the number of recursive calls
 \end{frame}
