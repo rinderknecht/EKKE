@@ -96,7 +96,8 @@ pattern~\(p\) itself.
 \bigskip
 
 Contrary to na\"{\i}ve factoring, letters in the text are compared in
-a strictly increasing order (never having to backtrack).
+a strictly increasing order, which enables \textbf{searches in data
+  streams}.
 
 \begin{figure}
 \centering
@@ -275,12 +276,25 @@ Unfolding the equations yields:
 &= \Border{}{\Border{2}{y} \cdot a},
 &  \Border{2}{y} \cdot a &\nprefeq \Border{}{y};\\
 &\;\;\smash{\vdots} & &\;\;\smash{\vdots}\\
-   \smash{\Border{}{\Border{p-1}{y} \cdot a}}
-&= \smash{\Border{}{\Border{p}{y} \cdot a}},
-& \smash{\Border{p}{y} \cdot a} &\nprefeq \smash{\Border{p-1}{y}};
+   \smash{\Border{}{\Border{p-2}{y} \cdot a}}
+&= \smash{\Border{}{\Border{p-1}{y} \cdot a}},
+& \smash{\Border{p-1}{y} \cdot a} &\nprefeq \smash{\Border{p-2}{y}};
 \end{align*}
 and \(\varepsilon \not\in \{y,\Border{}{y}, \dots,
-\Border{p-1}{y}\}\).
+\Border{p-2}{y}\}\), so \(\Border{}{ya} =
+\smash{\Border{}{\Border{p-1}{y} \cdot a}}\).
+
+If \(\Border{p-1}{y} = \varepsilon\), then \(\Border{}{ya} =
+\Border{}{a} = \varepsilon\), else the unfolding resumes until we find
+the smallest \(q > p\) such that \(\Border{}{\Border{q-1}{y} \cdot a}
+= \Border{}{\Border{q}{y} \cdot a}\) with \(\Border{q}{y} \cdot a
+\prefeq \Border{q-1}{y}\).
+
+
+%we assume
+%\(\Border{q}{y} \cdot a \prefeq y\) and then
+%\(\Border{}{ya} = \smash{\Border{}{\Border{q-1}{y} \cdot a}} =
+%\smash{\Border{}{\Border{q-1}{y}} \cdot a} = \Border{q}{y} \cdot a\).
 
 \end{frame}
 
@@ -288,7 +302,17 @@ and \(\varepsilon \not\in \{y,\Border{}{y}, \dots,
 \begin{frame}
   \frametitle{Morris-Pratt algorithm}
 
-Therefore, an equivalent definition is:
+Because a border is a proper prefix, that is to say, \(\Border{}{y}
+\pref y\), we have \(\Border{2}{y} = \Border{}{\Border{}{y}} \pref
+\Border{}{y}\), so \(\Border{q}{y} \cdot a \prefeq \Border{q-1}{y}
+\pref \dots \pref \Border{}{y} \pref y\). Therefore \(\Border{q}{y}
+\cdot a \prefeq y\), since \({q > 0}\), and \(\Border{}{ya} =
+\Border{q}{y} \cdot a\).
+
+\bigskip
+
+Gathering all the cases, an equivalent definition of the maximum
+border:
 \begin{equation*}
 \Border{}{ya} =
 \left\{
@@ -438,7 +462,7 @@ We can now return to the last missing bit:
 \Border{q}{y} \cdot a \prefeq y
 \,\; \text{and} \,\; ya \prefeq x \,\;\text{and}\,\; \len{y} = i.
 \end{equation*}
-It is equivalent to the following:
+Since \(\Border{q}{y} \pref y\), those are equivalent to the following:
 \begin{equation*}
   \smash{\Ind{y}{\len{\Border{q}{y}}}} = a \Leftrightarrow
 \smash{\Ind{y}{\MPfailure{x}{q}{i}}} = a \Leftrightarrow
@@ -486,15 +510,15 @@ and \(q>0\)~is the smallest natural such that
 \begin{frame}
   \frametitle{Morris-Pratt algorithm}
 
-Assuming \(0 \leqslant i < \len{x}\),
 \begin{codebox}
-\(\proc{Fail} (x, i)\)\RComment \(\MPfailure{x}{}{i}\)\\
+\(\proc{Fail} (x, i)\)\RComment \(\MPfailure{x}{}{i}\) with \(0
+\leqslant i < \len{x}\) \\
 \li \If \(i = 0\)
 \li \Then \(\proc{Fail} \gets -1\)\RComment \(\MPfailure{x}{}{0} = -1\)
 \li \Else \(j \gets i - 1\)
-\li       \Repeat
+\li       \Repeat\RComment \(q > 0\) times
 \li         \(j \gets \proc{Fail}(x,j)\)
-\li       \Until \(j = -1\) \LogOr \(x[j] = x[i-1]\)
+\li       \Until \(j = -1\) \LogOr \(x[j] = x[i-1]\)\RComment Sequentially
 \li       \(\proc{Fail} \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
 = 1+\MPfailure{x}{q}{i-1}\)
     \End
