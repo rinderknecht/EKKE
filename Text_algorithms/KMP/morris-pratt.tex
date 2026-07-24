@@ -597,45 +597,79 @@ The idea is to compute all the values of \(\MPfailure{x}{}{i}\) for \emph{increa
 \li \Do \(j \gets i - 1\)
 \li     \Repeat
 \li       \(j \gets \MPfailureName_{x}[j]\)\RComment
-\(\MPfailureName_{x}[j] < j\)
+\(\MPfailureName_{x}[j] < j < i\)
 \li       \Until \(j = -1\) \LogOr \(x[j] = x[i-1]\)
 \li     \(\MPfailureName_{x}[i] \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
-= 1+\MPfailure{x}{k}{i-1}\)
+= 1+\MPfailure{x}{q}{i-1}\)
     \End
 \li \(\proc{Make} \gets \MPfailureName_{x}\)
 \end{codebox}
 
+It is hard to see why is the maximum cost of \(\proc{Make}(x)\) is
+\(\sim 2\cdot\len{x}\). (Consider \(x=a^m\), \(x = a^{m-1}b\), and \(x
+=abc\), with \(a \neq b \neq c\): every attempt at making the inner
+loop longer with \(x[j] \neq x[i-1]\) corresponds at having empty
+borders for all prefixes, so \(\MPfailureName_x[j] = -1\).)
+
 \end{frame}
+
+%% \begin{frame}
+%%   \frametitle{Morris-Pratt algorithm}
+
+%% Let us determine the maximum cost of computing the maximum borders of
+%% all the proper prefixes of a given word.
+
+%% \bigskip
+
+%% First, let us come back to the definition, so we can find out the
+%% configurations of the word that yield the maximum number of
+%% comparisons.
+
+%% \bigskip
+
+%% For all words~\({y \neq \varepsilon}\) and any letter~\(a\),
+%% \begin{equation*}
+%%   \Border{}{a}         := \varepsilon;\qquad
+%%   \Border{}{y \cdot a} := \left\{
+%%     \begin{aligned}
+%%       & \Border{}{y} \cdot a,
+%%       && \text{if \(\Border{}{y} \cdot a \prefeq y\)};\\
+%%       & \Border{}{\Border{}{y} \cdot a},
+%%       && \text{otherwise.}
+%%     \end{aligned}
+%%   \right.
+%% \end{equation*}
+
+%% Since we compute the maximum borders for increasing prefixes, and it
+%% is easy to prove that \(\Border{}{y} \pref y\), we consider
+%% \(\Border{}{y} \cdot a\) to incur no cost (no comparison). So, we
+%% only want to maximise the number of recursive calls
+%% \end{frame}
+
+
+%% \begin{frame}
+%%   \frametitle{Morris-Pratt algorithm}
+
+%% To find out the best configuration of a pattern of length~\(m\) that
+%% yields the minumum number of letter comparisons, let us assume that
+%% the loop in the definition of \proc{Fail} is always executed once:
+%% \begin{align*}
+%%   \MPfailure{x}{}{m} &= 1 + \MPfailure{x}{}{m-1} &
+%%   x[\MPfailure{x}{}{m-1}] = x[m-1]\\
+%%   \MPfailure{x}{}{m-1} &= 1 + \MPfailure{x}{}{m-2} &
+%%   x[\MPfailure{x}{}{m-2}] = x[m-2]\\
+%%                      & \vdots\\
+%%   \MPfailure{x}{}{1} &= 1 + \MPfailure{x}{}{0}\\
+%%   \MPfailure{x}{}{0} &= -1
+%% \end{align*}
+%% So \(\MPfailure{x}{}{k} = k - 1\) for \(k > 0\), and the number of
+%% letter comparisons is \(m-1\). The configuration satisfies \(x[k-1] =
+%% x[k]\), so, for example \(p=a^{m}\).
+%% \end{frame}
 
 \begin{frame}
   \frametitle{Morris-Pratt algorithm}
 
-Let us determine the maximum cost of computing the maximum borders of
-all the proper prefixes of a given word.
 
-\bigskip
 
-First, let us come back to the definition, so we can find out the
-configurations of the word that yield the maximum number of
-comparisons.
-
-\bigskip
-
-For all words~\({y \neq \varepsilon}\) and any letter~\(a\),
-\begin{equation*}
-  \Border{}{a}         := \varepsilon;\qquad
-  \Border{}{y \cdot a} := \left\{
-    \begin{aligned}
-      & \Border{}{y} \cdot a,
-      && \text{if \(\Border{}{y} \cdot a \prefeq y\)};\\
-      & \Border{}{\Border{}{y} \cdot a},
-      && \text{otherwise.}
-    \end{aligned}
-  \right.
-\end{equation*}
-
-Since we compute the maximum borders for increasing prefixes, and it
-is easy to prove that \(\Border{}{y} \pref y\), we consider
-\(\Border{}{y} \cdot a\) to incur no cost (no comparison). So, we
-only want to maximise the number of recursive calls
 \end{frame}
