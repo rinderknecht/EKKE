@@ -511,15 +511,15 @@ and \(q>0\)~is the smallest natural such that
   \frametitle{Morris-Pratt algorithm}
 
 \begin{codebox}
-\(\proc{Fail} (x, i)\)\RComment \(\MPfailure{x}{}{i}\) with \(0
+\(\proc{Next} (x, i)\)\RComment \(\MPfailure{x}{}{i}\) with \(0
 \leqslant i < \len{x}\) \\
 \li \If \(i = 0\)
-\li \Then \(\proc{Fail} \gets -1\)\RComment \(\MPfailure{x}{}{0} = -1\)
+\li \Then \(\proc{Next} \gets -1\)\RComment \(\MPfailure{x}{}{0} = -1\)
 \li \Else \(j \gets i - 1\)
 \li       \Repeat\RComment \(q > 0\) times
-\li         \(j \gets \proc{Fail}(x,j)\)
+\li         \(j \gets \proc{Next}(x,j)\)
 \li       \Until \(j = -1\) \LogOr \(x[j] = x[i-1]\)\RComment Sequentially
-\li       \(\proc{Fail} \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
+\li       \(\proc{Next} \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
 = 1+\MPfailure{x}{q}{i-1}\)
     \End
 \end{codebox}
@@ -539,10 +539,10 @@ The table of the maximum borders for the proper prefixes of the word
 
 Static single-assignment form, assuming \(0 \leqslant i < \len{x}\):
 \begin{codebox}
-\(\proc{Fail}(x, i)\)\\
+\(\proc{Next}(x, i)\)\\
 \li \If \(i = 0\)
-\li \Then \(\proc{Fail} \gets -1\)
-\li \Else \(\proc{Fail} \gets 1 + \proc{Fix}(x, \proc{Fail}(x, i, i-1))\)
+\li \Then \(\proc{Next} \gets -1\)
+\li \Else \(\proc{Next} \gets 1 + \proc{Fix}(x, \proc{Next}(x, i, i-1))\)
 \End
 \end{codebox}
 
@@ -551,7 +551,7 @@ Static single-assignment form, assuming \(0 \leqslant i < \len{x}\):
 \(\proc{Fix}(x, i, j)\)\\
 \li \If \(j = -1\) \LogOr \(x[j] = x[i-1]\)
 \li \Then \(\proc{Fix} \gets j\)
-\li \Else \(\proc{Fix}(x, i, \proc{Fail}(x, j))\) \End
+\li \Else \(\proc{Fix}(x, i, \proc{Next}(x, j))\) \End
 \end{codebox}
 
 \end{frame}
@@ -591,85 +591,104 @@ function:
 
 The idea is to compute all the values of \(\MPfailure{x}{}{i}\) for \emph{increasing} values of \(i\):
 \begin{codebox}
-\(\proc{Make}(x)\)\\
-\li \(\MPfailureName_{x}[0] \gets -1\)
+\(\proc{Next}(x)\)\\
+\li \(\id{next}[0] \gets -1\)
 \li \For \(i \gets 1\) \To \(\len{x} - 1\)
 \li \Do \(j \gets i - 1\)
 \li     \Repeat
-\li       \(j \gets \MPfailureName_{x}[j]\)\RComment
+\li       \(j \gets \id{next}[j]\)\RComment
 \(\MPfailureName_{x}[j] < j < i\)
 \li       \Until \(j = -1\) \LogOr \(x[j] = x[i-1]\)
-\li     \(\MPfailureName_{x}[i] \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
+\li     \(\id{next}[i] \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
 = 1+\MPfailure{x}{q}{i-1}\)
     \End
-\li \(\proc{Make} \gets \MPfailureName_{x}\)
+\li \(\proc{Next} \gets \id{next}\)
 \end{codebox}
 
-It is hard to see why is the maximum cost of \(\proc{Make}(x)\) is
-\(\sim 2\cdot\len{x}\). (Consider \(x=a^m\), \(x = a^{m-1}b\), and \(x
-=abc\), with \(a \neq b \neq c\): every attempt at making the inner
-loop longer with \(x[j] \neq x[i-1]\) corresponds at having empty
-borders for all prefixes, so \(\MPfailureName_x[j] = -1\).)
-
 \end{frame}
-
-%% \begin{frame}
-%%   \frametitle{Morris-Pratt algorithm}
-
-%% Let us determine the maximum cost of computing the maximum borders of
-%% all the proper prefixes of a given word.
-
-%% \bigskip
-
-%% First, let us come back to the definition, so we can find out the
-%% configurations of the word that yield the maximum number of
-%% comparisons.
-
-%% \bigskip
-
-%% For all words~\({y \neq \varepsilon}\) and any letter~\(a\),
-%% \begin{equation*}
-%%   \Border{}{a}         := \varepsilon;\qquad
-%%   \Border{}{y \cdot a} := \left\{
-%%     \begin{aligned}
-%%       & \Border{}{y} \cdot a,
-%%       && \text{if \(\Border{}{y} \cdot a \prefeq y\)};\\
-%%       & \Border{}{\Border{}{y} \cdot a},
-%%       && \text{otherwise.}
-%%     \end{aligned}
-%%   \right.
-%% \end{equation*}
-
-%% Since we compute the maximum borders for increasing prefixes, and it
-%% is easy to prove that \(\Border{}{y} \pref y\), we consider
-%% \(\Border{}{y} \cdot a\) to incur no cost (no comparison). So, we
-%% only want to maximise the number of recursive calls
-%% \end{frame}
-
-
-%% \begin{frame}
-%%   \frametitle{Morris-Pratt algorithm}
-
-%% To find out the best configuration of a pattern of length~\(m\) that
-%% yields the minumum number of letter comparisons, let us assume that
-%% the loop in the definition of \proc{Fail} is always executed once:
-%% \begin{align*}
-%%   \MPfailure{x}{}{m} &= 1 + \MPfailure{x}{}{m-1} &
-%%   x[\MPfailure{x}{}{m-1}] = x[m-1]\\
-%%   \MPfailure{x}{}{m-1} &= 1 + \MPfailure{x}{}{m-2} &
-%%   x[\MPfailure{x}{}{m-2}] = x[m-2]\\
-%%                      & \vdots\\
-%%   \MPfailure{x}{}{1} &= 1 + \MPfailure{x}{}{0}\\
-%%   \MPfailure{x}{}{0} &= -1
-%% \end{align*}
-%% So \(\MPfailure{x}{}{k} = k - 1\) for \(k > 0\), and the number of
-%% letter comparisons is \(m-1\). The configuration satisfies \(x[k-1] =
-%% x[k]\), so, for example \(p=a^{m}\).
-%% \end{frame}
 
 \begin{frame}
   \frametitle{Morris-Pratt algorithm}
 
+To find out the best configuration of a pattern~\(p\) of length~\(m\)
+that yields the minimum number of letter comparisons, let us assume
+that the inner loop in the definition of \proc{Next} is always
+executed exactly once:
+\begin{align*}
+  \MPfailure{x}{}{m} &= 1 + \MPfailure{x}{}{m-1} &
+  x[\MPfailure{x}{}{m-1}] &= x[m-1]\\
+  \MPfailure{x}{}{m-1} &= 1 + \MPfailure{x}{}{m-2} &
+  x[\MPfailure{x}{}{m-2}] &= x[m-2]\\
+                     & \vdots & &\vdots \\
+  \MPfailure{x}{}{2} &= 1 + \MPfailure{x}{}{1} &
+  x[\MPfailure{x}{}{1}] &= x[1]\\
+  \MPfailure{x}{}{1} &= 1 + \MPfailure{x}{}{0}\\
+  \MPfailure{x}{}{0} &= -1
+\end{align*}
+So \(\MPfailure{x}{}{j} = j - 1\) and \(x[j-1] = x[j]\), for \(j >
+0\), so the number of letter comparisons for~\(p\) is \(m-1\). An
+example of pattern is \(p=a^{m}\).
 
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+  To find the worst configuration of a pattern~\(p\) of length~\(m\)
+  that yields the maximum number of letter comparisons, let us assume
+  that the inner loop in the definition of \proc{Next} is executed as
+  many times as possible, that is to say, the prefix test \(x[j-1] =
+  x[j]\) fails until \(j = -1\).
+
+  \bigskip
+
+  In other words, \(\MPfailure{x}{}{j}\) must decrease as slowly as
+  possible, which is actually the best case: \(\MPfailure{x}{}{j} = j
+  - 1\).
+
+  \bigskip
+
+  In other words, the worst case is the best case followed by a letter
+  that is not in the best case prefix: \(p = a^{m-1}b\), where \(a
+  \neq b\). We know that the number of comparisons (equalities) for \(a^{m-1}\) is \(m-2\).
+
+  \bigskip
+
+  We need to add the comparisons (inequalities) of~\(b\) to all
+  the~\(a\): \(x[j] \neq x[m-1]\) for \(0 \leqslant j < m - 1\), that
+  is, \(m - 1\).
+
+  \bigskip
+
+  In total, the number of comparisons in the worst case is
+  \((m-2)+(m-1) = 2m-3\).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Morris-Pratt algorithm}
+
+Let us parameterise the search with the failure function:
+
+\begin{codebox}
+\(\proc{Find} (p, t, \id{next})\)\\
+\li \(i \gets 0\); \(j \gets 0\)
+\li \While \(i < \len{p}\) \LogAnd \(j < \len{t}\)
+\li \Do \If \(i = -1\) \LogOr \(p[i] = t[j]\)
+\li \Then \(i \gets i + 1\); \(j \gets j + 1\)
+\li \Else \(i \gets \id{next}[i]\)\RComment \(j\) invariant
+\End \End
+\li \If i = \len{p}
+\li \Then \(\proc{Find} \gets j - \len{p}\)\RComment Index of first occurence
+\li \Else \(\proc{Find} \gets -1\)\RComment Not found
+\end{codebox}
+
+So the Morris-Pratt algorithm is
+
+\begin{codebox}
+\(\proc{MP} (p, t)\)\\
+\li \(\proc{MP} \gets \proc{Find}(p,t,\proc{Next}(p))\)
+\end{codebox}
 
 \end{frame}

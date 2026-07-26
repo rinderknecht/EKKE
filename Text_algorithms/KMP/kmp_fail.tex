@@ -1,0 +1,28 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-eps}
+\usepackage{amssymb}
+\usepackage{booktabs}
+
+\input{commands}
+
+\begin{document}
+
+\TeXtoEPS
+\(
+\begin{array}{rrrrrrrrr}
+\toprule
+  x = & \word{a} & \word{b} & \word{a} & \word{c}
+      & \word{a} & \word{b} & \word{a} & \word{c}\\
+\midrule
+  i &  0 & 1 & 2  & 3 & 4  & 5 & 6  & 7\\
+  \MPfailure{x}{}{i}
+    & -1 & 0 & -1 & 1 & -1 & 0 & -1 & 1\\
+\bottomrule
+\end{array}
+\)
+\endTeXtoEPS
+
+\end{document}
