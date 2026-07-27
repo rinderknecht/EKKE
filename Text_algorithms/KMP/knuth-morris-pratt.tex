@@ -132,7 +132,7 @@ maintain~\(j\) as the next state before optimisation.
 \li   \Then \(\id{next}[i] \gets \id{next}[j]\)
 \li   \Else
 \li     \(\id{next}[i] \gets j;\)
-\li     \While \(j \geqslant 0\) \LogAnd \(x[j] = x[i]\)
+\li     \While \(j \geqslant 0\) \LogAnd \(x[j] \neq x[i]\)
 \li     \Do
 \li       \(j \gets next[j]\)
         \End
