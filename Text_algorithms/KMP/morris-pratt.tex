@@ -679,9 +679,10 @@ Let us parameterise the search with the failure function:
 \li \Then \(i \gets i + 1\); \(j \gets j + 1\)
 \li \Else \(i \gets \id{next}[i]\)\RComment \(j\) invariant
 \End \End
-\li \If i = \len{p}
-\li \Then \(\proc{Find} \gets j - \len{p}\)\RComment Index of first occurence
+\li \If \(i = \len{p}\)
+\li \Then \(\proc{Find} \gets j - \len{p}\)\RComment Index of first occurrence
 \li \Else \(\proc{Find} \gets -1\)\RComment Not found
+\End
 \end{codebox}
 
 So the Morris-Pratt algorithm is
