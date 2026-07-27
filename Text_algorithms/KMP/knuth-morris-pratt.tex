@@ -120,8 +120,9 @@ outgoing label is still~\(a\), it loses its destination.
 \begin{frame}
   \frametitle{Knuth-Morris-Pratt algorithm}
 
-With some effort, we can fuse the two loops into one. The idea is to
-maintain~\(j\) as the next state before optimisation.
+We can fuse the two loops into one. The idea is to maintain~\(j\) as
+the failure state of~\(i\) before optimisation (the original edge \(i
+\dashrightarrow j\)).
 
 \begin{codebox}
 \(\proc{Next'} (x)\)\\
