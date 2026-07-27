@@ -1,0 +1,45 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pst-eps}
+\usepackage{vaucanson-g}
+
+%\ShowGrid
+
+\begin{document}
+
+\TeXtoEPS
+\VCDraw{%
+\begin{VCPicture}{(0,0)(7,6)}
+% States
+\State[A]{(0,3)}{A}
+\State[B]{(3,3)}{B}
+\State[C]{(5,6)}{C}
+\State[D]{(5,0)}{D}
+\FinalState[E]{(7,3)}{E}
+% Initial and final
+\Initial{A}
+% Edges
+\EdgeL{A}{C}{0,\ldots,9}
+\EdgeL[0.5]{A}{B}{+}
+\LabelR[0.5]{-}
+\EdgeR[0.5]{A}{D}{\mathtt{.}}
+
+\EdgeR[0.2]{B}{C}{0}
+\LabelR[0.35]{\cdot}
+\LabelR[0.4]{\cdot}
+\LabelR[0.45]{\cdot}
+\LabelR[0.6]{9}
+\EdgeL[0.5]{B}{D}{\mathtt{.}}
+
+\LoopN[0.5]{C}{0,\ldots,9}
+\EdgeL[0.5]{C}{D}{\mathtt{.}}
+
+\EdgeR{D}{E}{0,\ldots,9}
+\LoopN[0.5]{E}{0,\ldots,9}
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

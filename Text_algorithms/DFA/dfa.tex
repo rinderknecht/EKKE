@@ -1,0 +1,748 @@
+%%-*-latex-*-
+
+%%-*-latex-*-
+
+\documentclass[compress,dvips,xcolor={dvipsnames},t]{beamer}
+
+\usepackage[english]{babel}
+\usepackage{xspace}
+\usepackage{hyphenat}
+
+\usepackage{graphicx}
+
+\usepackage{colortbl}
+\definecolor{mygrey}{gray}{0.5}
+
+% Tables
+%
+\usepackage{arydshln}
+\setlength\dashlinedash{1pt}
+\setlength\dashlinegap{1pt}
+
+\usepackage{amssymb,amsmath,stmaryrd,txfonts}
+
+% Pseudo-code typesetting (algorithms)
+%
+\usepackage{clrscode}
+\newcommand{\LogAnd}{\textbf{and} }
+\newcommand{\LogOr}{\textbf{or} }
+
+% Input files
+%
+\input{beamer_cfg}
+\input{commands}
+
+% Document
+%
+\title{Deterministic Finite Automata}
+\author{Christian Rinderknecht}
+\date{September \oldstylenums{2026}}
+
+\begin{document}
+
+\frame{\maketitle}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Deterministic Finite Automata}
+
+An \textbf{automaton} is a very useful and pervasive concept in
+software and telecommunication engineering.
+
+\bigskip
+
+Let us present first the simplest of the automata, called the
+\textbf{deterministic finite automaton}, or \textbf{DFA}. The most
+intuitive presentation of automata is by means of a graphic:
+\begin{center}
+\includegraphics[bb=48 694 253 715]{trie_hello}
+\end{center}
+One component is a circle or a double-circle, called \textbf{node},
+with a name inside, called \textbf{state}. The other component is an
+arrow which connects two circles with a letter: these are
+\textbf{edges} and the letters are \textbf{labels}. The arrow which
+has no originating circle is a marker to distinguish a state, just as
+the double-circle denotes another special state: the former is an
+\textbf{initial state} and the latter is a \textbf{final state}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Deterministic Finite Automata}
+
+\label{trie_then}
+
+It is possible to have several edges between the same pair of states
+but they must carry different labels. There may be several final
+states.
+
+\bigskip
+
+\begin{columns}
+
+  \column{0.5\textwidth} For instance, consider
+  \begin{center}
+    \includegraphics[bb=48 644 218 730,scale=0.93]{trie_then}
+  \end{center}
+
+  \column{0.5\textwidth} Note that here
+  \begin{enumerate}
+
+    \item the \textbf{alphabet} of labels is the English alphabet,
+
+    \item there are nodes without out-going edges carrying all possible
+    letters: this DFA is \textbf{not complete}.
+
+  \end{enumerate}
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Deterministic Finite Automata}
+
+The graphic representation of an automaton is called a
+\textbf{transition diagram}.
+
+\bigskip
+
+Here is another transition diagram over
+the alphabet \(\{0,1\}\), called \textbf{binary alphabet}:
+\begin{center}
+\includegraphics[bb=48 685 185 756]{dfa_01_first}
+\end{center}
+Note that there are here some edges that connect a node to
+itself: these edges are called \textbf{loops}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Deterministic Finite Automata}
+
+\label{dfa_01}
+
+It is possible to simplify the transition diagram by merging edges
+which have the same pair of nodes, and by listing the labels,
+separated by commas:
+\begin{center}
+\includegraphics[bb=48 710 185 760]{dfa_01}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Trie}
+
+Before giving a formal definition of DFAs, we can explain on
+transition diagrams how they are used on an example.
+
+\bigskip
+
+Let a short list of English words be composed of `\textsf{then}',
+`\textsf{they}', `\textsf{thus}' and `\textsf{this}'. Imagine we are
+given a word and asked to check if this word belongs to our list.
+(This request would often occur within the framework of a text
+editor.)
+
+\bigskip
+
+We can of course, compare the given word to each word in the list, one
+after the other, until a match is found or the end of the list is
+reached.
+
+\bigskip
+
+But this is not efficient.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Trie}
+
+A better approach is to sort the words in the list in alphabetic order
+and compare the word we seek with the first in the list, then the
+second if needed, until either we found it or reach the end.
+
+\bigskip
+
+This loosely similar to the way we search a word in a dictionary,
+except, in a dictionary, we would use the heuristics of opening the
+dictionary where we think the word is, and then search as above.
+
+\bigskip
+
+Our dictionary is comprised of: `\textsf{this}', `\textsf{then}',
+`\textsf{they}' and `\textsf{thus}' (the order matters). Let us search
+the word `\textsf{they}'.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Trie}
+
+First, `\textsf{they}' is compared to `\textsf{this}'. The failure
+happens at the third letter (i.e. after three letter comparisons) and
+we must try the next word, `\textsf{then}'.
+
+\bigskip
+
+Second, `\textsf{they}' is compared to `\textsf{then}'. But then, we
+compare in turn the first letters \textsf{t} and \textsf{h}, i.e. we
+start again from the beginning of the searched word.
+
+\bigskip
+
+There is a way to avoid this inefficiency by considering a model of
+the dictionary that is not one-dimensional, like a list, but
+two-dimensional, like a DFA --- called in this context a
+\textbf{trie}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Trie}
+
+The trie corresponding to our example dictionary is exactly the
+transition diagram given page~\pageref{trie_then}. Let us assume here
+that the word is followed by a special marker \textsf{\$}.
+
+\bigskip
+
+\begin{columns}
+  \column{0.5\textwidth}
+    \begin{center}
+      \includegraphics[bb=48 644 218 730,scale=0.93]{trie_then}
+    \end{center}
+
+  \column{0.5\textwidth} At the beginning of the search, the current
+  state is the initial state, \(q_0\), and the current letter in the
+  searched word is \textsf{t}.
+
+  \bigskip
+
+  Then if there is an out-going edge from the current state that
+  matches the current letter, we change the current state to the state
+  pointed to by this edge and the current letter becomes the following
+  one in the word or is \textsf{\$}.
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Trie}
+
+If the current letter is \textsf{\$}, i.e. all letters of the word
+have been successfully matched, and the current state is a final state
+(double-circled node), then the words belongs to the dictionary. (In
+other words, the trie accepts the word.)
+
+\bigskip
+
+Otherwise, the word is not in the dictionary.
+
+\bigskip
+
+In the worst case, a word of length \(n\) is in the dictionary and is
+found in exactly \(n\) letter comparisons.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Formal definition}
+
+Formally, a DFA \({\cal D}\) is a 5-tuple \({\cal D} = (Q, \Sigma,
+\delta, q_0, F)\) where
+\begin{enumerate}
+
+  \item a finite set of \emph{states}, often noted \(Q\);
+
+  \item an \emph{initial state} \(q_0 \in Q\);
+
+  \item a set of \emph{final (\emph{or} accepting)
+  states} \(F \subseteq Q\);
+
+  \item a finite set of \emph{input symbols}, called \emph{alphabet},
+    often noted \(\Sigma\);
+
+  \item a \emph{transition function} \(\delta: Q \times \Sigma \mapsto
+    Q\) that takes
+  a state and an input symbol and returns a state: if \(q\) is a state
+  with an edge labeled \(a\), the edge leads to state \(\delta(q,
+  a)\).
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Recognised words}
+
+Independently of the interpretation of the states, we can define how a
+given word is accepted (or recognised) or rejected by a given DFA.
+
+\bigskip
+
+The word \(a_1 a_2 \cdots a_n\), where \(a_i \in \Sigma\), is
+recognised by the DFA \({\cal D} = (Q, \Sigma, \delta, q_0, F)\) if
+\begin{itemize}
+
+  \item for all \(0 \leqslant i < n\)
+
+  \item there is a sequence of states \(q_i \in Q\) such that
+
+  \item \(\delta (q_i, a_{i+1}) = q_{i+1}\)
+
+  \item and \(q_n \in F\).
+
+\end{itemize}
+The language recognised by \(\cal D\), noted \(L({\cal D})\) is the
+set of words recognised by \(\cal D\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Recognised words/Example}
+
+\begin{columns}
+
+  \column{0.5\textwidth} For example, consider again the DFA
+  page~\pageref{trie_then}:
+  \begin{center}
+    \includegraphics[bb=48 644 218 730,scale=0.93]{trie_then}
+  \end{center}
+
+  \column{0.5\textwidth} The word `\textsf{then}' is recognised
+  because there is a sequence of states \((q_0, q_1, q_2, q_4, q_5)\)
+  connected by edges, which satisfies
+  \begin{align*}
+    \delta (q_0, \textsf{t}) &= q_1\\
+    \delta (q_1, \textsf{h}) &= q_2\\
+    \delta (q_2, \textsf{e}) &= q_4\\
+    \delta (q_4, \textsf{n}) &= q_5
+  \end{align*}
+  and \(q_5 \in F\), i.e. \(q_5\) is a final state.
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Recognised language}
+
+It is easy to define formally \(L({\cal D})\).
+
+\bigskip
+
+Let \({\cal D} = (Q, \Sigma, \delta, q_0, F)\).
+
+\bigskip
+
+First, let us extend \(\delta\) to words and let us call this
+extension \(\hat{\delta}\):
+\begin{itemize}
+
+  \item for all state \(q \in Q\), let \(\hat{\delta} (q,
+  \varepsilon) = q\), where \(\varepsilon\) is the empty string;
+
+  \item for all state \(q \in Q\), all word \(w \in \Sigma^{*}\), all
+ input \(a \in \Sigma\), let \(\hat{\delta} (q, wa) = \delta
+ (\hat{\delta}(q,w),a)\).
+
+\end{itemize}
+Then the word \(w\) is recognised by \(\cal D\) if \(\hat{\delta}(q_0,
+w) \in F\). The language \(L({\cal D})\) recognised by \(\cal D\) is
+defined as
+\[
+L({\cal D}) = \{w \in \Sigma^{*} \; \lvert \; \hat{\delta}(q_0, w) \in F\}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Recognised language (cont)}
+
+For example, in our last example:
+\[
+\begin{aligned}
+   \hat{\delta}(q_0, \epsilon)
+&= q_0\\
+   \hat{\delta}(q_0, \textsf{t})
+&= \delta (\hat{\delta}(q_0, \epsilon), \textsf{t})
+= \delta (q_0, \textsf{t})
+= q_1\\
+   \hat{\delta}(q_0, \textsf{th})
+&= \delta (\hat{\delta}(q_0, \textsf{t}), \textsf{h})
+= \delta (q_1, \textsf{h})
+= q_2\\
+   \hat{\delta}(q_0, \textsf{the})
+&= \delta (\hat{\delta}(q_0, \textsf{th}), \textsf{e})
+= \delta (q_2, \textsf{e})
+= q_4\\
+   \hat{\delta}(q_0, \textsf{then})
+&= \delta (\hat{\delta}(q_0, \textsf{the}), \textsf{n})
+= \delta (q_4, \textsf{n})
+= q_5 \in F
+\end{aligned}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Recognised language (cont)}
+
+What is the language recognised by the previous DFA? The definition
+states that this language is composed of all the words that are
+recognised.
+
+\bigskip
+
+\begin{columns}
+
+  \column{0.5\textwidth} Each recognised word corresponds to a
+  \textbf{path}, i.e. a sequence of states connected by edges, from
+  the initial state to a final state.
+
+  \bigskip
+
+  In our example, the language recognised is \(\{\textsf{then},
+  \textsf{they}, \textsf{this}, \textsf{thus}\}\).
+
+  \column{0.5\textwidth} In other words:
+  \begin{align*}
+    \hat{\delta}(q_0, \textsf{then}) &\in F\\
+    \hat{\delta}(q_0, \textsf{they}) &\in F\\
+    \hat{\delta}(q_0, \textsf{this}) &\in F\\
+    \hat{\delta}(q_0, \textsf{thus}) &\in F
+  \end{align*}
+  It is a finite language.
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Recognised language (cont)}
+
+What is the language recognised by the DFA page~\pageref{dfa_01}?
+\begin{center}
+\includegraphics[bb=48 710 185 760]{dfa_01}
+\end{center}
+In English, this language can be defined as the set of binary strings
+containing the sequence \(01\).
+
+\bigskip
+
+Note that this an \textbf{infinite language}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Transition diagrams}
+
+We can redefine transition diagrams in terms of the concept of DFA.
+
+\bigskip
+
+A transition diagram for a DFA \({\cal D} = (Q, \Sigma, \delta, q_0,
+F)\) is a graph defined as follows:
+\begin{enumerate}
+
+  \item for each state \(q\) in \(Q\) there is a \textbf{node}, i.e. a
+    single circle with \(q\) inside;
+
+  \item for each state \(q \in Q\) and each input symbol \(a \in
+    \Sigma\), if \(\delta (q, a)\) exists, then there is an
+    \textbf{edge}, i.e. an arrow, from the node denoting \(q\) to the
+    node denoting \(\delta (q, a)\) labeled by \(a\); multiple edges
+    can be merged into one and the labels are then separated by
+    commas;
+
+  \item there is an edge coming to the node denoting \(q_0\) without
+    origin;
+
+  \item nodes corresponding to final states (in \(F\)) are
+    double-circled.
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Transition table}
+
+There is a compact textual way to represent the transition function of
+a DFA: a \textbf{transition table}.
+
+\bigskip
+
+The rows of the table correspond to the states and the columns
+correspond to the inputs (symbols).
+
+\bigskip
+
+In other words, the entry for the row corresponding to state \(q\) and
+the column corresponding to input \(a\) is the state \(\delta (q,
+a)\):
+\[
+\begin{array}{c||c|c|c}
+\delta & \ldots & a & \ldots\\
+\hline\hline
+\vdots & & &\\
+\hline
+q & & \delta (q, a)\\
+\hline
+\vdots & & &
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Transition table/Example}
+
+The transition table of the function \(\delta\) in our last example is
+thus:
+\[
+\begin{array}{r@{}l||c|c}
+\multicolumn{2}{c||}{\cal D} & 0 & 1\\
+\hline\hline
+\rightarrow & q_0 & q_1 & q_0\\
+            & q_1 & q_1 & q_2\\
+         \# & q_2 & q_2 & q_2
+\end{array}
+\]
+Actually, we added some extra information in the table: the initial
+state is marked with \(\rightarrow\) and the final states are marked
+with \(\#\).
+
+\bigskip
+
+Therefore, it is not only \(\delta\) which is defined by means of the
+transition table here, but the whole DFA \(\cal D\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Example}
+
+We want to define formally a DFA which recognises the language \(L\)
+whose words contain an even number of 0's and an even number of 1's
+(the alphabet is binary).
+
+\bigskip
+
+We should understand that the role of the states here is to
+\textbf{not} to count the exact number of 0's and 1's that have been
+recognised before but this number \textbf{modulo 2}.
+
+\bigskip
+
+Therefore, there are four states because there are four cases:
+\begin{enumerate}
+
+  \item there has been an even number of 0's and 1's (state \(q_0\));
+
+  \item there has been an even number of 0's and an odd number of 1's
+    (state \(q_1\));
+
+  \item there has been an odd number of 0's and an even number of 1's
+    (state \(q_2\));
+
+  \item there has been an odd number of 0's and 1's (state \(q_3\)).
+
+\end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Example (cont)}
+
+What about the initial and final states?
+\begin{itemize}
+
+  \item State \(q_0\) is the initial state because before considering
+  any input, the number of 0's and 1's is zero and zero is even.
+
+  \item State \(q_0\) is the only final state because its definition
+  matches exactly the characteristic of \(L\) and no other state
+  matches.
+
+\end{itemize}
+We almost know now how to specify the DFA for language \(L\). It is
+\[
+{\cal D} = (\{q_0,q_1,q_2,q_3\}, \{0,1\}, \delta,q_0, \{q_0\}).
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Example (cont)}
+
+\begin{columns}
+  \column{0.5\textwidth}
+    The transition function \(\delta\) is described by the transition
+    diagram:
+  \begin{center}
+    \includegraphics[bb=48 653 138 737]{dfa_even01}
+  \end{center}
+
+  \column{0.5\textwidth} Notice how each input 0 causes the state to
+  cross the horizontal line.
+
+  \bigskip
+
+  Thus, after seeing an even number of 0's we are always above the
+  horizontal line, in state \(q_0\) or \(q_1\), and after seeing an
+  odd number of 0's we are always below this line, in state \(q_2\) or
+  \(q_3\).
+
+  \bigskip
+
+  There is a vertically symmetric situation for transitions on 1.
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Example (cont)}
+
+We can also represent this DFA by a transition table:
+\[
+\begin{array}{r@{}l||c|c}
+\multicolumn{2}{c||}{\cal D} & 0 & 1\\
+\hline\hline
+\# \rightarrow & q_0 & q_2 & q_1\\
+               & q_1 & q_3 & q_0\\
+               & q_2 & q_0 & q_3\\
+               & q_3 & q_1 & q_2
+\end{array}
+\]
+We can use this table to illustrate the construction of
+\(\hat{\delta}\) from \(\delta\).
+
+\bigskip
+
+Suppose the input is \(110101\). Since this string has even numbers of
+0's and 1's, it belongs to \(L\), i.e. we expect
+\(\hat{\delta}(q_0,110101) = q_0\), since \(q_0\) is the unique final
+state.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{DFA/Example (cont)}
+
+We can check this by computing step by step
+\(\hat{\delta}(q_0,\verb+110101+)\), from the shortest prefix to the
+longest (which is the word \verb+110101+ itself):
+\[
+\begin{aligned}
+  \hat{\delta} (q_0, \varepsilon)
+&= q_0\\
+   \hat{\delta} (q_0, \verb+1+)
+&= \delta (\hat{\delta} (q_0, \varepsilon), \verb+1+)
+= \delta (q_0, \verb+1+)
+= q_1\\
+   \hat{\delta} (q_0, \verb+11+)
+&= \delta (\hat{\delta} (q_0, \verb+1+), \verb+1+)
+= \delta (q_1, \verb+1+)
+= q_0\\
+   \hat{\delta} (q_0, \verb+110+)
+&= \delta (\hat{\delta} (q_0, \verb+11+), \verb+0+)
+= \delta (q_0, \verb+0+)
+= q_2\\
+   \hat{\delta} (q_0, \verb+1101+)
+&= \delta (\hat{\delta} (q_0, \verb+110+), \verb+1+)
+= \delta (q_2, \verb+1+)
+= q_3\\
+   \hat{\delta} (q_0, \verb+11010+)
+&= \delta (\hat{\delta} (q_0, \verb+1101+), \verb+0+)
+= \delta (q_3, \verb+0+)
+= q_1\\
+   \hat{\delta} (q_0, \verb+110101+)
+&= \delta (\hat{\delta} (q_0, \verb+11010+), \verb+1+)
+= \delta (q_1, \verb+1+)
+= q_0 \in F
+\end{aligned}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{DFA/Dictionary}
+
+Let us use DFAs for implementing a dictionary, that is, a trie as
+presented at page~\pageref{trie_then}.
+
+\bigskip
+First, here is how to add a word \(w \in \Sigma^{+}\) to a trie
+\({\cal D} = (Q, \Sigma, \delta, q_0, F)\). The transition function
+\(\delta\) is considered here as an array which is modified in place.
+\begin{codebox}
+\(\proc{Add} (w, (Q, \Sigma, \delta, q_0, F))\)\\
+\li \(p \gets q_0\); \(i \gets 0\)
+\li \While \(\delta[p,w[i]]\) is defined\RComment Recognise as much as possible
+\li   \Do \(p \gets \delta[p,w[i]]\); \(i \gets i + 1\)
+      \End
+\li \For \(j \gets i\) \To \(\len{w} - 1\)\RComment Add the rest
+\li \Do \(q \gets \proc{New-state}(Q)\);
+     \(Q \gets Q \cup \{q\}\);
+     \(\delta[p, w[j]] \gets q\);
+     \(p \gets q\)
+    \End
+\li  \(F \gets F \cup \{p\}\)
+\end{codebox}
+
+\end{frame}
+
+\end{document}
