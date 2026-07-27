@@ -1,0 +1,7 @@
+%%-*-*latex-*-
+
+\newcommand\tokenName[1]{\textbf{\textsf{\MakeLowercase{#1}}}}
+\newcommand\token[2]{\tokenName{#1}\(\langle\)\texttt{#2}\(\rangle\)\xspace}
+\newcommand\itoken[2]{\tokenName{#1}\(\langle\)\textsf{\MakeUppercase{#2}}\(\rangle\)\xspace}
+\newcommand\boxedToken[2]{\fbox{\token{#1}{#2}}}
+\newcommand\polytoken[2]{\tokenName{#1}\langle{#2}\rangle}

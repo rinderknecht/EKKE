@@ -1,0 +1,716 @@
+%%-*-latex-*-
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Equivalence of DFAs and NFAs}
+
+NFA are easier to build than DFA because one does not have to worry,
+for any state, of having out-going edges carrying a unique label.
+
+\bigskip
+
+The surprising thing is that NFA and DFA actually have the same
+expressiveness, that is, all that can be defined by means of a NFA can
+also be defined with a DFA (the converse is trivial since a DFA is
+already a NFA).
+
+\bigskip
+
+More precisely, there is a procedure, called \textbf{the subset
+construction}, which converts any NFA to a DFA.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction}
+
+Consider that, in a NFA, from a state \(q\) with several out-going
+edges with the same label \(a\), the transition function \(\delta_N\)
+leads, in general, to \emph{several} states.
+
+\bigskip
+
+The idea of the subset construction is to create a new automaton where
+those edges are merged.
+
+\bigskip
+
+So we create a state \(p\) which corresponds to the set of states
+\(\delta_N (q,a)\) in the NFA. Accordingly, we create a state \(r\)
+which corresponds to the set \(\{q\}\) in the NFA. We create an edge
+labeled \(a\) between \(r\) and \(p\). The important point is that
+\emph{this labeled edge is unique}.
+
+\bigskip
+
+This is the first step to create a DFA from a NFA.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction}
+
+Graphically, instead of the non-determinism
+\begin{center}
+\includegraphics[bb=62 660 222 730]{nfa_edges}
+\end{center}
+where \(\delta_N (q, a) = \{p_0, p_1, \dots, p_n\}\), we get the
+determinism
+\begin{center}
+\includegraphics[bb=60 712 144 730]{nfa_subset}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction}
+
+Now, let us present the complete algorithm for the subset
+construction.
+
+\bigskip
+
+Let us start from a NFA \({\cal N} = (Q_N, \Sigma, \delta_N, q_0, F_N)\).
+
+\bigskip
+
+The goal is to construct a DFA \({\cal D} = (Q_D, \Sigma, \delta_D,
+\{q_0\}, F_D)\) such that \(L({\cal D}) = L({\cal N})\).
+
+\bigskip
+
+Notice that the input alphabet of the two automata are the same and
+the initial state of \({\cal D}\) if the set containing only the
+initial state of \({\cal N}\).
+
+\bigskip
+
+The other components of \({\cal D}\) are constructed as follows.
+\begin{itemize}
+
+  \item \(Q_D\) is the set of subsets of \(Q_N\); i.e. \(Q_D\) is the
+  \textbf{power set} of \(Q_N\). Thus, if \(Q_D\) has \(n\) states,
+  \(Q_D\) has \(2^n\) states. Fortunately, often not all these states
+  are \textbf{accessible} from the initial state of \(Q_D\), so these
+  inaccessible states can be discarded.
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction}
+
+\label{state_explosion}
+
+Why is \(2^n\) the number of subsets of a finite set of cardinal
+\(n\)?
+
+\bigskip
+
+Let us order the \(n\) elements. Let us represent each subset by an
+\(n\)-bit string where bit \(i\) corresponds to the \(i\)-th element:
+it is \(1\) if the \(i\)-th element is present in the subset and \(0\)
+if not.
+
+\bigskip
+
+This way, we counted all the subsets and not more (a bit cannot always
+be \(0\) since all elements are used to form subsets and cannot always
+be \(1\) if there is more than one element).
+
+\bigskip
+
+There are \(2\) possibilities, \(0\) or \(1\), for the first bit;
+\(2\) possibilities for the second bit etc. Since the choices are
+independent, we multiply all of them: \(\underbrace{2 \times 2 \times
+  \dots \times 2}_{n \; \text{times}} = 2^n\).
+
+\bigskip
+
+Hence the number of subsets of an \(n\)-element set is also \(2^n\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction}
+
+Resuming the definition of DFA \({\cal D}\), the other components are
+defined as follows.
+
+\begin{itemize}
+
+  \item \(F_D\) is the set of subsets \(S\) of \(Q_N\) such that \(S
+    \cap F_N \neq \varnothing\). That is, \(F_D\) is all sets of
+    \(N\)'s states that include at least one final state of \({\cal
+      N}\).
+
+  \item for each set \(S \subseteq Q_N\) and for each input \(a \in
+  \Sigma\),
+  \[
+    \delta_D(S, a) = \bigcup_{q \in S}{\delta_N (q, a)}
+  \]
+  In other words, to compute \(\delta_D (S, a)\) we look at all the
+  states \(q\) in \(S\), see what states of \({\cal N}\) are reached
+  from \(q\) on input \(a\) and take the union of all those states to
+  make the next state of \({\cal D}\).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Example/Transition table}
+
+\begin{columns}
+
+  \column{0.5\textwidth} Let us consider the NFA given by its
+  transition table page~\pageref{nfa_01_suffix_table}:
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{NFA} \; {\cal N}} & 0 & 1\\
+    \hline\hline
+    \rightarrow & q_0 & \{q_0, q_1\} & \{q_0\}\\
+                & q_1 & \varnothing  & \{q_2\}\\
+    \#          & q_2 & \varnothing  & \varnothing
+  \end{array}
+  \]
+  and let us create an equivalent DFA.
+
+  \column{0.5\textwidth} First, we form all the subsets of the sets of
+  the NFA and put them in the first column:
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+    \hline\hline
+    & \varnothing       & &\\
+    & \{q_0\}           & &\\
+    & \{q_1\}           & &\\
+    & \{q_2\}           & &\\
+    & \{q_0, q_1\}      & &\\
+    & \{q_0, q_2\}      & &\\
+    & \{q_1, q_2\}      & &\\
+    & \{q_0, q_1, q_2\} & &
+  \end{array}
+  \]
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Example/Transition table}
+
+\begin{columns}
+
+  \column{0.5\textwidth} Then we annotate in this first column the
+  states with \(\rightarrow\) if and only if they contain the initial
+  state of the NFA, here \(q_0\), and we add a \(\#\) if and only if
+  the states contain at least a final state of the NFA, here \(q_2\).
+
+  \column{0.5\textwidth}
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+    \hline\hline
+                & \varnothing       & &\\
+    \rightarrow & \{q_0\}           & &\\
+                & \{q_1\}           & &\\
+             \# & \{q_2\}           & &\\
+                & \{q_0, q_1\}      & &\\
+             \# & \{q_0, q_2\}      & &\\
+             \# & \{q_1, q_2\}      & &\\
+             \# & \{q_0, q_1, q_2\} & &
+  \end{array}
+  \]
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Example/Transition table}
+\[\footnotesize
+\begin{array}{r@{}l||c|c}
+\multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+\hline\hline
+            & \varnothing & \varnothing & \varnothing\\
+\rightarrow & \{q_0\} & \delta_N(q_0, 0) & \delta_N(q_0, 1)\\
+            & \{q_1\} & \delta_N(q_1, 0) & \delta_N(q_1, 1)\\
+         \# & \{q_2\} & \delta_N(q_2, 0) & \delta_N(q_2, 1)\\
+            & \{q_0, q_1\} & \delta_N(q_0,0) \cup \delta_N(q_1,0)
+                           & \delta_N(q_0,1) \cup \delta_N(q_1,1)\\
+         \# & \{q_0, q_2\} & \delta_N(q_0,0) \cup \delta_N(q_2,0)
+                           & \delta_N(q_0,1) \cup \delta_N(q_2,1)\\
+         \# & \{q_1, q_2\} & \delta_N(q_1,0) \cup \delta_N(q_2,0)
+                           & \delta_N(q_1,1) \cup \delta_N(q_2,1)\\
+         \# & \{q_0, q_1, q_2\}
+            & \delta_N(q_0,0) \cup \delta_N(q_1,0) \cup \delta_N(q_2,0)
+            & \delta_N(q_0,1) \cup \delta_N(q_1,1) \cup \delta_N(q_2,1)
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Example/Transition table}
+\[
+\begin{array}{r@{}l||c|c}
+\multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+\hline\hline
+            & \varnothing & \varnothing & \varnothing\\
+\rightarrow & \{q_0\} & \{q_0, q_1\} & \{q_0\}\\
+            & \{q_1\} & \varnothing & \{q_2\}\\
+         \# & \{q_2\} & \varnothing & \varnothing\\
+            & \{q_0, q_1\} & \{q_0,q_1\} & \{q_0,q_2\}\\
+         \# & \{q_0, q_2\} & \{q_0,q_1\} & \{q_0\}\\
+         \# & \{q_1, q_2\} & \varnothing & \{q_2\}\\
+         \# & \{q_0, q_1, q_2\} & \{q_0, q_1\} & \{q_0,q_2\}
+\end{array}
+\]
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Example/Transition diagram}
+
+The transition diagram of the DFA \({\cal D}\) is then
+\begin{center}
+\includegraphics[bb=42 628 291 758]{dfa_from_nfa}
+\end{center}
+where states with out-going edges which have no end are final states.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Example/Transition diagram (cont.)}
+
+\begin{columns}
+
+  \column{0.5\textwidth} If we look carefully at the transition
+  diagram, we see that the DFA is actually made of two parts which are
+  disconnected, i.e. not joined by an edge.
+
+  \bigskip
+
+  In particular, since we have only one initial state, this means that
+  one part is not accessible, i.e. some states are never used to
+  recognise or reject an input word, and we can remove this part.
+
+  \column{0.5\textwidth}
+  \begin{center}
+    \includegraphics[bb=48 642 150 755]{dfa_from_nfa_simple1}
+  \end{center}
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Example/Transition diagram (cont.)}
+
+\begin{columns}
+
+  \column{0.5\textwidth} It is important to understand that the states
+  of the DFA are subsets of the NFA states.
+
+  \bigskip
+
+  This is due to the construction and, when finished, it is possible
+  to hide this by \textbf{renaming the states}. For example, we can
+  rename the states of the previous DFA in the following manner:
+  \(\{q_0\}\) as~\(A\), \(\{q_0, q_1\}\) as~\(B\), and \(\{q_0,
+  q_2\}\) as~\(C\).
+
+  \column{0.5\textwidth} So the transition table
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+    \hline\hline
+    \rightarrow & \{q_0\}     & \{q_0, q_1\} & \{q_0\}\\
+                & \{q_0,q_1\} & \{q_0,q_1\}  & \{q_0,q_2\}\\
+             \# & \{q_0,q_2\} & \{q_0,q_1\}  & \{q_0\}
+  \end{array}
+  \]
+  becomes:
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+    \hline\hline
+    \rightarrow & A & B & A\\
+                & B & B & C\\
+             \# & C & B & A
+  \end{array}
+  \]
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Example/Transition diagram (cont.)}
+So, finally, the DFA is simply
+\begin{center}
+\includegraphics[bb=48 642 150 755]{dfa_from_nfa_simple}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Optimisation}
+
+Even if in the worst case the resulting DFA has an exponential number
+of states of the corresponding NFA, it is in practice often possible
+to avoid the construction of inaccessible states.
+\begin{itemize}
+
+  \item The singleton containing the initial state (in our example,
+  \(\{q_0\}\)) is accessible.
+
+  \item Assume we have a set \(S\) of \textbf{accessible states}; then
+    for each input symbol \(a\), we compute \(\delta_D(S,a)\): this
+    new set is also accessible.
+
+  \item Repeat the last step, starting with \(\{q_0\}\), until no
+  new (accessible) sets are found (we reach the fixed point).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Optimisation/Example}
+
+\begin{columns}
+
+  \column{0.5\textwidth} Let us consider the NFA given by its
+  transition table page~\pageref{nfa_01_suffix_table}:
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{NFA} \; {\cal N}} & 0 & 1\\
+    \hline\hline
+    \rightarrow & q_0 & \{q_0, q_1\} & \{q_0\}\\
+                & q_1 & \varnothing  & \{q_2\}\\
+    \#          & q_2 & \varnothing  & \varnothing
+  \end{array}
+  \]
+
+  \column{0.5\textwidth} Initially, the sole subset of accessible
+  states is \(\{q_0\}\):
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+    \hline\hline
+    \rightarrow & \{q_0\} & \delta_N(q_0,0) & \delta_N(q_0,1)
+  \end{array}
+  \]
+  that is
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+    \hline\hline
+    \rightarrow & \{q_0\} & \{q_0,q_1\} & \{q_0\}
+  \end{array}
+  \]
+
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Optimisation/Example}
+
+\begin{columns}
+
+  \column{0.5\textwidth} Therefore \(\{q_0,q_1\}\) and \(\{q_0\}\) are
+  accessible sets. But \(\{q_0\}\) is not a new set, so we only add to
+  the table entries \(\{q_0, q_1\}\), and compute the transitions from
+  it:
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+    \hline\hline
+    \rightarrow & \{q_0\}      & \{q_0, q_1\} & \{q_0\}\\
+                & \{q_0, q_1\} & \{q_0, q_1\} & \{q_0, q_2\}
+  \end{array}
+  \]
+
+  \column{0.5\textwidth} This step uncovered a new set of accessible
+  states, \(\{q_0, q_2\}\), which we add to the table and repeat the
+  procedure, then mark it as final state, because \(q_2 \in \{q_0,
+  q_2\}\):
+  \[
+  \begin{array}{r@{}l||c|c}
+    \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
+    \hline\hline
+    \rightarrow & \{q_0\}      & \{q_0, q_1\} & \{q_0\}\\
+                & \{q_0, q_1\} & \{q_0, q_1\} & \{q_0, q_2\}\\
+             \# & \{q_0, q_2\} & \{q_0, q_1\} & \{q_0\}
+  \end{array}
+  \]
+  We are done since there is no more new accessible sets.
+
+\end{columns}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Tries}
+
+Compilers try to recognise a prefix of the input character stream (i.e
+the first meaningful unit, called \textbf{lexeme}, of the given
+program). Consider the C keywords \term{const} and \term{continue}:
+\begin{center}
+\includegraphics[bb=48 675 353 730]{nfa_kwd}
+\end{center}
+This example shows that a NFA is much more comfortable than a DFA for
+specifying lexemes: we design \emph{separately}
+the automata for each kind of lexeme, called \textbf{token}, and then
+merge their initial states into one, leading to one (possibly big)
+NFA.
+
+\bigskip
+
+It is possible to apply the subset construction to this NFA.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Tries}
+
+\label{trie_kwd}
+
+After forming the corresponding NFA as in the previous example, it is
+actually easy to construct an equivalent DFA by \textbf{sharing their
+  prefixes}, hence obtaining a tree-like automaton called
+\textbf{trie} (pronounced as the word `try'):
+\begin{center}
+\includegraphics[bb=48 675 353 730]{trie_kwd}
+\end{center}
+The origin of this word comes from the word re\textbf{trie}val.
+
+\bigskip
+
+Note that this construction only works for a list of constant words,
+like keywords.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Text searching}
+
+This technique can easily be generalized for searching constant
+strings (like keywords) in a text, i.e. not only as a prefix of a
+text, but \textbf{at any position}.
+
+\bigskip
+
+It suffices to add a loop on the initial state for each possible input
+symbol. If we note \(\Sigma\) the language alphabet, we get the NFA
+\begin{center}
+\includegraphics[bb=48 675 355 738]{trie_kwd_search}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Text searching}
+
+It is possible to apply the subset construction to this NFA or to use
+it directly for searching \emph{all occurrences} of the two keywords
+at \emph{any position} in a text.
+
+\bigskip
+
+In case of direct use, the difference between this NFA and the trie
+page~\pageref{trie_kwd} is that there is no need here to ``restart''
+by hand the recognition process once a keyword has been recognised: we
+simply do not stop on final states, but continue reading the input
+after discarding the recognised prefix (at the last final state).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Text searching}
+
+This works because of the loop on the initial state.
+
+\bigskip
+
+Try for instance the input \texttt{constantcontinue}. We have
+\(\hat{\delta}(q_0, \texttt{const}) = \{q_0, q_5\}\). Since \(q_5\) is
+a final state, we recognised the input \texttt{const}.
+
+\bigskip
+
+But we can continue because \(\hat{\delta}(q_0, \texttt{consta}) =
+\{q_0\}\) etc., until we reach the start of \texttt{continue}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Bad case}
+
+The subset construction can lead, in the worst case, to a number of
+states which is the total number of state subsets of the NFA.
+
+\bigskip
+
+In other words, if the NFA has \(n\) states, the equivalent DFA by
+subset construction can have \(2^n\) states (see
+page~\pageref{state_explosion} for the count of all the subsets of a
+finite set).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Bad case}
+
+Consider the following NFA, which recognises all binary strings which
+have \(1\) at the \(n\)-th position from the end:
+\begin{center}
+\includegraphics[bb=48 711 305 758]{subset_bad_case}
+\end{center}
+The language recognised by this NFA is \(\Sigma^{*} 1 \Sigma^{n-1}\),
+where \(\Sigma=\{0,1\}\), that is: all words of length greater or
+equal to \(n\) are accepted as long as the \(n\)-th bit from the
+\textbf{end} is \(1\).
+
+\bigskip
+
+Therefore, in any equivalent DFA, all the prefixes of length \(n\)
+should not lead to a stuck state, because the automaton must wait
+until the \textbf{end} of the word to accept or reject it.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Bad case}
+
+If the states reached by these prefixes are all different, then there
+are at least \(2^n\) states in the DFA.
+
+\bigskip
+
+If there are less than \(2^n\) different states, then some states can
+be reached by several strings of length \(n\):
+\begin{center}
+\includegraphics[bb=48 643 235 730]{dfa_bad_case}
+\end{center}
+where words \(x1w\) and \(x'0w\) have length \(n\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Bad case}
+
+Let us call the DFA \({\cal D} = (Q_D, \Sigma, \delta_D, q_D, F_D)\),
+where \(q_D=\{q_0\}\).
+
+\bigskip
+
+The extended transition function is noted \(\hat{\delta}_D\) as
+usual. The situation of the previous picture can be formally expressed
+as
+\begin{gather}
+\hat{\delta}_D (q_D, x1) = \hat{\delta}_D (q_D, x'0) = q \label{ext:1}\\
+\lvert{x1w}\lvert = \lvert{x'0w}\lvert = n
+\end{gather}
+where \(\lvert{u}\lvert\) is the length of \(u\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Bad case}
+
+Let \(y\) be a any string of 0 and 1 such that \(\lvert{wy}\lvert = n
+- 1\).
+
+\bigskip
+
+Then \(\hat{\delta}_D(q_D, x1wy) \in F_D\) since there is a 1 at the
+\(n\)-th position from the end:
+\begin{center}
+\includegraphics[bb=48 643 287 730]{dfa_bad_case_complete}
+\end{center}
+Also, \(\hat{\delta}_D(q_D,x'0wy) \not\in F_D\) because there is a 0
+at the \(n\)-th position from the end.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Subset construction/Bad case}
+
+On the other hand, equation~(\ref{ext:1}) implies
+\[
+\hat{\delta}_D (q_D, x1wy) = \hat{\delta}_D (q_D, x'0wy) = p
+\]
+So there is contradiction because a state (here, \(p\)) must be either
+final or not final, it cannot be both...
+
+\bigskip
+
+As a consequence, we must reject our initial assumption: there are at
+least \(2^n\) states in the equivalent DFA.
+
+\bigskip
+
+This is a very bad case, even if it is not the worst case (\(2^{n+1}\)
+states).
+
+\end{frame}
