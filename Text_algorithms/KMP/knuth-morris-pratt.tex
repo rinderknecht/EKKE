@@ -96,7 +96,7 @@ outgoing label is still~\(a\), it loses its destination.
 \begin{frame}
   \frametitle{Knuth-Morris-Pratt algorithm}
 
-  It terms of a table, this DFA is equivalent to
+  In terms of a table, this DFA is equivalent to
 
 \begin{figure}
 \centering
@@ -107,8 +107,7 @@ outgoing label is still~\(a\), it loses its destination.
 \(\proc{Next'} (x)\)\\
 \li \(\id{next} \gets \proc{Next}(x)\)
 \li \For \(i \gets 1\) \To \(\len{x} - 1\)
-\li \Do
-\li \(j \gets \id{next}[i]\)
+\li \Do \(j \gets \id{next}[i]\)
 \li \If \(j \geqslant 0\) \LogAnd \(x[j] = x[i]\)
 \li \Then \(\id{next}[i] \gets \id{next}[j]\) \End
 \End
@@ -121,21 +120,18 @@ outgoing label is still~\(a\), it loses its destination.
   \frametitle{Knuth-Morris-Pratt algorithm}
 
 We can fuse the two loops into one. The idea is to maintain~\(j\) as
-the failure state of~\(i\) before optimisation (the original edge \(i
-\dashrightarrow j\)).
+the failure state of~\(i\) before optimisation (that is, original
+edges \(i \dashrightarrow j\)).
 
 \begin{codebox}
 \(\proc{Next'} (x)\)\\
 \li \(\id{next}[0] \gets -1\); \(j \gets 0\)
 \li \For \(i \gets 1\) \To \(\len{x} - 1\)
-\li \Do
-\li   \If \(x[j] = x[i]\)
+\li \Do \If \(x[j] = x[i]\)
 \li   \Then \(\id{next}[i] \gets \id{next}[j]\)
-\li   \Else
-\li     \(\id{next}[i] \gets j;\)
+\li   \Else \(\id{next}[i] \gets j;\)
 \li     \While \(j \geqslant 0\) \LogAnd \(x[j] \neq x[i]\)
-\li     \Do
-\li       \(j \gets next[j]\)
+\li     \Do \(j \gets next[j]\)
         \End
       \End
 \li \(j \gets j + 1\)
