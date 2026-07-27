@@ -1,0 +1,41 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pst-eps}
+\usepackage{vaucanson-g}
+
+%\ShowGrid
+
+\begin{document}
+
+\TeXtoEPS
+\VCDraw{%
+\begin{VCPicture}{(0,0)(14,6)}
+% States
+\FixStateDiameter{6cm}
+\ChgStateLabelScale{3}
+\State[{\cal E'}]{(11,3)}{q7}
+\MediumState
+\RstStateLabelScale
+\State[q_0]{(0,3)}{q0}
+\State[q_1]{(3,4)}{q1}
+\State[q_2]{(3,2)}{q2}
+\State[q_3]{(6,3)}{q3}
+\VSState{(9.5,5)}{q4}
+\VSState{(9,3)}{q5}
+\VSState{(9.5,1)}{q6}
+% Initial and final states
+% Edges
+\EdgeL{q0}{q1}{\epsilon}
+\EdgeR{q0}{q2}{\epsilon}
+\EdgeL{q1}{q3}{\epsilon}
+\EdgeR{q2}{q3}{\epsilon}
+\ArcL{q3}{q4}{\epsilon}
+\EdgeL{q3}{q5}{\epsilon}
+\ArcR{q3}{q6}{\epsilon}
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}
