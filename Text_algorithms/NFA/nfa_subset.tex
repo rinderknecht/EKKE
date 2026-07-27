@@ -1,0 +1,24 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pst-eps}
+\usepackage{vaucanson-g}
+
+%\ShowGrid
+
+\begin{document}
+
+\TeXtoEPS
+\VCDraw{%
+\begin{VCPicture}{(0,0)(3,0)}
+% States
+\StateVar[\{q\}]{(0,0)}{qset}
+\StateVar[\delta_N(q,a)]{(3,0)}{delta}
+% Edges
+\EdgeL{qset}{delta}{a}
+\end{VCPicture}
+}
+\endTeXtoEPS
+
+\end{document}

@@ -1,0 +1,30 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-node,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[treemode=R,nodesep=2pt,arrows=->]{\TR{\(q_0\)}}{
+  \pstree{\TR{\(q_0\)}\taput{\(0\)}}{
+    \pstree{\TR{\(q_0\)}\taput{\(0\)}}{
+      \pstree{\TR{\(q_0\)}\taput{\(1\)}}{
+        \pstree{\TR{\(q_0\)}\taput{\(0\)}}{
+          \TR{\(q_0\)}\taput{\(1\)}
+        }
+        \pstree{\TR{\(q_1\)}\tbput{\(0\)}}{
+          \TR{\(q_2\)}~[tnpos=r]{(final)}\tbput{\(1\)}
+        }
+      }
+    }
+    \pstree{\TR{\(q_1\)}\tbput{\(0\)}}{
+      \TR{\(q_2\)}~[tnpos=r]{(stuck)}\nbput{\(1\)}
+    }
+  }
+  \TR{\(q_1\)}~[tnpos=r]{(stuck)}\tbput{\(0\)}
+}
+\endTeXtoEPS
+
+\end{document}

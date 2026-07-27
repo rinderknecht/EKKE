@@ -1,0 +1,226 @@
+%%-*-latex-*-
+
+\documentclass[compress,dvips,xcolor={dvipsnames},t]{beamer}
+
+\usepackage[english]{babel}
+\usepackage{xspace}
+\usepackage{hyphenat}
+
+\usepackage{graphicx}
+
+\usepackage{colortbl}
+\definecolor{mygrey}{gray}{0.5}
+
+% Tables
+%
+\usepackage{arydshln}
+\setlength\dashlinedash{1pt}
+\setlength\dashlinegap{1pt}
+
+\usepackage{amssymb,amsmath,stmaryrd,txfonts}
+
+% Pseudo-code typesetting (algorithms)
+%
+\usepackage{clrscode}
+\newcommand{\LogAnd}{\textbf{and} }
+\newcommand{\LogOr}{\textbf{or} }
+
+% Input files
+%
+\input{beamer_cfg}
+\input{commands}
+
+% Document
+%
+\title{Non-Deterministic Finite Automata}
+\author{Christian Rinderknecht}
+\date{September \oldstylenums{2026}}
+
+\begin{document}
+
+\frame{\maketitle}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{Non-deterministic finite automata}
+
+\label{nfa_01_suffix}
+
+A \textbf{non-deterministic finite automaton} (\textbf{NFA}) has the
+same definition as a DFA except that \(\delta\) returns a set of
+states instead of one state.
+
+\bigskip
+
+Consider
+\begin{center}
+\includegraphics[bb=48 711 188 758]{nfa_01_suffix}
+\end{center}
+There are two out-going edges from state \(q_0\) which are labeled
+\(0\), hence two states can be reached when \(0\) is input: \(q_0\)
+(loop) and \(q_1\).
+
+\bigskip
+
+This NFA recognises the language of words on the binary alphabet whose
+suffix is 01.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{NFA (cont)}
+
+Before describing formally what is a recognisable language by a NFA,
+let us consider as an example the previous NFA and the input
+\(00101\).
+
+\bigskip
+
+Let us represent each transition for this input by an edge in a tree
+where nodes are states of the NFA.
+\begin{center}
+  \includegraphics[bb=71 651 395 732]{nfa_01_suffix_trace}
+\end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{NFA/Formal definitions}
+
+\label{nfa_01_suffix_table}
+
+A NFA is represented essentially like a DFA:
+\(
+{\cal N} = (Q_N, \Sigma, \delta_N, q_0, F_N)
+\)
+where the names have the same interpretation as for DFA, except
+\(\delta_N\) which returns a subset of \(Q\) --- not an element of
+\(Q\).
+
+\bigskip
+
+\begin{columns}
+
+  \column{0.5\textwidth} For example, the NFA whose transition diagram
+  is at page~\pageref{nfa_01_suffix} can be specified formally as
+  \[
+    {\cal N} \!=\! (\{q_0, q_1, q_2\}, \{0, 1\}, \delta_N, q_0, \{q_2\})
+  \]
+
+  \column{0.5\textwidth} where the transition function \(\delta_N\) is
+  given by the transition table:
+  \[
+  \begin{array}{@{}r@{}l||c|c@{}}
+    \multicolumn{2}{c||}{\cal N} & 0 & 1\\
+    \hline\hline
+    \rightarrow & q_0 & \{q_0, q_1\} & \{q_0\}\\
+                & q_1 & \varnothing  & \{q_2\}\\
+    \#          & q_2 & \varnothing  & \varnothing
+  \end{array}
+  \]
+\end{columns}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{NFA/Formal definitions (cont)}
+
+Note that, in the transition table of a NFA, all the cells are
+filled: there is no transition between two states if and only if the
+corresponding cell contains \(\varnothing\).
+
+\bigskip
+
+In case of a DFA, a cell could remain empty (incomplete).
+
+\bigskip
+
+It is common also to set that in case of the empty word input,
+\(\varepsilon\), both for the DFA and NFA, the state remains the
+same:
+\begin{itemize}
+
+  \item for DFA: \(\forall q \in Q.\delta_D (q, \varepsilon) = q\)
+
+  \item for NFA: \(\forall q \in Q.\delta_N (q, \varepsilon) = \{q\}\)
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+\frametitle{NFA/Formal definitions (cont)}
+
+As we did for the DFAs, we can \emph{extend the transition function}
+\(\delta_N\) to accept words and not just letters (labels). The extended
+function is noted \(\hat{\delta}_N\) and defined as follows:
+\begin{itemize}
+
+  \item for any state \(q \in Q\), let \(\hat{\delta}_N (q,
+  \varepsilon) = \{q\}\)
+
+  \item for any state \(q\ \in Q\), any word \(w \in \Sigma^{*}\), any
+    input \(a \in \Sigma\), let \[\hat{\delta}_N (q, wa) = \bigcup_{q'
+      \in \hat{\delta}_N (q, w)}{\delta_N (q', a)}\]
+\end{itemize}
+The language \(L({\cal N})\) recognised by a NFA \(\cal N\) is
+defined as
+\[
+L({\cal N}) = \{w \in \Sigma^{*} \; \lvert \; \hat{\delta}_N (q_0, w)
+\cap F \neq \varnothing\}
+\]
+which means that the processing of the input stops successfully as
+soon as \textbf{at least one current state belongs to \(F\)}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[containsverbatim]
+\frametitle{NFA/Example}
+
+\label{nfa_01_suffix_formal}
+
+Let us use \(\hat{\delta}_N\) to describe the processing of the input
+\verb+00101+ by the NFA page~\pageref{nfa_01_suffix}:
+\begin{enumerate}
+
+  \item \(\hat{\delta}_N (q_0, \varepsilon) = q_0\)
+
+  \item \(\hat{\delta}_N (q_0, \verb+0+) = \delta_N (q_0, \verb+0+) =
+    \{q_0, q_1\}\)
+
+  \item \(\hat{\delta}_N (q_0, \verb+00+) = \delta_N (q_0, \verb+0+)
+    \cup \delta_N (q_1, \verb+0+) = \{q_0, q_1\} \cup \varnothing =
+    \{q_0, q_1\}\)
+
+  \item \(\hat{\delta}_N (q_0, \verb+001+) = \delta_N (q_0, \verb+1+)
+    \cup \delta_N (q_1, \verb+1+) = \{q_0\} \cup \{q_2\} = \{q_0,
+    q_2\}\)
+
+  \item \(\hat{\delta}_N (q_0, \verb+0010+) = \delta_N (q_0, \verb+0+)
+    \cup \delta_N (q_2, \verb+0+) = \{q_0, q_1\} \cup \varnothing =
+    \{q_0, q_1\}\)
+
+  \item \(\hat{\delta}_N (q_0, \verb+00101+) = \delta_N (q_0,
+    \verb+1+) \cup \delta_N (q_1, \verb+1+) = \{q_0\} \cup \{q_2\} =
+    \{q_0, q_2\} \ni q_2\)
+
+\end{enumerate}
+Because \(q_2\) is a final state, actually \(F = \{q_2\}\), we get
+\(\hat{\delta}_N (q_0, \verb+00101+) \cap F \neq \varnothing\) thus
+the string \verb+00101+ is recognised by the NFA.
+
+\end{frame}
+
+\end{document}
