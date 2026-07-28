@@ -34,15 +34,15 @@
 
 % New environments and commands
 %
-\newcommand\eNFA{\(\epsilon\)-NFA\xspace}
-\newcommand\eClose{\epsilon\text{-close}}
-\newcommand\eDFS{\epsilon\text{-DFS}}
-\newcommand\eDFSset{\overline{\epsilon\text{-DFS}}}
+\newcommand\eNFA{\(\varepsilon\)-NFA\xspace}
+\newcommand\eClose{\varepsilon\text{-close}}
+\newcommand\eDFS{\varepsilon\text{-DFS}}
+\newcommand\eDFSset{\overline{\varepsilon\text{-DFS}}}
 \newcommand\eCloseSet{\overline{\eClose}}
 
 % Document
 %
-\title{\(\epsilon\)-Non-Deterministic Finite Automata}
+\title{\(\varepsilon\)-Non-Deterministic Finite Automata}
 \author{Christian Rinderknecht}
 \date{September \oldstylenums{2026}}
 
@@ -53,22 +53,22 @@
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{NFA with \(\epsilon\)-transitions}
+\frametitle{NFA with \(\varepsilon\)-transitions}
 
 We shall now introduce another extension to NFA, called \eNFA, which
-is a NFA whose labels can be the empty string, noted \(\epsilon\).
+is a NFA whose labels can be the empty string, noted \(\varepsilon\).
 
 \bigskip
 
 The interpretation of this new kind of transition, called
-\(\epsilon\)-transition, is that the current state changes by
+\(\varepsilon\)-transition, is that the current state changes by
 following this transition \emph{without reading any input}. This is
 sometimes referred as a \textbf{spontaneous transition}.
 
 \bigskip
 
-The rationale, that is, the intuition behind that, is that \(\epsilon
-a = a \epsilon = a\), so recognising \(\epsilon a\) or \(a\epsilon\)
+The rationale, that is, the intuition behind that, is that \(\varepsilon
+a = a \varepsilon = a\), so recognising \(\varepsilon a\) or \(a\varepsilon\)
 is the same as recognising \(a\). In other words, we do not need to
 read something more than \(a\) as input.
 
@@ -87,7 +87,7 @@ means of the \eNFA
 \includegraphics[bb=49 660 288 758]{enfa_num}
 \end{center}
 This is not the simplest \eNFA we can imagine for these numbers, but
-note the utility of the \(\epsilon\)-transition between \(q_0\) and
+note the utility of the \(\varepsilon\)-transition between \(q_0\) and
 \(q_1\).
 
 \end{frame}
@@ -95,12 +95,12 @@ note the utility of the \(\epsilon\)-transition between \(q_0\) and
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA (cont)}
+\frametitle{\eNFA}
 
 In the case of compilers or IDEs, \eNFA enable the separate design of
 one NFA per token, then create an initial (respectively final) state
 connected to all their initial (respectively, final) states with an
-\(\epsilon\)-transition. For instance, for keywords \term{fun} and
+\(\varepsilon\)-transition. For instance, for keywords \term{fun} and
 \term{function} and identifiers:
 \begin{center}
 \includegraphics[bb=48 630 421 732,scale=0.88]{enfa_kwd_id}
@@ -111,12 +111,12 @@ connected to all their initial (respectively, final) states with an
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA (cont)}
+\frametitle{\eNFA}
 
 In order to perform a text search, once we have a single \eNFA, we can
 \begin{enumerate}
 
-  \item either remove all the \(\epsilon\)-transitions and
+  \item either remove all the \(\varepsilon\)-transitions and
   \begin{enumerate}
     \item either create a NFA and then maybe a DFA;
 
@@ -141,7 +141,7 @@ In other words, \textbf{DFA, NFA and \eNFA have the same expressive
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA (cont)}
+\frametitle{\eNFA}
 
 The first method constructs explicitly the NFA and maybe the DFA,
 while the second does not, at the possible cost of more computations
@@ -156,7 +156,7 @@ Before entering into the details, we need to define formally an
 
 The only difference between an NFA and an \eNFA is that the
 transition function \(\delta_E\) takes as second argument an element
-in \(\Sigma \cup \{\epsilon\}\), with \(\epsilon \not\in \Sigma\),
+in \(\Sigma \cup \{\varepsilon\}\), with \(\varepsilon \not\in \Sigma\),
 instead of \(\Sigma\) --- but the alphabet still remains \(\Sigma\).
 
 \end{frame}
@@ -164,23 +164,23 @@ instead of \(\Sigma\) --- but the alphabet still remains \(\Sigma\).
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure}
 
 We need now a function called \textbf{\(\eClose\)}, which takes an
 \eNFA \(\cal E\), a state \(q\) of \(\cal E\) and returns all the
 states which are accessible in \(\cal E\) from \(q\) with label
-\(\epsilon\).
+\(\varepsilon\) (transitive closure of \(\varepsilon\) transitions).
 
 \bigskip
 
 The idea is to achieve a \textbf{depth-first traversal} of \(\cal E\),
-starting from \(q\) and following only \(\epsilon\)-transitions.
+starting from \(q\) and following only \(\varepsilon\)-transitions.
 
 \bigskip
 
-Let us call \(\eDFS\) (``\(\epsilon\)-Depth-First-Search'') the
+Let us call \(\eDFS\) (``\(\varepsilon\)-Depth-First-Search'') the
 function such that \(\eDFS(q, Q)\) is the set of states reachable from
-\(q\) following \(\epsilon\)-transitions and which is not included in
+\(q\) following \(\varepsilon\)-transitions and which is not included in
 \(Q\), \emph{\(Q\) being interpreted as the set of states already
   visited in the traversal}. The set \(Q\) ensures the termination of
 the algorithm even in presence of cycles in the automaton. Therefore,
@@ -195,7 +195,7 @@ where the \eNFA is \({\cal E} = (Q_E, \Sigma, \delta_E, q_0, F_E)\).
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure}
 
 Now we define \(\eDFS\) as follows:
 \begin{align}
@@ -203,12 +203,12 @@ Now we define \(\eDFS\) as follows:
 &= \varnothing
 & \text{if} \; q \in Q \label{eDFS_1}\\
   \eDFS (q, Q)
-&= \{q\} \quad \cup \bigcup_{p \in \delta_E(q,\epsilon)}{\eDFS (p, Q
+&= \{q\} \quad \cup \bigcup_{p \in \delta_E(q,\varepsilon)}{\eDFS (p, Q
     \cup \{q\})}
 & \text{if} \; q \not\in Q \label{eDFS_2}
 \end{align}
 The \eNFA page~\pageref{enfa_num} leads to the
-following \(\epsilon\)-closures:
+following \(\varepsilon\)-closures:
 
 \bigskip
 
@@ -232,7 +232,7 @@ following \(\epsilon\)-closures:
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure}
 
 Consider, as a more difficult example, the following \eNFA \(\cal E\):
 \vspace*{-3pt}
@@ -248,12 +248,12 @@ Consider, as a more difficult example, the following \eNFA \(\cal E\):
               \cup \eDFS (q_4, \{q_0\})
   & \text{by eq.~\ref{eDFS_2}}\\
   &= \{q_0\} \cup \biggl( \{q_1\} \cup \bigcup_{p \in
-                \delta_E(q_1,\epsilon)}{\eDFS (p, \{q_0,
+                \delta_E(q_1,\varepsilon)}{\eDFS (p, \{q_0,
                 q_1\})}\biggr)
   & \text{by eq.~\ref{eDFS_2}}\\
   &\mathrel{\phantom{=}} \phantom{\{q_0\}}{}
    \cup \biggl( \{q_4\} \cup \bigcup_{p \in
-     \delta_E(q_4,\epsilon)}{\eDFS (p, \{q_0, q_4\})}
+     \delta_E(q_4,\varepsilon)}{\eDFS (p, \{q_0, q_4\})}
    \biggr)
   & \text{by eq.~\ref{eDFS_2}}
 \end{align*}
@@ -263,7 +263,7 @@ Consider, as a more difficult example, the following \eNFA \(\cal E\):
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure}
 
 \begin{align*}
 \eClose (q_0)
@@ -276,7 +276,7 @@ Consider, as a more difficult example, the following \eNFA \(\cal E\):
      \cup (\{q_4\} \cup \varnothing)\\
   &= \{q_0, q_1, q_4\} \cup \eDFS (q_2, \{q_0, q_1\})\\
   &= \{q_0, q_1, q_4\} \cup \biggl(\{q_2\} \cup \bigcup_{p \in
-       \delta_E(q_2,\epsilon)}{\eDFS (p, \{q_0, q_1,
+       \delta_E(q_2,\varepsilon)}{\eDFS (p, \{q_0, q_1,
        q_2\})}\biggr)
 \end{align*}
 
@@ -285,7 +285,7 @@ Consider, as a more difficult example, the following \eNFA \(\cal E\):
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure}
 
 \begin{align*}
 \eClose (q_0)
@@ -299,7 +299,7 @@ Consider, as a more difficult example, the following \eNFA \(\cal E\):
      \text{by eq.~\ref{eDFS_1}, since} \; q_1 \in \{q_0, q_1, q_2\}\\
   &\mathrel{\phantom{=}} \;\,
    \cup \biggl(\{q_3\} \cup \bigcup_{p \in \delta_E(q_3,
-     \epsilon)}{\eDFS (p, \{q_0, q_1, q_2, q_3\})}\biggr)
+     \varepsilon)}{\eDFS (p, \{q_0, q_1, q_2, q_3\})}\biggr)
    \quad \text{by eq.~\ref{eDFS_2}}\\
   &= \{q_0, q_1, q_2, q_3, q_4\} \cup \bigcup_{p \in
      \varnothing}{\eDFS (p, \{q_0, q_1, q_2, q_3\})}\\
@@ -311,7 +311,7 @@ Consider, as a more difficult example, the following \eNFA \(\cal E\):
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure}
 
 It is useful to extend \(\eClose\) to sets of states, not just
 states.
@@ -331,16 +331,16 @@ for any subset \(Q \subseteq Q_E\) where the \eNFA is \({\cal E} =
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure/Optimisation}
 
 \label{enfa_closure}
 
-Compute the \(\epsilon\)-closure of \(q_0\) in the following \eNFA
+Compute the \(\varepsilon\)-closure of \(q_0\) in the following \eNFA
 \(\cal E\):
 \begin{center}
 \includegraphics[bb=65 618 315 721]{enfa_closure}
 \end{center}
-where the sub-\eNFA \(\cal E'\) contains only \(\epsilon\)-transitions
+where the sub-\eNFA \(\cal E'\) contains only \(\varepsilon\)-transitions
 and all its \(Q'\) states are accessible from \(q_3\).
 
 \end{frame}
@@ -348,7 +348,7 @@ and all its \(Q'\) states are accessible from \(q_3\).
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure/Optimisation}
 
 \begin{align*}
    \eClose (q_0)
@@ -371,7 +371,7 @@ inefficient if \(Q'\) is big.
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure/Optimisation}
 
 The way to avoid duplicating traversals is to change the definitions
 of \(\eClose\) and \(\eCloseSet\).
@@ -401,7 +401,7 @@ states that have to be explored.
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure/Optimisation}
 
 In the first definition we computed the \emph{new reachable states},
 but in the new one we compute the \emph{currently reached
@@ -411,7 +411,7 @@ but in the new one we compute the \emph{currently reached
 &= Q'
 && \text{if} \; q \in Q' \tag{1'}\\
   \eDFS (q, Q')
-&= \eDFSset (\delta_E (q, \epsilon), Q' \cup \{q\})
+&= \eDFSset (\delta_E (q, \varepsilon), Q' \cup \{q\})
 && \text{if} \; q \not\in Q' \tag{2'}
 \end{align*}
 Contrast with the first definition
@@ -420,7 +420,7 @@ Contrast with the first definition
 &= \varnothing
 & \text{if} \; q \in Q' \tag{1} \label{empty}\\
   \eDFS (q, Q')
-&= \{q\} \quad \cup \bigcup_{p \in \delta_E(q,\epsilon)}{\eDFS (p, Q'
+&= \{q\} \quad \cup \bigcup_{p \in \delta_E(q,\varepsilon)}{\eDFS (p, Q'
     \cup \{q\})}
 & \text{if} \; q \not\in Q' \tag{2} \label{parallel}
 \end{align*}
@@ -433,7 +433,7 @@ new state, i.e. none not already in \(Q'\), whereas in (1') we return
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure/Optimisation}
 
 The new definition of \(\eDFSset\) is not more difficult than the
 first one:
@@ -451,7 +451,7 @@ Notice that the definitions of \(\eDFS\) and \(\eDFSset\) are
 
 In~\eqref{parallel} we traverse states in \emph{parallel} (consider
 the union operator), starting from each element in \(\delta_E (q,
-\epsilon)\), whereas in (2') and (\ref{eDFSset:2}), we traverse them
+\varepsilon)\), whereas in (2') and (\ref{eDFSset:2}), we traverse them
 \emph{sequentially} so we can use the information collected (currently
 reached states) in the previous searches.
 
@@ -460,7 +460,7 @@ reached states) in the previous searches.
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure/Optimisation}
 
 Coming back to our example page~\ref{enfa_closure}, we find
 \begin{align*}
@@ -488,7 +488,7 @@ Coming back to our example page~\ref{enfa_closure}, we find
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
+\frametitle{\eNFA{}/\(\varepsilon\)-closure/Optimisation}
 
 \begin{align*}
    \eClose (q_0)
@@ -515,14 +515,14 @@ result is always the same.
 \begin{frame}
 \frametitle{Extended transition functions for {\eNFA}s}
 
-The \(\epsilon\)-closure allows to explain how a \eNFA recognises or
+The \(\varepsilon\)-closure allows to explain how a \eNFA recognises or
 rejects a given input word.
 
 \bigskip
 
 In~\eqref{parallel} we traverse states in \emph{parallel} (consider
 the union operator), starting from each element in \(\delta_E (q,
-\epsilon)\), whereas in (2') and (\ref{eDFSset:2}), we traverse them
+\varepsilon)\), whereas in (2') and (\ref{eDFSset:2}), we traverse them
 \emph{sequentially} so we can use the information collected (currently
 reached states) in the previous searches.
 
@@ -531,132 +531,9 @@ reached states) in the previous searches.
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
-
-Coming back to our example page~\ref{enfa_closure}, we find
-\begin{align*}
-   \eClose (q_0)
-&= \eDFS (q_0, \varnothing)
-&& q_0 \in Q_E\\
-&= \eDFSset (\{q_1, q_2\}, \{q_0\})
-&& \text{by eq.~(2')}\\
-&= \eDFSset (\{q_2\}, \eDFS (q_1, \{q_0\}))
-&& \text{by eq.~(4)}\\
-&= \eDFSset (\{q_2\}, \eDFSset (\{q_3\}, \{q_0,
-   q_1\}))
-&& \text{by eq.~(2')}\\
-&= \eDFSset (\{q_2\}, \eDFSset (\varnothing, \eDFS (q_3, \{q_0, q_1\})))
-&& \text{by eq.~(4)}\\
-&= \eDFSset (\{q_2\}, \eDFS (q_3, \{q_0, q_1\}))
-&& \text{by eq.~(3)}\\
-&= \eDFSset (\{q_2\}, \{q_0, q_1, q_3\} \cup Q')\\
-&= \eDFSset (\varnothing, \eDFS (q_2, \{q_0, q_1, q_3\} \cup Q'))
-&& \text{by eq.~(4)}
-\end{align*}
-
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
-
-\begin{align*}
-   \eClose (q_0)
-&= \eDFS (q_2, \{q_0, q_1, q_3\} \cup Q')
-&& \text{by eq.~(3)}\\
-&= \eDFSset (\{q_3\}, \{q_0, q_1, q_2, q_3\} \cup Q')
-&& \text{by eq.~(2')}\\
-&= \eDFSset (\varnothing, \eDFS (q_3, \{q_0, q_1, q_2, q_3\} \cup Q'))
-&& \text{by eq.~(4)}\\
-&= \eDFS (q_3, \{q_0, q_1, q_2, q_3\} \cup Q')
-&& \text{by eq.~(3)}\\
-&= \{q_0, q_1, q_2, q_3\} \cup Q'
-&& \text{by eq.~(1')}\\
-\end{align*}
-The important thing here is that we did not compute (traverse) several
-times \(Q'\). Note that some equations can be used in a different
-order and \(q\) can be chosen arbitrarily in equation (4), but the
-result is always the same.
-
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}
 \frametitle{Extended transition functions for {\eNFA}s}
 
-The \(\epsilon\)-closure allows to explain how a \eNFA recognises or
-rejects a given input word.
-\bigskip
-
-In~\eqref{parallel} we traverse states in \emph{parallel} (consider
-the union operator), starting from each element in \(\delta_E (q,
-\epsilon)\), whereas in (2') and (\ref{eDFSset:2}), we traverse them
-\emph{sequentially} so we can use the information collected (currently
-reached states) in the previous searches.
-
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
-
-Coming back to our example page~\ref{enfa_closure}, we find
-\begin{align*}
-   \eClose (q_0)
-&= \eDFS (q_0, \varnothing)
-&& q_0 \in Q_E\\
-&= \eDFSset (\{q_1, q_2\}, \{q_0\})
-&& \text{by eq.~(2')}\\
-&= \eDFSset (\{q_2\}, \eDFS (q_1, \{q_0\}))
-&& \text{by eq.~(4)}\\
-&= \eDFSset (\{q_2\}, \eDFSset (\{q_3\}, \{q_0,
-   q_1\}))
-&& \text{by eq.~(2')}\\
-&= \eDFSset (\{q_2\}, \eDFSset (\varnothing, \eDFS (q_3, \{q_0, q_1\})))
-&& \text{by eq.~(4)}\\
-&= \eDFSset (\{q_2\}, \eDFS (q_3, \{q_0, q_1\}))
-&& \text{by eq.~(3)}\\
-&= \eDFSset (\{q_2\}, \{q_0, q_1, q_3\} \cup Q')\\
-&= \eDFSset (\varnothing, \eDFS (q_2, \{q_0, q_1, q_3\} \cup Q'))
-&& \text{by eq.~(4)}
-\end{align*}
-
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}
-\frametitle{\eNFA{}/\(\epsilon\)-closure/Optimisation (cont)}
-
-\begin{align*}
-   \eClose (q_0)
-&= \eDFS (q_2, \{q_0, q_1, q_3\} \cup Q')
-&& \text{by eq.~(3)}\\
-&= \eDFSset (\{q_3\}, \{q_0, q_1, q_2, q_3\} \cup Q')
-&& \text{by eq.~(2')}\\
-&= \eDFSset (\varnothing, \eDFS (q_3, \{q_0, q_1, q_2, q_3\} \cup Q'))
-&& \text{by eq.~(4)}\\
-&= \eDFS (q_3, \{q_0, q_1, q_2, q_3\} \cup Q')
-&& \text{by eq.~(3)}\\
-&= \{q_0, q_1, q_2, q_3\} \cup Q'
-&& \text{by eq.~(1')}\\
-\end{align*}
-The important thing here is that we did not compute (traverse) several
-times \(Q'\). Note that some equations can be used in a different
-order and \(q\) can be chosen arbitrarily in equation (4), but the
-result is always the same.
-
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}
-\frametitle{Extended transition functions for {\eNFA}s}
-
-The \(\epsilon\)-closure allows to explain how a \eNFA recognises or
+The \(\varepsilon\)-closure allows to explain how a \eNFA recognises or
 rejects a given input word.
 
 \bigskip
@@ -666,12 +543,12 @@ Let \({\cal E} = (Q_E, \Sigma, \delta_E, q_0, F_E)\).
 \bigskip
 
 We want \(\hat{\delta}_E (q, w)\) be the set of states reachable from
-\(q\) along a path whose labels, when concatenated, for the string
-\(w\). The difference here with NFA's is that several \(\epsilon\) can
+\(q\) along a path whose labels, when concatenated, form the string
+\(w\). The difference here with NFA's is that several \(\varepsilon\) can
 be present along this path, despite not contributing to \(w\).
 For all state \(q \in Q_E\), let
 \begin{align*}
-   \hat{\delta}_E (q, \epsilon)
+   \hat{\delta}_E (q, \varepsilon)
 &= \eClose (q)\\
    \hat{\delta}_E (q, wa)
 &= \eCloseSet \Biggl(\bigcup_{p \in \hat{\delta}_E (q, w)}{\delta_N (p,
@@ -679,7 +556,7 @@ For all state \(q \in Q_E\), let
 && \text{for all} \; a \in \Sigma, w \in \Sigma^{*}
 \end{align*}
 This definition is based on the regular identity \(wa =
-((w\epsilon^{*})a)\epsilon^{*}\).
+((w\varepsilon^{*})a)\varepsilon^{*}\).
 
 \end{frame}
 
@@ -692,11 +569,11 @@ Let us consider again the \eNFA recognising natural and decimal
 numbers, at page~\pageref{enfa_num}, and compute the states reached on
 the input \verb+5.6+:
 \begin{align*}
-   \hat{\delta}_E (q_0, \epsilon)
+   \hat{\delta}_E (q_0, \varepsilon)
 &= \eClose (q_0) = \{q_0, q_1\}\\
    \hat{\delta}_E (q_0, \mathtt{5})
 &= \eCloseSet \Biggl( \bigcup_{p \in \hat{\delta}_E (q_0,
-   \epsilon)}{\delta_N (p, \mathtt{5})} \Biggr)\\
+   \varepsilon)}{\delta_N (p, \mathtt{5})} \Biggr)\\
 &= \eCloseSet (\delta_N (q_0, \mathtt{5}) \cup \delta_N (q_1,
    \mathtt{5})) = \eCloseSet (\varnothing \cup \{q_1, q_4\})\\
 &= \{q_1, q_3, q_4, q_5\}\\
@@ -713,7 +590,7 @@ the input \verb+5.6+:
 % ------------------------------------------------------------------------
 %
 \begin{frame}[containsverbatim]
-\frametitle{Extended transition functions for {\eNFA}s/Example (cont)}
+\frametitle{Extended transition functions for {\eNFA}s/Example}
 
 \begin{align*}
    \hat{\delta}_E (q_0, \mathtt{5.})
@@ -744,14 +621,15 @@ recognise the same language.
 
 The method is a variation of the subset construction we presented for
 NFA: we must take into account the states reachable through
-\(\epsilon\)-transitions, with help of \(\epsilon\)-closures.
+\(\varepsilon\)-transitions, with the help of
+\(\varepsilon\)-closures.
 
 \end{frame}
 
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{Subset construction for {\eNFA}s (cont)}
+\frametitle{Subset construction for {\eNFA}s}
 
 Assume that \({\cal E} = (Q, \Sigma, \delta, q_0, F)\) is an
 \eNFA. Let us define as follows the equivalent DFA \({\cal D} = (Q_D,
@@ -759,12 +637,12 @@ Assume that \({\cal E} = (Q, \Sigma, \delta, q_0, F)\) is an
 \begin{enumerate}
 
   \item \(Q_D\) is the set of subsets of \(Q_E\). More precisely, all
-    accessible states of \(\cal D\) are \(\epsilon\)-closed subsets of
+    accessible states of \(\cal D\) are \(\varepsilon\)-closed subsets of
     \(Q_E\), i.e. sets \(Q \subseteq Q_E\) such that \(Q =
     \eClose(Q)\).
 
   \item \(q_D = \eClose (q_0)\), i.e. we get the start state
-  of \(\cal D\) by \(\epsilon\)-closing the set made of only the start
+  of \(\cal D\) by \(\varepsilon\)-closing the set made of only the start
   state of \(\cal E\).
 
   \item \(F_D\) is those sets of states that contain at least one
@@ -791,7 +669,7 @@ table is
 \[
 \begin{array}{r@{}l||c|c|c|c|c}
 \multicolumn{2}{c||}{\cal E} & + & - & 0, \ldots, 9 & \mathtt{.} &
-\epsilon\\
+\varepsilon\\
 \hline\hline
 \rightarrow & q_0 & \{q_1\} & \{q_1\} & \varnothing & \varnothing
                   & \{q_1\}\\
@@ -813,7 +691,7 @@ table is
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{Subset construction for {\eNFA}s/Example (cont)}
+\frametitle{Subset construction for {\eNFA}s/Example}
 
 By applying the subset construction to this \eNFA, we get the table
 \[
@@ -839,7 +717,7 @@ By applying the subset construction to this \eNFA, we get the table
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{Subset construction for {\eNFA}s/Example (cont)}
+\frametitle{Subset construction for {\eNFA}s/Example}
 
 Let us rename the states of \(\cal D\) and get rid of the empty sets:
 \[
@@ -860,7 +738,7 @@ Let us rename the states of \(\cal D\) and get rid of the empty sets:
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-\frametitle{Subset construction for {\eNFA}s/Example (cont)}
+\frametitle{Subset construction for {\eNFA}s/Example}
 
 The transition diagram of \(\cal D\) is therefore
 \begin{center}
