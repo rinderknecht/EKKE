@@ -1,0 +1,61 @@
+%%-*-latex-*-
+
+\documentclass[compress,dvipdfmx]{beamer}
+
+\usepackage[english]{babel}
+\usepackage{amssymb,amsmath}
+\usepackage{xspace}
+
+\input{beamer_cfg}
+
+% ------------------------------------------------------------------------
+% Document
+%
+\title{Introduction to Garbage Collection}
+\author{Christian Rinderknecht}
+\institute{Eszterházy Károly Katolikus Egyetem}
+\date{September 2026}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  The run-times of many programming languages feature \textbf{dynamic
+    memory management}.
+
+  \bigskip
+
+  The first aspect of that management is \textbf{allocation}, that is,
+  the program can create \textbf{objects} whole lifetime can be that
+  of the program itself. In particular, they can outlive the procedure
+  or function that created them, contrary to \textbf{local variables},
+  which live in the \textbf{call stack}.
+
+  \bigskip
+
+  Those objects exist in a memory area called the \textbf{heap}. More
+  precisely, a \textbf{continuous block} is allocated for one
+  object, whose size depends on the \textbf{type} of the object.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  \begin{center}
+    \includegraphics[width=\textwidth]{memory.png}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  For example, in \texttt{Java},
+
+\end{frame}
+
+\end{document}
