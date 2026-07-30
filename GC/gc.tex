@@ -5,8 +5,19 @@
 \usepackage[english]{babel}
 \usepackage{amssymb,amsmath}
 \usepackage{xspace}
+%\usepackage{verbatim}
 
 \input{beamer_cfg}
+
+\newcommand\lang[1]{\texttt{#1}\xspace}
+\newcommand\Java{\lang{Java}}
+\newcommand\C{\lang{C}}
+\newcommand\Lisp{\lang{List}}
+\newcommand\Csharp{\lang{C\#}}
+\newcommand\Haskell{\lang{Haskell}}
+\newcommand\OCaml{\lang{OCaml}}
+
+\newcommand\GC{GC\xspace}
 
 % ------------------------------------------------------------------------
 % Document
@@ -23,7 +34,7 @@
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  The run-times of many programming languages feature \textbf{dynamic
+  The runtimes of many programming languages feature \textbf{dynamic
     memory management}.
 
   \bigskip
@@ -42,19 +53,113 @@
 
 \end{frame}
 
+\begin{frame}[containsverbatim]
+  \frametitle{Garbage Collection}
+
+  For example, in \Java, we can declare a type for the cells
+  in a linked list of integers as follows:
+\begin{verbatim}
+class Cell {
+  int   content;
+  Cell  next;
+}
+\end{verbatim}
+Each cell contains an integer and a \textbf{pointer} to another
+cell. The pointer is implicit in the recursive occurrence of the type
+name \texttt{Cell}. It is either the address of an object in memory,
+or a special value \textbf{nil} (noted \texttt{null} in
+\Java). Consequently, each cell requires at least two
+\textbf{words} (one for each field and perhaps more, depending on the
+data layout).
+
+\end{frame}
+
+\begin{frame}[containsverbatim]
+  \frametitle{Garbage Collection}
+
+  A cell can be allocated with the built-in function \texttt{new},
+  like so:
+\begin{verbatim}
+Cell c = new Cell ();
+\end{verbatim}
+
+A word is the smallest amount of memory that can be
+addressed and filled by a primitive type or a pointer, that is, 64
+bits in modern computers. In other words, we can imagine memory as a
+table with addresses as keys and words as values, which are
+interpreted either as an address (pointer) or not.
+
+\bigskip
+
+Then we can modify the contents of the fields it contains, as many
+times as we wish to. Every call to \texttt{new} returns the
+\textbf{address of a new block} drawn from the available memory.
+
+\end{frame}
+
+\begin{frame}[containsverbatim]
+  \frametitle{Garbage Collection}
+
+Because each allocation removes from available, finite memory, it is
+necessary to \textbf{free the memory used by useless objects}, which
+we need to define and determine what are those objects.
+
+\bigskip
+
+In some programming languages, like \C, this task is entirely
+delegated to the programmers. They have a predefined procedure
+\texttt{free} that frees a memory block:
+\begin{verbatim}
+free(c);
+\end{verbatim}
+After it is executed, the block pointed at by~\texttt{c} is considered
+available again, so its address can be reused in a future
+allocation. Two common errors are the use a freed object and to forget
+to free an object.
+
+\end{frame}
+
+
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  \begin{center}
-    \includegraphics[width=\textwidth]{memory.png}
-  \end{center}
+  In \Java, there is no equivalent to the \texttt{free} procedure of
+  \C because the identification and freeing of useless objects is left
+  to the runtime system.
+
+  \bigskip
+
+  That part of the runtime is called the \textbf{garbage collector}
+  (\GC). At regular intervals, it interrups the program, analyses the
+  heap, find out the useless objects and free them.
+
+  \bigskip
+
+  This technique was invented by McCarthy, creator of the functional
+  programming language \Lisp in \oldstylenums{1960}. It is widely used
+  in mainstream languages like \Java, \Csharp, \Haskell or \OCaml.
+
+  \bigskip
+
+  Beyond avoiding the two errors above, a \GC can free many objects at
+  a time, which is more efficient than manually.
 
 \end{frame}
 
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  For example, in \texttt{Java},
+  How does a \GC determine what objects are useless?
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  \begin{center}
+    \includegraphics[width=\textwidth]{memory.png}
+  \end{center}
 
 \end{frame}
 
