@@ -8,6 +8,10 @@
 \usepackage{hyphenat}
 %\usepackage{verbatim}
 
+% Pseudo-code typesetting (algorithms)
+%
+\usepackage{clrscode}
+
 \setbeamertemplate{theorems}[numbered]
 \input{beamer_cfg}
 
@@ -158,7 +162,8 @@ allocation.
   \bigskip
 
   That part of the runtime is called the \textbf{garbage collector}
-  (GC). At regular intervals, it interrups the program, analyses the
+  (GC), or `collector' in short. At regular intervals, it interrups
+  the program (called hereafter the \textbf{mutator}), analyses the
   heap, find out the useless objects and free them.
 
   \bigskip
@@ -274,5 +279,175 @@ allocation.
   page~\pageref{C_errors} another case of memory leak in \C.)
 
 \end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  One of the simplest technique for garbage collection is known as
+  \textbf{mark \& sweep}.
+
+  \bigskip
+
+  As the name indicates, it consists of two passes:
+  \begin{enumerate}
+
+    \item mark: traversing the \emph{graph} of objects from the roots
+      while marking the visited nodes,
+
+    \item sweep: traverse the \emph{whole} heap (the linear piece of
+      memory, not the graph view): all the unmarked objects are freed,
+      and the marks of the others are reset (to mean `not visited').
+
+  \end{enumerate}
+  Crucially, during the mark \& sweep, \textbf{the program is
+    stopped}.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  In the following pseudo\hyp{}codes, we will assume that each
+  object~\(o\) has two fields, \(o.\textit{left}\) and
+  \(o.\textit{right}\), both containing a pointer (address) to another
+  object, or the special value \texttt{nil}. Each object also contains
+  a bit field denoting the states `marked' and `unmarked' (default).
+
+  \bigskip
+
+  Obviously, the marks from the first phase constitute the information
+  carried over to the sweeping phase, but they also play an essential
+  role during the marking: they tell the traversal algorithm to not
+  visit a vertex more than once, so the total cost of traversing the
+  graph remains \textbf{linear in the number of vertices}.
+
+  \bigskip
+
+  This is crucial if some objects are shared through distinct paths,
+  and even if the graph contains cycles.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  We stated earlier that each object would contain a bit field for the
+  mark. This is the most common solution: put the mark into a
+  \textbf{header}, that is, metadata about each object. The downside
+  is that the cost per object becomes (at least) one word, even if
+  only a bit is required and one field of data (that is theworst case:
+  the size of the metadata is the same as that of the data).
+
+  \bigskip
+
+  There is another choice: a separate table, called a \textbf{bitmap},
+  where the bits are stored in a compact manner: one word will encode
+  many bit marks (64 on modern hardware architectures). This enables
+  getting rid of the object headers and saving a lot of memory, at the
+  expense of extra time accessing and decoding the table.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  For the marking of objects, any graph traversal can do. Let us run a
+  \textbf{depth\hyp{}first search} for each root:
+
+  \bigskip
+
+  \begin{codebox}
+    \(\proc{DFS}(o)\)\\
+    \li \If \(o \neq \kw{nil}\) \kw{and} \text{\(o\) is not marked}
+    \li \Then \kw{begin}
+    \zi \text{mark} \(o\);
+    \zi \proc{DFS}(o.left);
+    \zi \proc{DFA}(o.right)
+    \zi \kw{end}
+    \End
+  \end{codebox}
+  \begin{codebox}
+    \(\proc{Mark}()\)\\
+    \li \For \kw{each} \text{root \(r\)} \kw{do} \proc{DFS}(r)
+  \end{codebox}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  This program terminates because the bit marks are never set twice
+  nor reset.n
+
+  \bigskip
+
+  Let us count the number of calls to \proc{DFS}, including the
+  recursive calls. First, there are one call for each root. Second,
+  two recursive calls per object being marked. Therefore, the total
+  number of calls to \proc{DFS} is \(O(r + m)\), where \(r\)~is the
+  number of roots, and \(m\)~is the number of marked objects.
+
+  \bigskip
+
+  Moreover, the flipping of the bit mark is assumed to take a constant
+  time: \(O(1)\).
+
+  \bigskip
+
+  Note that \(m\)~only counts the live objects: if there are many dead
+  objects, the cost does not change here.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  Let us prove something that might seem obvious: namely that,
+  \textbf{all reachable objects, and only them, are marked by a call
+    to \proc{Mark}}.
+
+  \bigskip
+
+  We proceed by induction on the assertion: `Object \(o\) is reachable
+  from the roots.'
+  \begin{enumerate}
+
+    \item In the base case, \(o\)~is the direct successor of a root,
+      so, by the definition of \proc{Mark}, one call to
+      \(\proc{DFS}(o)\) was performed.
+
+    \item In the inductive case, \(o\)~is the direct successor of an
+      object~\(o'\) that is itself reachable from the roots. The
+      induction hypothesis applies to~\(o'\), and says that at least
+      one call to \(\proc{DFS}(o')\) was made.
+
+  \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  Let us consider the first of such calls: \(o'\)~was unmarked, thus,
+  according to \proc{DFS}, the test is true, implying a call to
+  \proc{DFS}(\(o'\).left), followed (since \proc{DFS} always terminate
+  on all inputs) by a call to \proc{DFS}(\(o'\).right). From our
+  hypotheses, \(o\)~is either equal to \(o'\).left or \(o'\).right,
+  therefore a call to \(\proc{DFS}(o)\) happened.
+
+  \bigskip
+
+  The reciprocal assertion, that is, if a call \(\proc{DFS}(o)\)
+  occurs, then \(o\)~is \textbf{nil} or is reachable from the roots,
+  is easily established.
+
+\end{frame}
+
 
 \end{document}
