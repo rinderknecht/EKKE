@@ -5,8 +5,10 @@
 \usepackage[english]{babel}
 \usepackage{amssymb,amsmath}
 \usepackage{xspace}
+\usepackage{hyphenat}
 %\usepackage{verbatim}
 
+\setbeamertemplate{theorems}[numbered]
 \input{beamer_cfg}
 
 \newcommand\lang[1]{\texttt{#1}\xspace}
@@ -17,7 +19,7 @@
 \newcommand\Haskell{\lang{Haskell}}
 \newcommand\OCaml{\lang{OCaml}}
 
-\newcommand\GC{GC\xspace}
+\frenchspacing  % Follow French conventions after a period
 
 % ------------------------------------------------------------------------
 % Document
@@ -40,10 +42,10 @@
   \bigskip
 
   The first aspect of that management is \textbf{allocation}, that is,
-  the program can create \textbf{objects} whole lifetime can be that
-  of the program itself. In particular, they can outlive the procedure
-  or function that created them, contrary to \textbf{local variables},
-  which live in the \textbf{call stack}.
+  the program can create pieces of data (called in this context
+  \textbf{objects}) whole lifetime can be that of the program
+  itself. In particular, they can outlive the procedure or function
+  that created them.
 
   \bigskip
 
@@ -84,10 +86,14 @@ Cell c = new Cell ();
 \end{verbatim}
 
 A word is the smallest amount of memory that can be
-addressed and filled by a primitive type or a pointer, that is, 64
-bits in modern computers. In other words, we can imagine memory as a
-table with addresses as keys and words as values, which are
-interpreted either as an address (pointer) or not.
+addressed and filled by a primitive type or a pointer ---~64
+bits in modern computers.
+
+\bigskip
+
+In other words, we can imagine memory as a table with addresses as
+keys and words as values. Those values may be interpreted as another
+key (address) or not (primitive type).
 
 \bigskip
 
@@ -101,8 +107,8 @@ times as we wish to. Every call to \texttt{new} returns the
   \frametitle{Garbage Collection}
 
 Because each allocation removes from available, finite memory, it is
-necessary to \textbf{free the memory used by useless objects}, which
-we need to define and determine what are those objects.
+necessary for the GC to \textbf{free the memory used by useless
+  objects}, which it needs to define and find.
 
 \bigskip
 
@@ -114,8 +120,30 @@ free(c);
 \end{verbatim}
 After it is executed, the block pointed at by~\texttt{c} is considered
 available again, so its address can be reused in a future
-allocation. Two common errors are the use a freed object and to forget
-to free an object.
+allocation.
+
+\end{frame}
+
+
+\begin{frame}[containsverbatim]
+  \frametitle{Garbage Collection}
+
+  \label{C_errors}
+
+  In \C, the premature of an object may lead to errors:
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{wrong_free.png}
+  \end{center}
+  Here, \texttt{B} has been freed. The live object \texttt{A} now
+  contains a \textbf{dangling pointer}, and the memory occupied by
+  \texttt{C} has \textbf{leaked}: \texttt{C} is not reachable, but it
+  cannot be freed.
+
+  \bigskip
+
+  Another common mistake is freeing an already freed object (like
+  \texttt{B} above): this is an undefined behaviour and thus a source
+  of \textbf{non\hyp{}determinism}.
 
 \end{frame}
 
@@ -124,13 +152,13 @@ to free an object.
   \frametitle{Garbage Collection}
 
   In \Java, there is no equivalent to the \texttt{free} procedure of
-  \C because the identification and freeing of useless objects is left
-  to the runtime system.
+  \C because the identifying and freeing of useless objects is left to
+  the runtime system.
 
   \bigskip
 
   That part of the runtime is called the \textbf{garbage collector}
-  (\GC). At regular intervals, it interrups the program, analyses the
+  (GC). At regular intervals, it interrups the program, analyses the
   heap, find out the useless objects and free them.
 
   \bigskip
@@ -141,15 +169,81 @@ to free an object.
 
   \bigskip
 
-  Beyond avoiding the two errors above, a \GC can free many objects at
-  a time, which is more efficient than manually.
+  Beyond avoiding the two errors above, a GC may also free many
+  objects at a time, which is more efficient than any sequential,
+  manual deallocation.
 
 \end{frame}
 
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  How does a \GC determine what objects are useless?
+  How does a GC determine what objects are useless, since it has no
+  access to the source code or the programmer (interactively)?
+
+  \bigskip
+
+  The GC can rely on the following condition:
+  \begin{center}
+    \it If, at a certain moment, a program does not have a pointer
+    (anymore) to an object, that object is considered useless.
+  \end{center}
+  That condition is not true in \C, where pointers can be forged (type
+  casting) from integers, but it holds in \Java for example.
+
+  \bigskip
+
+  Therefore, the memory block of that object can be reused for
+  another, without the program being able to observe that reuse.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  When a program has the address of an object, it is said to be
+  \textbf{alive}, and \textbf{dead} otherwise.
+
+  \bigskip
+
+  We can define inductively the notion of liveness:
+  \begin{definition}
+    \it Both the global and local variables of the program are called
+    \textbf{roots}. By definition (base case), the object pointed at
+    by a root is alive. Moreover, if an object is alive and one of its
+    fields contains the address of another object, then that latter
+    object is alive too (inductive case).
+  \end{definition}
+
+  \medskip
+
+  What counts as global and local variable depends on the programming
+  language. In \Java, the former are the \texttt{static} fields
+  (a.k.a. instance fields), and the latter are methods arguments
+  (including \texttt{this}) and the variables declared in the method
+  being executed.
+
+  \end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  The heap can now be seen as a \textbf{graph}, where the
+  \textbf{vertices} correspond to the roots and the objects, and the
+  \textbf{edges} model the pointers between objects (that is, if one's
+  block contains a pointer to another's).
+
+  \bigskip
+
+  The live objects are then the vertices \textbf{reachable from the
+    roots}.
+
+  \bigskip
+
+  Therefore, to determine the live objects at a given time, the GC has
+  to traverse the graph of objects from the roots.
 
 \end{frame}
 
@@ -160,6 +254,24 @@ to free an object.
   \begin{center}
     \includegraphics[width=\textwidth]{memory.png}
   \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  We started this introduction by referring to `useful objects', but
+  now we see that the appropriate concept is that of `live objects',
+  which is the same as `reachable objects'.
+
+  \bigskip
+
+  It is obvious that all dead objects are useless, but the reciprocal
+  is not true: a live object might be useless if the program does
+  nothing with it. They are allocated in the heap but cannot be
+  reclaimed. This is a case of \textbf{memory leak}. (We saw
+  page~\pageref{C_errors} another case of memory leak in \C.)
 
 \end{frame}
 
