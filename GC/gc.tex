@@ -18,7 +18,7 @@
 \newcommand\lang[1]{\texttt{#1}\xspace}
 \newcommand\Java{\lang{Java}}
 \newcommand\C{\lang{C}}
-\newcommand\Lisp{\lang{List}}
+\newcommand\Lisp{\lang{Lisp}}
 \newcommand\Csharp{\lang{C\#}}
 \newcommand\Haskell{\lang{Haskell}}
 \newcommand\OCaml{\lang{OCaml}}
@@ -47,15 +47,14 @@
 
   The first aspect of that management is \textbf{allocation}, that is,
   the program can create pieces of data (called in this context
-  \textbf{objects}) whole lifetime can be that of the program
-  itself. In particular, they can outlive the procedure or function
-  that created them.
+  \textbf{objects}) that can outlive the procedure or function that
+  created them, even last the duration of the program itself.
 
   \bigskip
 
   Those objects exist in a memory area called the \textbf{heap}. More
-  precisely, a \textbf{continuous block} is allocated for one
-  object, whose size depends on the \textbf{type} of the object.
+  precisely, a \textbf{continuous block} is allocated for each object,
+  whose size depends on the \textbf{type} of the object.
 
 \end{frame}
 
@@ -96,7 +95,7 @@ bits in modern computers.
 \bigskip
 
 In other words, we can imagine memory as a table with addresses as
-keys and words as values. Those values may be interpreted as another
+keys, and words as values. Those values may be interpreted as another
 key (address) or not (primitive type).
 
 \bigskip
@@ -190,8 +189,8 @@ allocation.
 
   The GC can rely on the following condition:
   \begin{center}
-    \it If, at a certain moment, a program does not have a pointer
-    (anymore) to an object, that object is considered useless.
+    \it If, at a certain moment, a program does not have (anymore) a
+    pointer to an object, that object is considered useless.
   \end{center}
   That condition is not true in \C, where pointers can be forged (type
   casting) from integers, but it holds in \Java for example.
@@ -207,7 +206,8 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  When a program has the address of an object, it is said to be
+  When, at the current point in the execution of a program, the
+  address of an object is known, that object is said to be
   \textbf{alive}, and \textbf{dead} otherwise.
 
   \bigskip
@@ -217,8 +217,8 @@ allocation.
     \it Both the global and local variables of the program are called
     \textbf{roots}. By definition (base case), the object pointed at
     by a root is alive. Moreover, if an object is alive and one of its
-    fields contains the address of another object, then that latter
-    object is alive too (inductive case).
+    fields contains the address of another object, then that object is
+    alive too (inductive case).
   \end{definition}
 
   \medskip
@@ -239,6 +239,11 @@ allocation.
   \textbf{vertices} correspond to the roots and the objects, and the
   \textbf{edges} model the pointers between objects (that is, if one's
   block contains a pointer to another's).
+
+  \bigskip
+
+  Sometimes we will use interchangeably `block' and `object' when
+  referring to blocks in the heap. Likewise `pointer' and `address'.
 
   \bigskip
 
@@ -300,7 +305,7 @@ allocation.
       and the marks of the others are reset (to mean `not visited').
 
   \end{enumerate}
-  Crucially, during the mark \& sweep, \textbf{the program is
+  Crucially, during the mark \& sweep, \textbf{the mutator is
     stopped}.
 
 \end{frame}
@@ -309,24 +314,26 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  In the following pseudo\hyp{}codes, we will assume that each
-  object~\(o\) has two fields, \(o.\textit{left}\) and
-  \(o.\textit{right}\), both containing a pointer (address) to another
-  object, or the special value \texttt{nil}. Each object also contains
-  a bit field denoting the states `marked' and `unmarked' (default).
+  In the following pseudo\hyp{}code, we will assume that each
+  object~\(o\) has two fields, \(o.\text{left}\) and
+  \(o.\text{right}\), each containing a pointer to another object, or
+  the special value \texttt{nil}. Each object also contains a
+  \textbf{bit field} denoting the states `marked' and `unmarked'
+  (default).
 
   \bigskip
 
-  Obviously, the marks from the first phase constitute the information
-  carried over to the sweeping phase, but they also play an essential
-  role during the marking: they tell the traversal algorithm to not
-  visit a vertex more than once, so the total cost of traversing the
-  graph remains \textbf{linear in the number of vertices}.
+  Obviously, the bit marks from the first phase constitute the
+  information carried over to the sweeping phase, but they also play
+  an essential role during marking: they tell the traversal algorithm
+  to not visit a vertex more than once, so the total cost of
+  traversing the graph remains \textbf{linear in the number of
+    vertices}.
 
   \bigskip
 
   This is crucial if some objects are shared through distinct paths,
-  and even if the graph contains cycles.
+  in particular if the graph contains cycles.
 
 \end{frame}
 
@@ -346,8 +353,10 @@ allocation.
   There is another choice: a separate table, called a \textbf{bitmap},
   where the bits are stored in a compact manner: one word will encode
   many bit marks (64 on modern hardware architectures). This enables
-  getting rid of the object headers and saving a lot of memory, at the
-  expense of extra time accessing and decoding the table.
+  getting rid of the object headers and saving a lot of memory,
+  especially if there are many small objects, at the expense of extra
+  time accessing and decoding the table (e.g. mapping object addresses
+  to bit positions).
 
 \end{frame}
 
@@ -355,14 +364,14 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  For the marking of objects, any graph traversal can do. Let us run a
-  \textbf{depth\hyp{}first search} for each root:
+  For the marking of objects, any graph traversal can do. For example,
+  let us run a \textbf{depth\hyp{}first search} from each root:
 
   \bigskip
 
   \begin{codebox}
     \(\proc{DFS}(o)\)\\
-    \li \If \(o \neq \kw{nil}\) \kw{and} \text{\(o\) is not marked}
+    \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is not marked
     \li \Then \kw{begin}
     \zi \text{mark} \(o\);
     \zi \proc{DFS}(o.left);
@@ -372,7 +381,7 @@ allocation.
   \end{codebox}
   \begin{codebox}
     \(\proc{Mark}()\)\\
-    \li \For \kw{each} \text{root \(r\)} \kw{do} \proc{DFS}(r)
+    \li \For \kw{each} root \(r\) \kw{do} \proc{DFS}(r)
   \end{codebox}
 
 \end{frame}
@@ -381,15 +390,15 @@ allocation.
   \frametitle{Garbage Collection}
 
   This program terminates because the bit marks are never set twice
-  nor reset.n
+  nor reset.
 
   \bigskip
 
   Let us count the number of calls to \proc{DFS}, including the
-  recursive calls. First, there are one call for each root. Second,
-  two recursive calls per object being marked. Therefore, the total
-  number of calls to \proc{DFS} is \(O(r + m)\), where \(r\)~is the
-  number of roots, and \(m\)~is the number of marked objects.
+  recursive calls. First, there is one call for each root. Second, two
+  recursive calls per object being marked. Therefore, the total number
+  of calls to \proc{DFS} is \(O(r + m)\), where \(r\)~is the number of
+  roots, and \(m\)~is the number of marked objects.
 
   \bigskip
 
@@ -449,5 +458,346 @@ allocation.
 
 \end{frame}
 
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  The previous pseudo\hyp{}code uses function calls, but it is better
+  for the collector to not modify the call stack, which is meant for
+  the mutator.
+
+  \bigskip
+
+  Let us write a single loop instead, one that manages a stack of
+  pointers to be traversed.
+  \begin{codebox}
+    \(\proc{Mark}()\)\\
+    \li \For \kw{each} root \(r\)
+    \li \Do push \(r\) \End
+    \li \While the stack is not empty
+    \li \Do pop a pointer \(o\)
+    \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
+    \li \Then mark \(o\); push \(o\).left; push \(o\).right
+    \End\End
+  \end{codebox}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  We could have used a data structure other than a stack, because the
+  order in which the objects are visited does not matter.
+
+  \bigskip
+
+  We also could avoid pushing \textbf{nil} pointers.
+
+  \bigskip
+
+  If we interpret \(o\)~as a linked list so that \(o\).left points to
+  the contents of the cell, and \(o\).right points to the next cell,
+  then what is the behaviour of the code above? In particular, what is
+  the size of the size of the stack?
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  We see that \(o\).left is pushed \emph{before} \(o\).right, so the
+  next pointer to be popped is \(o\).right, and so forth until the end
+  of the list, that is \(o\).right is \textbf{nil}. So the size of the
+  stack ends up being the same as the list's. If the list is large,
+  this might be a problem.
+
+  \bigskip
+
+  Instead, we could \textbf{push} \(o\).left \textbf{after}
+  \(o\).right. This way, the contents of a cell would be traversed
+  before the next cell, that is, the rest of the list. Therefore the
+  traversal cost (in terms of memory) does not depend on the size of
+  the list.
+
+  \bigskip
+
+  In a functional programming language, lists are the bread and butter
+  of programmers, and the GC traversing the head before the tail of
+  the list is an improvement.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  As we just saw, the size of the traversal stack can be linear in the
+  size of the reachable data. But how is that stack implemented?
+
+  \bigskip
+
+  It cannot be allocated in the heap with the mutator's data, as the
+  heap must remain the same during a collection. Instead, is relies on
+  an array whose size is fixed beforehand.
+
+  \bigskip
+
+  An element of that array then fits a word (interpreted as an
+  address), which is optimal.
+
+  \bigskip
+
+  Nevertheless, if the heap can contain up to \(n\)~objects, that
+  array should be of size~\(n\), even if not use completely. Moreover,
+  if each block contains at least three words (a header and two
+  pointers), then the length of the stack-array should be a third of
+  that of the heap, which is considerable.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  One obvious solution is having a bounded stack that is not too
+  large. If it becomes full, we drop any new pointer. At the end of
+  the marking, the collector knows (the stack overflow set a flag)
+  that the graph was not traversed in its entirety.
+
+  \bigskip
+
+  In that case, a linear sweep of the heap (not the graph) is
+  performed: whenever a marked object is found to point to an unmarked
+  object, we run the marking algorithm from it. This process is
+  iterated until a fixed point (no new object is marked): all
+  reachable objects have then been marked.
+
+  \bigskip
+
+  Additionally, in case of a stack overflow, the size of the stack can
+  be doubled for the next collection.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  Another solution by Deutsch, Schorr and Waite (DSW), more complex
+  and costly, consists in dispensing with the stack entirely. Instead,
+  the pointers in the heap are modified to keep track of the path of
+  the marking.
+
+  \bigskip
+
+  Let us illustrate the basic technique behind DSW, called
+  \textbf{pointer reversal}, on a singly\hyp{}linked list containing
+  only primitive types, so each object~\(o\) has exactly one
+  pointer~\(o\).next. For instance
+  \[
+  A \longrightarrow B \longrightarrow C \longrightarrow \textbf{nil}
+  \]
+  Let's have the collector traverse it from~\(A\) without a stack
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  The DSW maintains three pointers:
+  \begin{enumerate}
+
+    \item \(p\)~points to the previous visited node (\textbf{nil}
+      for~\(A\));
+
+    \item \(q\)~points to the current node being visited (to be
+      marked or marked);
+
+    \item \(r\)~points to the rest of the list.
+
+  \end{enumerate}
+  Initially:
+  \[
+  \begin{array}{ccccccccc}
+    \textbf{nil} & \hphantom{\longleftarrow} & A & \longrightarrow & B &
+    \longrightarrow & C & \longrightarrow & \textbf{nil} \\
+    \uparrow   && \uparrow && \uparrow \\
+    p          && q        && r
+  \end{array}
+  \]
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+  We can mark~\(A\) and set \(A\).next to point backwards to~\textbf{nil}:
+  \[
+  \begin{array}{ccccccccc}
+    \textbf{nil} & \longleftarrow & A^* & \hphantom{\longrightarrow} & B
+    & \longrightarrow & C & \longrightarrow & \textbf{nil} \\
+    \uparrow   && \uparrow && \uparrow          \\
+    p          && q        && r
+  \end{array}
+  \]
+  Then we move \(p\), \(q\)~and~\(r\) one step to the right:
+  \[
+  \begin{array}{ccccccccc}
+    \textbf{nil} & \longleftarrow & A^* & \hphantom{\longrightarrow} & B
+    & \longrightarrow & C & \longrightarrow & \textbf{nil} \\
+    && \uparrow && \uparrow && \uparrow \\
+    && p        && q        && r
+  \end{array}
+  \]
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  We can mark~\(B\) and set \(B\).next to point backwards to~\(A\):
+  \[
+  \begin{array}{ccccccccc}
+    \textbf{nil} & \longleftarrow & A^* & \longleftarrow & B^*
+    & \hphantom{\longrightarrow} & C & \longrightarrow & \textbf{nil} \\
+    && \uparrow && \uparrow && \uparrow \\
+    && p        && q        && r
+  \end{array}
+  \]
+  Then we move \(p\), \(q\)~and~\(r\) one step to the right:
+  \[
+  \begin{array}{ccccccccc}
+    \textbf{nil} & \longleftarrow & A^* & \longleftarrow & B^*
+    & \hphantom{\longrightarrow} & C & \longrightarrow & \textbf{nil} \\
+    &&&& \uparrow && \uparrow && \uparrow \\
+    &&&& p        && q        && r
+  \end{array}
+  \]
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  We can mark~\(C\) and set \(C\).next to point backwards to~\(B\):
+  \[
+  \begin{array}{ccccccccc}
+    \textbf{nil} & \longleftarrow & A^* & \longleftarrow & B^*
+    & \longleftarrow & C^* & \hphantom{\longrightarrow} & \textbf{nil} \\
+    &&&& \uparrow && \uparrow && \uparrow \\
+    &&&& p        && q        && r
+  \end{array}
+  \]
+  We are done. To return, we need to reverse the pointers again, this
+  time by swapping \(p\)~and~\(r\):
+  \[
+  \begin{array}{ccccccccc}
+    \textbf{nil} & \longleftarrow & A^* & \longleftarrow & B^*
+    & \longleftarrow & C^* & \hphantom{\longrightarrow} & \textbf{nil} \\
+    &&&& \uparrow && \uparrow && \uparrow \\
+    &&&& r        && q        && p
+  \end{array}
+  \]
+  The general case (trees, graphs) is more complicated, but this gives
+  the gist of it.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  Let us consider now the second phase: sweeping.
+
+  \bigskip
+
+  During marking, we considered the graph of objects. Now we look at
+  the heap as a continuous piece of memory, that is, a table indexed
+  with memory addresses.
+
+  \bigskip
+
+  In such a view of the heap, we see a series of blocks, either of
+  (allocated) objects (in which case they start with a header) or not
+  in use (free blocks).
+
+  \bigskip
+
+  To understand how to sweep unreachable objects, we first need to
+  know how those were allocated first.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  \textbf{Sequential allocation} is a simple method consisting in
+  \textbf{partitioning the heap} in two areas: one for the objects
+  (dead or alive) and a \textbf{free zone} adjacent to it. The GC has
+  a pointer to the start of the free zone, and another to the upper
+  limit of that zone (to avoid overwriting in case of overflow). A new
+  object of size~\(n\) is allocated at that address (modulo some
+  alignment padding) as follows:
+  \begin{figure}
+    \includegraphics[width=\textwidth]{seq_alloc.png}
+  \end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  We assume that the collector
+  \begin{itemize}
+
+    \item can determine the size of an object by means of \proc{Size},
+
+    \item and manages a pointer \textbf{free} to the start of the free
+      zone, and another, \textbf{limit}, to the upper limit of that
+      zone.
+
+  \end{itemize}
+  \begin{codebox}
+    \(\proc{SeqAlloc}(o)\)\\
+    \li \(\id{free'} \gets \kw{free} + \proc{Size}(o)\)
+    \li \If \(\id{free'} > \kw{limit}\)
+    \li \Then \(\proc{SeqAlloc} \gets \kw{nil}\)\RComment Insufficient memory
+    \li \Else \(\proc{Allocate}(o)\)\RComment At the address \kw{free}
+    \li \(\kw{free} \gets \id{free'}\)\RComment Bump pointer
+    \li \(\proc{SeqAlloc} \gets \kw{free}\)
+    \End
+  \end{codebox}
+  This is simple and efficient (locality enables good cache
+  performance). But, if objects are never moved, deallocations will
+  create small blocks that cannot be reused (not in the free zone):
+  this is called \textbf{fragmentation}. We shall come back to this.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  Another technique does not partition the heap and assumes that the
+  collector
+  \begin{itemize}
+
+    \item can distinguish allocated blocks from those that are free to
+      use;
+
+    \item can determine the size of each block and free zones;
+
+    \item maintains the set of all free zones in a \textbf{free list}.
+
+  \end{itemize}
+
+  In order to distinguish an allocated object from a free zone, it
+  suffices to store
+
+\end{frame}
 
 \end{document}

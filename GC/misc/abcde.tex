@@ -1,0 +1,20 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath,amssymb}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[arrows=->,nodesep=2pt,levelsep=20pt,treesep=14pt]{\TR{A}}{
+  \pstree{\TR{B}}{
+    \TR{D}
+    \TR{E}
+  }
+  \TR{C}
+}
+\endTeXtoEPS
+
+\end{document}
