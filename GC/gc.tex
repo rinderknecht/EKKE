@@ -381,10 +381,10 @@ allocation.
   \begin{codebox}
     \(\proc{DFS}(o)\)\\
     \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is not marked
-    \li \Then \text{mark} \(o\);
-    \li \proc{DFS}(o.left);
-    \li \proc{DFA}(o.right)
-    \End
+    \li \Then \text{mark} \(o\)
+    \li       \proc{DFS}(o.left)
+    \li       \proc{DFA}(o.right)
+        \End
   \end{codebox}
   Note how we use tabulations to suggest blocks of instructions. Finally:
   \begin{codebox}
@@ -483,12 +483,13 @@ allocation.
     \(\proc{Mark}()\)\RComment New definition! \\
     \li \For \kw{each} root \(r\) \kw{do} push \(r\);
     \li \While the stack is not empty
-    \li \Do pop a pointer \(o\);
-    \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
-    \li \Then mark \(o\);
-    \li       push \(o\).left;
-    \li       push \(o\).right
-    \End\End
+    \li \Do pop a pointer \(o\)
+    \li     \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
+    \li     \Then mark \(o\)
+    \li           push \(o\).left
+    \li          push \(o\).right
+            \End
+        \End
   \end{codebox}
 
 \end{frame}
@@ -545,13 +546,13 @@ allocation.
 
   \begin{codebox}
     \(\proc{Mark}()\)\RComment Second redefinition, more efficient \\
-    \li \For \kw{each} root \(r\) \kw{do} push \(r\);
+    \li \For \kw{each} root \(r\) \kw{do} push \(r\)
     \li \While the stack is not empty
-    \li \Do pop a pointer \(o\);
+    \li \Do pop a pointer \(o\)
     \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
-    \li \Then mark \(o\);
+    \li \Then mark \(o\)
     \li       push \(o\).right\RComment Right first
-    \li       push \(o\).left;
+    \li       push \(o\).left
     \End\End
   \end{codebox}
 
@@ -801,10 +802,10 @@ allocation.
     the header of \(o\)
     \li \If \(\id{free'} > \kw{limit}\)
     \li \Then \(\proc{SeqAlloc} \gets \kw{nil}\)\RComment Insufficient memory
-    \li \Else \(\proc{Write}(o);\)\RComment At the address \kw{free}
-    \li       \(\kw{free} \gets \id{free'};\)\RComment Bump pointer
+    \li \Else \(\proc{Write}(o)\)\RComment At the address \kw{free}
+    \li       \(\kw{free} \gets \id{free'}\)\RComment Bump pointer
     \li       \(\proc{SeqAlloc} \gets \kw{free}\)
-    \End
+        \End
   \end{codebox}
   This is simple and efficient (locality enables good cache
   performance). But, if objects are never moved, deallocations will
@@ -915,17 +916,16 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  We can now write the procedure \proc{New} of the GC that is called
-  by the runtime system:
+  We can now write the GC procedure \proc{New} that is called by the
+  runtime system:
   \begin{codebox}
     \(\proc{New}(o)\)\\
     \li \If \(\proc{IsEmpty}()\)
-    \li \Then \kw{begin}
-    \li       \(\proc{Mark}();\)
-    \li       \(\proc{Sweep}();\)
+    \li \Then \(\proc{Mark}()\)
+    \li       \(\proc{Sweep}()\)
     \li       \If \(\proc{IsEmpty}()\)
     \li       \Then \kw{fail}
-    \li       \Else \(\proc{Allocate}(o)\)
+    \li       \Else \(\proc{Allocate}(o)\)\RComment Can fail too.
               \End
     \li  \Else \(\proc{Allocate}(o)\)
          \End
