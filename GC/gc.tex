@@ -6,6 +6,7 @@
 \usepackage{amssymb,amsmath}
 \usepackage{xspace}
 \usepackage{hyphenat}
+\usepackage{adjustbox}
 %\usepackage{verbatim}
 
 % Pseudo-code typesetting (algorithms)
@@ -22,6 +23,7 @@
 \newcommand\Csharp{\lang{C\#}}
 \newcommand\Haskell{\lang{Haskell}}
 \newcommand\OCaml{\lang{OCaml}}
+\newcommand\Python{\lang{Python}}
 
 \frenchspacing  % Follow French conventions after a period
 
@@ -94,9 +96,9 @@ bits in modern computers.
 
 \bigskip
 
-In other words, we can imagine memory as a table with addresses as
-keys, and words as values. Those values may be interpreted as another
-key (address) or not (primitive type).
+In other words, we can imagine memory as an array of words indexed by
+addresses. Those words may be interpreted as an address or a primitive
+type.
 
 \bigskip
 
@@ -135,7 +137,7 @@ allocation.
 
   In \C, the premature of an object may lead to errors:
   \begin{center}
-    \includegraphics[width=0.5\textwidth]{wrong_free.png}
+    \includegraphics[width=0.8\textwidth]{wrong_free.png}
   \end{center}
   Here, \texttt{B} has been freed. The live object \texttt{A} now
   contains a \textbf{dangling pointer}, and the memory occupied by
@@ -261,8 +263,15 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
+  \vspace*{-5mm}
   \begin{center}
-    \includegraphics[width=\textwidth]{memory.png}
+  \adjustbox{
+  width=\textwidth,
+  trim=5mm 0 5mm 0,
+  clip
+}{%
+  \includegraphics{memory.png}
+  }
   \end{center}
 
 \end{frame}
@@ -372,19 +381,19 @@ allocation.
   \begin{codebox}
     \(\proc{DFS}(o)\)\\
     \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is not marked
-    \li \Then \kw{begin}
-    \zi \text{mark} \(o\);
-    \zi \proc{DFS}(o.left);
-    \zi \proc{DFA}(o.right)
-    \zi \kw{end}
+    \li \Then \text{mark} \(o\);
+    \li \proc{DFS}(o.left);
+    \li \proc{DFA}(o.right)
     \End
   \end{codebox}
+  Note how we use tabulations to suggest blocks of instructions. Finally:
   \begin{codebox}
     \(\proc{Mark}()\)\\
     \li \For \kw{each} root \(r\) \kw{do} \proc{DFS}(r)
   \end{codebox}
 
 \end{frame}
+
 
 \begin{frame}
   \frametitle{Garbage Collection}
@@ -471,13 +480,14 @@ allocation.
   Let us write a single loop instead, one that manages a stack of
   pointers to be traversed.
   \begin{codebox}
-    \(\proc{Mark}()\)\\
-    \li \For \kw{each} root \(r\)
-    \li \Do push \(r\) \End
+    \(\proc{Mark}()\)\RComment New definition! \\
+    \li \For \kw{each} root \(r\) \kw{do} push \(r\);
     \li \While the stack is not empty
-    \li \Do pop a pointer \(o\)
+    \li \Do pop a pointer \(o\);
     \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
-    \li \Then mark \(o\); push \(o\).left; push \(o\).right
+    \li \Then mark \(o\);
+    \li       push \(o\).left;
+    \li       push \(o\).right
     \End\End
   \end{codebox}
 
@@ -499,7 +509,7 @@ allocation.
   If we interpret \(o\)~as a linked list so that \(o\).left points to
   the contents of the cell, and \(o\).right points to the next cell,
   then what is the behaviour of the code above? In particular, what is
-  the size of the size of the stack?
+  the size of the stack?
 
 \end{frame}
 
@@ -523,8 +533,27 @@ allocation.
   \bigskip
 
   In a functional programming language, lists are the bread and butter
-  of programmers, and the GC traversing the head before the tail of
-  the list is an improvement.
+  of programmers, therefore a GC traversing the head before the tail
+  of the list is a significant improvement.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+
+  \begin{codebox}
+    \(\proc{Mark}()\)\RComment Second redefinition, more efficient \\
+    \li \For \kw{each} root \(r\) \kw{do} push \(r\);
+    \li \While the stack is not empty
+    \li \Do pop a pointer \(o\);
+    \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
+    \li \Then mark \(o\);
+    \li       push \(o\).right\RComment Right first
+    \li       push \(o\).left;
+    \End\End
+  \end{codebox}
 
 \end{frame}
 
@@ -560,18 +589,18 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  One obvious solution is having a bounded stack that is not too
-  large. If it becomes full, we drop any new pointer. At the end of
-  the marking, the collector knows (the stack overflow set a flag)
-  that the graph was not traversed in its entirety.
+  One obvious solution is having \textbf{a bounded stack} that is not
+  too large. If it becomes full, we drop any new pointer. At the end
+  of the marking, the collector knows that the graph was not traversed
+  in its entirety, because the stack overflow set a flag.
 
   \bigskip
 
-  In that case, a linear sweep of the heap (not the graph) is
-  performed: whenever a marked object is found to point to an unmarked
-  object, we run the marking algorithm from it. This process is
-  iterated until a fixed point (no new object is marked): all
-  reachable objects have then been marked.
+  In that case, a linear sweep of the whole heap is performed:
+  whenever a marked object is found to point to an unmarked object, we
+  run the marking algorithm from it. This process is iterated until a
+  fixed point (no new object is marked): all reachable objects have
+  then been marked.
 
   \bigskip
 
@@ -584,10 +613,10 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  Another solution by Deutsch, Schorr and Waite (DSW), more complex
-  and costly, consists in dispensing with the stack entirely. Instead,
-  the pointers in the heap are modified to keep track of the path of
-  the marking.
+  Another solution by Deutsch, Schorr and Waite (DSW), more complex,
+  consists in dispensing with the stack entirely. Instead, the
+  pointers in the heap are modified to keep track of the path of the
+  marking.
 
   \bigskip
 
@@ -598,7 +627,7 @@ allocation.
   \[
   A \longrightarrow B \longrightarrow C \longrightarrow \textbf{nil}
   \]
-  Let's have the collector traverse it from~\(A\) without a stack
+  The collector starts the traversal from~\(A\) without a stack
 
 \end{frame}
 
@@ -609,15 +638,19 @@ allocation.
   The DSW maintains three pointers:
   \begin{enumerate}
 
-    \item \(p\)~points to the previous visited node (\textbf{nil}
-      for~\(A\));
-
     \item \(q\)~points to the current node being visited (to be
       marked or marked);
 
-    \item \(r\)~points to the rest of the list.
+    \item \(p\)~points to the previous visited node (\(p \rightarrow
+      \textbf{nil}\) if \(q \rightarrow A\));
+
+    \item \(r\)~points to the rest of the list (\(r \rightarrow
+      \textbf{nil}\) if \(q \rightarrow C\)).
 
   \end{enumerate}
+
+  \medskip
+
   Initially:
   \[
   \begin{array}{ccccccccc}
@@ -633,7 +666,7 @@ allocation.
 
 \begin{frame}
   \frametitle{Garbage Collection}
-  We can mark~\(A\) and set \(A\).next to point backwards to~\textbf{nil}:
+  We can mark~\(A\) and set \(A\).next to point backwards to~\(p\):
   \[
   \begin{array}{ccccccccc}
     \textbf{nil} & \longleftarrow & A^* & \hphantom{\longrightarrow} & B
@@ -714,19 +747,20 @@ allocation.
   \bigskip
 
   During marking, we considered the graph of objects. Now we look at
-  the heap as a continuous piece of memory, that is, a table indexed
-  with memory addresses.
+  the heap as an array of words indexed by addresses. (This dual view
+  of the heap, either as a graph or an array, is crucial in
+  understanding garbage collection.)
 
   \bigskip
 
   In such a view of the heap, we see a series of blocks, either of
-  (allocated) objects (in which case they start with a header) or not
-  in use (free blocks).
+  (allocated) objects --- in which case they start with a header ---
+  or not in use (free blocks).
 
   \bigskip
 
   To understand how to sweep unreachable objects, we first need to
-  know how those were allocated first.
+  know how objects were allocated first.
 
 \end{frame}
 
@@ -736,7 +770,7 @@ allocation.
 
   \textbf{Sequential allocation} is a simple method consisting in
   \textbf{partitioning the heap} in two areas: one for the objects
-  (dead or alive) and a \textbf{free zone} adjacent to it. The GC has
+  (dead or alive) and a \textbf{free zone adjacent to it}. The GC has
   a pointer to the start of the free zone, and another to the upper
   limit of that zone (to avoid overwriting in case of overflow). A new
   object of size~\(n\) is allocated at that address (modulo some
@@ -754,7 +788,7 @@ allocation.
   We assume that the collector
   \begin{itemize}
 
-    \item can determine the size of an object by means of \proc{Size},
+    \item can determine the size of a block by means of \proc{Size},
 
     \item and manages a pointer \textbf{free} to the start of the free
       zone, and another, \textbf{limit}, to the upper limit of that
@@ -762,19 +796,21 @@ allocation.
 
   \end{itemize}
   \begin{codebox}
-    \(\proc{SeqAlloc}(o)\)\\
-    \li \(\id{free'} \gets \kw{free} + \proc{Size}(o)\)
+    \(\proc{SeqAlloc}(o)\)\RComment \(o\) is an object\\
+    \li \(\id{free'} \gets \kw{free} + \proc{Size}(o)\)\RComment Read
+    the header of \(o\)
     \li \If \(\id{free'} > \kw{limit}\)
     \li \Then \(\proc{SeqAlloc} \gets \kw{nil}\)\RComment Insufficient memory
-    \li \Else \(\proc{Allocate}(o)\)\RComment At the address \kw{free}
-    \li \(\kw{free} \gets \id{free'}\)\RComment Bump pointer
-    \li \(\proc{SeqAlloc} \gets \kw{free}\)
+    \li \Else \(\proc{Write}(o);\)\RComment At the address \kw{free}
+    \li       \(\kw{free} \gets \id{free'};\)\RComment Bump pointer
+    \li       \(\proc{SeqAlloc} \gets \kw{free}\)
     \End
   \end{codebox}
   This is simple and efficient (locality enables good cache
   performance). But, if objects are never moved, deallocations will
-  create small blocks that cannot be reused (not in the free zone):
-  this is called \textbf{fragmentation}. We shall come back to this.
+  create free blocks that cannot be reused, because they are not in
+  the free zone: this is called \textbf{fragmentation}. We shall come
+  back to this.
 
 \end{frame}
 
@@ -782,21 +818,125 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  Another technique does not partition the heap and assumes that the
-  collector
+  Another technique does not partition the heap and, instead, assumes
+  that the collector
   \begin{itemize}
 
     \item can distinguish allocated blocks from those that are free to
       use;
 
-    \item can determine the size of each block and free zones;
+    \item can determine the size of each block (allocated and free);
 
-    \item maintains the set of all free zones in a \textbf{free list}.
+    \item maintains the set of all free blocks in a \textbf{free
+      list}.
 
   \end{itemize}
+  Objects already have a one-word header. \textbf{Free blocks need a
+    header} too:
+  \begin{enumerate}
 
-  In order to distinguish an allocated object from a free zone, it
-  suffices to store
+    \item To distinguish an allocated object from a free block, we
+      store in the first word a \textbf{number unique to all free
+        blocks}.
+
+    \item In the second word, the \textbf{size of the block} is
+      stored.
+
+    \item Since free and allocated blocks share the same space (no
+      partitioning of the heap), we need to connect the all free
+      blocks --- in a manner reminiscent of how the objects are
+      connected to each other in a graph. So the third word of their
+      header contains a \textbf{pointer to the next free block},
+      making up the free list. The address of the first free block
+      will be held in a global variable.
+
+  \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  In all, free blocks require three-word header, which is acceptable,
+  as, for instance, we have seen that a simple linked list requires
+  three words of data (the header is metadata).
+
+  \bigskip
+
+  The free list will require three main operations:
+  \begin{enumerate}
+
+    \item a predicate \(\proc{IsEmpty}()\) on whether the free list is
+      empty;
+
+    \item a procedure \(\proc{Allocate}(o)\) that looks up a free
+      block large enough to contain the objet~\(o\), allocates and
+      initialises the memory, and updates the free list (leaving
+      perhaps a smaller free block) ---~otherwise fails;
+
+    \item a procedure \(\proc{Free}(o)\) that turns an allocated
+      object~\(o\) into a free block that is in turn registered with
+      the free list, perhaps after coalescing it with any contiguous
+      ones.
+
+  \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  Assuming a free list and the previous primitive operations, we can
+  return to the second phase of the collector: sweeping.
+  \begin{codebox}
+    \(\proc{Sweep}()\)\\
+    \li \(a \gets \text{start of the heap}\)\RComment There is always a
+    block at address \(a\)
+    \li \While \(a < \text{end of the heap}\)
+    \li \Do \(n \gets \proc{Size}(a)\)\RComment Read the header
+    \li     \If \(a\) is an allocated object \(o\)
+    \li     \Then \If \(o\) is marked\RComment \(o\) is alive
+    \li           \Then remove the mark\RComment Write the header
+    \li           \Else \proc{Free}(o)\RComment \(o\) is dead
+                  \End
+            \End
+    \li \(a \gets a + n\)
+        \End
+  \end{codebox}
+  Note how we call \(\proc{Size}(a)\) \emph{before} calling
+  \(\proc{Free}(o)\), as the latter could destroy the information
+  needed by \proc{Size} by coalescing the newly freed block with
+  others.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  We can now write the procedure \proc{New} of the GC that is called
+  by the runtime system:
+  \begin{codebox}
+    \(\proc{New}(o)\)\\
+    \li \If \(\proc{IsEmpty}()\)
+    \li \Then \kw{begin}
+    \li       \(\proc{Mark}();\)
+    \li       \(\proc{Sweep}();\)
+    \li       \If \(\proc{IsEmpty}()\)
+    \li       \Then \kw{fail}
+    \li       \Else \(\proc{Allocate}(o)\)
+              \End
+    \li  \Else \(\proc{Allocate}(o)\)
+         \End
+  \end{codebox}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
 
 \end{frame}
 
