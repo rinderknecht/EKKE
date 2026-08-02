@@ -920,10 +920,10 @@ allocation.
   runtime system:
   \begin{codebox}
     \(\proc{New}(o)\)\\
-    \li \If \(\proc{IsEmpty}()\)
+    \li \If \(\proc{IsEmpty}()\)\RComment Checking the free list
     \li \Then \(\proc{Mark}()\)
     \li       \(\proc{Sweep}()\)
-    \li       \If \(\proc{IsEmpty}()\)
+    \li       \If \(\proc{IsEmpty}()\)\RComment Checking again
     \li       \Then \kw{fail}
     \li       \Else \(\proc{Allocate}(o)\)\RComment Can fail too.
               \End
