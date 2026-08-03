@@ -131,7 +131,7 @@ allocation.
 
 
 \begin{frame}[containsverbatim]
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Memory leak}
 
   \label{C_errors}
 
@@ -206,7 +206,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Roots \& Liveness}
 
   When, at the current point in the execution of a program, the
   address of an object is known, that object is said to be
@@ -296,7 +296,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Mark \& Sweep}
 
   One of the simplest technique for garbage collection is known as
   \textbf{mark \& sweep}.
@@ -321,14 +321,14 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Marking}
 
   In the following pseudo\hyp{}code, we will assume that each
   object~\(o\) has two fields, \(o.\text{left}\) and
   \(o.\text{right}\), each containing a pointer to another object, or
   the special value \texttt{nil}. Each object also contains a
   \textbf{bit field} denoting the states `marked' and `unmarked'
-  (default).
+  (default): this is part of the \textbf{metadata}.
 
   \bigskip
 
@@ -371,7 +371,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Recursive Marking}
 
   For the marking of objects, any graph traversal can do. For example,
   let us run a \textbf{depth\hyp{}first search} from each root:
@@ -469,7 +469,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Iterative Marking}
 
   The previous pseudo\hyp{}code uses function calls, but it is better
   for the collector to not modify the call stack, which is meant for
@@ -480,7 +480,7 @@ allocation.
   Let us write a single loop instead, one that manages a stack of
   pointers to be traversed.
   \begin{codebox}
-    \(\proc{Mark}()\)\RComment New definition! \\
+    \(\proc{Mark}()\)\RComment Iterative definition \\
     \li \For \kw{each} root \(r\) \kw{do} push \(r\);
     \li \While the stack is not empty
     \li \Do pop a pointer \(o\)
@@ -541,7 +541,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Efficient Marking}
 
 
   \begin{codebox}
@@ -560,7 +560,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Traversal Stack}
 
   As we just saw, the size of the traversal stack can be linear in the
   size of the reachable data. But how is that stack implemented?
@@ -612,7 +612,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Pointer Reversal}
 
   Another solution by Deutsch, Schorr and Waite (DSW), more complex,
   consists in dispensing with the stack entirely. Instead, the
@@ -741,7 +741,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Sweeping}
 
   Let us consider now the second phase: sweeping.
 
@@ -767,7 +767,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Sequential Allocation}
 
   \textbf{Sequential allocation} is a simple method consisting in
   \textbf{partitioning the heap} in two areas: one for the objects
@@ -817,7 +817,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Free Lists}
 
   Another technique does not partition the heap and, instead, assumes
   that the collector
@@ -887,7 +887,7 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Sweeping}
 
   Assuming a free list and the previous primitive operations, we can
   return to the second phase of the collector: sweeping.
@@ -914,20 +914,21 @@ allocation.
 \end{frame}
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Allocation}
 
   We can now write the GC procedure \proc{New} that is called by the
   runtime system:
   \begin{codebox}
     \(\proc{New}(o)\)\\
     \li \If \(\proc{IsEmpty}()\)\RComment Checking the free list
-    \li \Then \(\proc{Mark}()\)
-    \li       \(\proc{Sweep}()\)
+    \li \Then \(\proc{Mark}()\)\RComment Marking live objects
+    \li       \(\proc{Sweep}()\)\RComment Reclaiming dead objects
     \li       \If \(\proc{IsEmpty}()\)\RComment Checking again
-    \li       \Then \kw{fail}
-    \li       \Else \(\proc{Allocate}(o)\)\RComment Can fail too.
+    \li       \Then \kw{fail}\RComment Memory is full
+    \li       \Else \(\proc{Allocate}(o)\)\RComment Fails if \(o\)
+    doesn't fit
               \End
-    \li  \Else \(\proc{Allocate}(o)\)
+    \li  \Else \(\proc{Allocate}(o)\)\RComment Idem.
          \End
   \end{codebox}
 
