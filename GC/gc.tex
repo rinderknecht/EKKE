@@ -767,60 +767,9 @@ allocation.
 
 
 \begin{frame}
-  \frametitle{Garbage Collection/Sequential Allocation}
+  \frametitle{Garbage Collection/Allocation with Free Lists}
 
-  \textbf{Sequential allocation} is a simple method consisting in
-  \textbf{partitioning the heap} in two areas: one for the objects
-  (dead or alive) and a \textbf{free zone adjacent to it}. The GC has
-  a pointer to the start of the free zone, and another to the upper
-  limit of that zone (to avoid overwriting in case of overflow). A new
-  object of size~\(n\) is allocated at that address (modulo some
-  alignment padding) as follows:
-  \begin{figure}
-    \includegraphics[width=\textwidth]{seq_alloc.png}
-  \end{figure}
-
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Garbage Collection}
-
-  We assume that the collector
-  \begin{itemize}
-
-    \item can determine the size of a block by means of \proc{Size},
-
-    \item and manages a pointer \textbf{free} to the start of the free
-      zone, and another, \textbf{limit}, to the upper limit of that
-      zone.
-
-  \end{itemize}
-  \begin{codebox}
-    \(\proc{SeqAlloc}(o)\)\RComment \(o\) is an object\\
-    \li \(\id{free'} \gets \kw{free} + \proc{Size}(o)\)\RComment Read
-    the header of \(o\)
-    \li \If \(\id{free'} > \kw{limit}\)
-    \li \Then \(\proc{SeqAlloc} \gets \kw{nil}\)\RComment Insufficient memory
-    \li \Else \(\proc{Write}(o)\)\RComment At the address \kw{free}
-    \li       \(\kw{free} \gets \id{free'}\)\RComment Bump pointer
-    \li       \(\proc{SeqAlloc} \gets \kw{free}\)
-        \End
-  \end{codebox}
-  This is simple and efficient (locality enables good cache
-  performance). But, if objects are never moved, deallocations will
-  create free blocks that cannot be reused, because they are not in
-  the free zone: this is called \textbf{fragmentation}. We shall come
-  back to this.
-
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Garbage Collection/Free Lists}
-
-  Another technique does not partition the heap and, instead, assumes
-  that the collector
+  Let us assume that the collector
   \begin{itemize}
 
     \item can distinguish allocated blocks from those that are free to
@@ -931,6 +880,83 @@ allocation.
     \li  \Else \(\proc{Allocate}(o)\)\RComment Idem.
          \End
   \end{codebox}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Drawbacks of Free Lists}
+
+   When allocating objects of different sizes, the heap will contain
+   holes (free blocks) of varying sizes: this is
+   \textbf{fragmentation}.
+   \begin{enumerate}
+
+     \item This may lead to an \textbf{allocation failure} because an
+       object can fit in none of those, even if the total available
+       memory is large enough.
+
+     \item Another unpleasant effect of fragmentation is when that two
+       successive allocation requests are satisfied by free blocks
+       that are very far apart in the free list: this breaks data
+       locality, which incurs \textbf{cache misses} and virtual page
+       loads.
+
+     \item Yet another drawback of a free list is simply its linear
+       structure, yielding an allocation to be performed in
+       \textbf{linear time} in the worst case.
+
+   \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Sequential Allocation}
+
+  One way to address the locality and linearity issues is
+  \textbf{sequential allocation} whereby \textbf{the heap is
+    partitioned in two} areas: one for the objects (dead or alive) and
+  a \textbf{free zone adjacent to it}. The GC has a pointer to the
+  start of the free zone, and another to the upper limit of that zone
+  (to avoid overwriting in case of overflow). A new object of
+  size~\(n\) is allocated at that address (modulo some alignment
+  padding) as follows:
+  \begin{figure}
+    \includegraphics[width=\textwidth]{seq_alloc.png}
+  \end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  We assume that the collector
+  \begin{itemize}
+
+    \item can determine the size of a block by means of \proc{Size},
+
+    \item and manages a pointer \textbf{free} to the start of the free
+      zone, and another, \textbf{limit}, to the upper limit of that
+      zone.
+
+  \end{itemize}
+  \begin{codebox}
+    \(\proc{SeqAlloc}(o)\)\RComment \(o\) is an object\\
+    \li \(\id{free'} \gets \kw{free} + \proc{Size}(o)\)\RComment Read
+    the header of \(o\)
+    \li \If \(\id{free'} > \kw{limit}\)
+    \li \Then \(\proc{SeqAlloc} \gets \kw{nil}\)\RComment Insufficient memory
+    \li \Else \(\proc{Write}(o)\)\RComment At the address \kw{free}
+    \li       \(\kw{free} \gets \id{free'}\)\RComment Bump pointer
+    \li       \(\proc{SeqAlloc} \gets \kw{free}\)
+        \End
+  \end{codebox}
+  No linear search. Locality enables good cache performance. But, if
+  objects are never moved, deallocations will create free blocks that
+  cannot be reused, simply because they are not in the free zone: we
+  still have the core problem of \textbf{fragmentation}.
 
 \end{frame}
 
