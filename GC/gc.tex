@@ -422,50 +422,50 @@ allocation.
 \end{frame}
 
 
-\begin{frame}
-  \frametitle{Garbage Collection}
+%% \begin{frame}
+%%   \frametitle{Garbage Collection}
 
-  Let us prove something that might seem obvious: namely that,
-  \textbf{all reachable objects, and only them, are marked by a call
-    to \proc{Mark}}.
+%%   Let us prove something that might seem obvious: namely that,
+%%   \textbf{all reachable objects, and only them, are marked by a call
+%%     to \proc{Mark}}.
 
-  \bigskip
+%%   \bigskip
 
-  We proceed by induction on the assertion: `Object \(o\) is reachable
-  from the roots.'
-  \begin{enumerate}
+%%   We proceed by induction on the assertion: `Object \(o\) is reachable
+%%   from the roots.'
+%%   \begin{enumerate}
 
-    \item In the base case, \(o\)~is the direct successor of a root,
-      so, by the definition of \proc{Mark}, one call to
-      \(\proc{DFS}(o)\) was performed.
+%%     \item In the base case, \(o\)~is the direct successor of a root,
+%%       so, by the definition of \proc{Mark}, one call to
+%%       \(\proc{DFS}(o)\) was performed.
 
-    \item In the inductive case, \(o\)~is the direct successor of an
-      object~\(o'\) that is itself reachable from the roots. The
-      induction hypothesis applies to~\(o'\), and says that at least
-      one call to \(\proc{DFS}(o')\) was made.
+%%     \item In the inductive case, \(o\)~is the direct successor of an
+%%       object~\(o'\) that is itself reachable from the roots. The
+%%       induction hypothesis applies to~\(o'\), and says that at least
+%%       one call to \(\proc{DFS}(o')\) was made.
 
-  \end{enumerate}
+%%   \end{enumerate}
 
-\end{frame}
+%% \end{frame}
 
 
-\begin{frame}
-  \frametitle{Garbage Collection}
+%% \begin{frame}
+%%   \frametitle{Garbage Collection}
 
-  Let us consider the first of such calls: \(o'\)~was unmarked, thus,
-  according to \proc{DFS}, the test is true, implying a call to
-  \proc{DFS}(\(o'\).left), followed (since \proc{DFS} always terminate
-  on all inputs) by a call to \proc{DFS}(\(o'\).right). From our
-  hypotheses, \(o\)~is either equal to \(o'\).left or \(o'\).right,
-  therefore a call to \(\proc{DFS}(o)\) happened.
+%%   Let us consider the first of such calls: \(o'\)~was unmarked, thus,
+%%   according to \proc{DFS}, the test is true, implying a call to
+%%   \proc{DFS}(\(o'\).left), followed (since \proc{DFS} always terminate
+%%   on all inputs) by a call to \proc{DFS}(\(o'\).right). From our
+%%   hypotheses, \(o\)~is either equal to \(o'\).left or \(o'\).right,
+%%   therefore a call to \(\proc{DFS}(o)\) happened.
 
-  \bigskip
+%%   \bigskip
 
-  The reciprocal assertion, that is, if a call \(\proc{DFS}(o)\)
-  occurs, then \(o\)~is \textbf{nil} or is reachable from the roots,
-  is easily established.
+%%   The reciprocal assertion, that is, if a call \(\proc{DFS}(o)\)
+%%   occurs, then \(o\)~is \textbf{nil} or is reachable from the roots,
+%%   is easily established.
 
-\end{frame}
+%% \end{frame}
 
 
 \begin{frame}
@@ -555,6 +555,9 @@ allocation.
     \li       push \(o\).left
     \End\End
   \end{codebox}
+  In general, an object will have more than two pointers, and the
+  previous optimisation applies only because the compiler somehow
+  informed the GC that this is a value of the list data type.
 
 \end{frame}
 
@@ -781,8 +784,8 @@ allocation.
       list}.
 
   \end{itemize}
-  Objects already have a one-word header. \textbf{Free blocks need a
-    header} too:
+  Objects have a one-word header. \textbf{Free blocks need a header}
+  too:
   \begin{enumerate}
 
     \item To distinguish an allocated object from a free block, we
