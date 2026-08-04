@@ -482,14 +482,13 @@ allocation.
   \begin{codebox}
     \(\proc{Mark}()\)\RComment Iterative definition \\
     \li \For \kw{each} root \(r\) \kw{do} push \(r\);
-    \li \While the stack is not empty
-    \li \Do pop a pointer \(o\)
-    \li     \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
+    \li \While the stack is not empty \kw{do}
+    \li \> pop a pointer \(o\)
+    \li \>  \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
     \li     \Then mark \(o\)
     \li           push \(o\).left
     \li          push \(o\).right
             \End
-        \End
   \end{codebox}
 
 \end{frame}
@@ -543,24 +542,39 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection/Efficient Marking}
 
-
   \begin{codebox}
     \(\proc{Mark}()\)\RComment Second redefinition, more efficient \\
     \li \For \kw{each} root \(r\) \kw{do} push \(r\)
-    \li \While the stack is not empty
-    \li \Do pop a pointer \(o\)
-    \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
-    \li \Then mark \(o\)
-    \li       push \(o\).right\RComment Right first
-    \li       push \(o\).left
-    \End\End
+    \li \While the stack is not empty \kw{do}
+    \li \> pop a pointer \(o\)
+    \li \> \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
+    \li    \Then mark \(o\)
+    \li          push \(o\).right\RComment Right first
+    \li          push \(o\).left
+           \End
   \end{codebox}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Traversal Stack}
+
   In general, an object will have more than two pointers, and the
   previous optimisation applies only because the compiler somehow
   informed the GC that this is a value of the list data type.
+  \begin{codebox}
+    \(\proc{Mark}()\)\RComment General\\
+    \li \For \kw{each} root \(r\) \kw{do} push \(r\)
+    \li \While the stack is not empty \kw{do}
+    \li \> pop a pointer \(o\)
+    \li \> \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
+    \li    \Then mark \(o\)
+    \li          \For \kw{each} \(c\) \kw{in} \(\proc{Children}(o)\) \kw{do}
+    push \(c\)
+    \End
+  \end{codebox}
 
 \end{frame}
-
 
 \begin{frame}
   \frametitle{Garbage Collection/Traversal Stack}
@@ -847,16 +861,15 @@ allocation.
     \(\proc{Sweep}()\)\\
     \li \(a \gets \text{start of the heap}\)\RComment There is always a
     block at address \(a\)
-    \li \While \(a < \text{end of the heap}\)
-    \li \Do \(n \gets \proc{Size}(a)\)\RComment Read the header
-    \li     \If \(a\) is an allocated object \(o\)
-    \li     \Then \If \(o\) is marked\RComment \(o\) is alive
-    \li           \Then remove the mark\RComment Write the header
-    \li           \Else \proc{Free}(o)\RComment \(o\) is dead
-                  \End
-            \End
-    \li \(a \gets a + n\)
-        \End
+    \li \While \(a < \text{end of the heap}\) \kw{do}
+    \li \> \(n \gets \proc{Size}(a)\)\RComment Includes the header
+    \li \> \If \(a\) is an allocated object \(o\)
+    \li    \Then \If \(o\) is marked\RComment \(o\) is alive
+    \li          \Then remove the mark\RComment Write the header
+    \li          \Else \proc{Free}(o)\RComment \(o\) is dead
+                 \End
+           \End
+    \li \> \(a \gets a + n\)
   \end{codebox}
   Note how we call \(\proc{Size}(a)\) \emph{before} calling
   \(\proc{Free}(o)\), as the latter could destroy the information
@@ -876,13 +889,137 @@ allocation.
     \li \Then \(\proc{Mark}()\)\RComment Marking live objects
     \li       \(\proc{Sweep}()\)\RComment Reclaiming dead objects
     \li       \If \(\proc{IsEmpty}()\)\RComment Checking again
-    \li       \Then \kw{fail}\RComment Memory is full
-    \li       \Else \(\proc{Allocate}(o)\)\RComment Fails if \(o\)
-    doesn't fit
+    \li       \Then \(\proc{New} \gets \kw{nil}\)\RComment Memory is full
+    \li       \Else \(\proc{New} \gets \proc{Allocate}(o)\)\RComment See next line
               \End
-    \li  \Else \(\proc{Allocate}(o)\)\RComment Idem.
+    \li  \Else \(\proc{New} \gets \proc{Allocate}(o)\)\RComment Fails if \(o\)
+    doesn't fit
          \End
   \end{codebox}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/First-fit Allocation}
+
+  Several implementations of \proc{Allocate} are possible. Perhaps the
+  simplest is \textbf{first-fit allocation}, whereby the first block
+  in the free list that can fit the object is used.
+
+  \bigskip
+
+  Let \(\proc{Next}(p)\) be the address of the free block immediately
+  after the free block~\(p\), and it is an \(l\)\hyp{}value
+  ---~\(\proc{Size}(p)\) too. The value \(\proc{Size}(o)\) is the size
+  of~\(o\) as recorded in the header. Let \textbf{free} be the head of
+  the free list.
+  \begin{codebox}
+    \(\proc{FirstFit}(o)\)\RComment Use in stead of \proc{Allocate} in
+    \proc{New}\\
+    \li \((\id{previous}, \id{current}) \gets (\kw{nil}, \kw{free})\)
+    \li \While \(\id{current} \neq \kw{nil}
+               \,\; \kw{and} \,\; \proc{Size}(current) <
+               \proc{Size}(o)\) \kw{do}
+    \li \> \((\id{previous}, \id{current})
+    \gets (\id{current}, \proc{Next}(\id{current}))\)
+    \End
+    \li \kw{if} \(\id{current} \neq \kw{nil}\) \kw{then} \(\proc{Update}(\id{previous},
+    \id{current}, o)\)
+    \li \(\proc{FirstFit} \gets \id{current}\)
+  \end{codebox}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  Let us use the beginning of a free block to allocate an object:
+  \begin{codebox}
+    \(\proc{Update}(\id{previous}, \id{current}, o)\)\RComment
+    \(\proc{Size}(current) \geqslant \proc{Size}(o)\)\\
+    \li \If \(\proc{Size}(current) = \proc{Size}(o)\)
+    \li \Then \(\proc{Next}(previous) \gets \proc{Next}(current)\)
+    \li \Else \(\id{rest} \gets \id{current} + \; \proc{Size}(o)\)
+    \li       \(\proc{Next}(rest) \gets \proc{Next}(current)\)
+    \li       \(\proc{Size}(rest) \gets \proc{Size}(current) - \proc{Size}(o)\)
+    \li       \(\proc{Next}(previous) \gets \id{rest}\)
+        \End
+    \li \(\proc{Write}(\id{current}, o)\)
+  \end{codebox}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/First-fit Allocation (variant)}
+
+  We could instead use the end of the free block:
+  \begin{codebox}
+    \(\proc{Update}(\id{previous}, \id{current}, o)\)\RComment
+    \(\proc{Size}(current) \geqslant \proc{Size}(o)\)\\
+    \li \If \(\proc{Size}(current) = \proc{Size}(o)\)
+    \li \Then \(\proc{Next}(previous) \gets \proc{Next}(current)\)
+    \li       \(\proc{Update} \gets \id{current}\)
+    \li \Else \(\proc{Size}(current) \gets \proc{Size}(current) - \proc{Size}(o)\)
+    \li       \(\proc{Update} \gets \id{current} + \; \proc{Size}(current)\)
+        \End
+    \li \(\proc{Write}(\proc{Update}, o)\)
+  \end{codebox}
+  Note how \proc{Update} must be a function: it returns the address of
+  the allocated block, and so \proc{FirstFit} should be rewritten
+  sligthly.
+
+  \bigskip
+
+  First-fit allocation tends to accummulate small free blocks at the
+  beginning of the free list, slowing further allocations.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Next-fit Allocation}
+
+  To avoid this, \textbf{next-fit allocation} starts searching a free
+  block where the last allocation succeeded. When the end is reached,
+  search resumes at the beginning, hence it is sometimes called
+  \emph{circular next-fit allocation}.
+
+  \bigskip
+
+  One drawback is that objects from different phases of the mutator
+  execution become mixed together, and, because they die at different
+  times, this increases fragmentation.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Best-fit Allocation}
+
+  \textbf{Best-fit allocation} finds the first smallest free block
+  that fits the object. This avoids splitting large blocks that could
+  otherwise be used later.
+  \begin{codebox}
+    \(\proc{BestFit}(o)\)\\
+    \li \((\id{bestPrev}, \id{best}, \id{bestSize}, \id{previous}, \id{current})
+          \gets (\kw{nil}, \kw{nil}, \infty, \kw{nil}, \kw{free})\)
+    \li \While \(\id{current} \neq \kw{nil}\) \kw{do}
+    \li \> \If \(\proc{Size}(o) \leqslant \proc{Size}(\id{current})\)
+               \kw{and} \(\proc{Size}(\id{current}) < \id{bestSize}\)
+    \li    \Then \((\id{bestPrev}, \id{best}, \id{bestSize}) \gets
+                   (\id{previous}, \id{current}, \proc{Size}(current))\)
+           \End
+    \li \> \((\id{previous}, \id{current}) \gets (\id{current}, \proc{Next}(current))\)
+    \li \If \(\id{best} = \kw{nil}\)
+    \li \Then \(\proc{BestFit} \gets \kw{nil}\)
+    \li \Else \(\proc{BestFit} \gets \proc{Update}(bestPrev, best, o)\)
+        \End
+  \end{codebox}
+  The loop always traverses the free list entirely, whereas
+  \proc{FirstFit} could stop at the head of the list.
 
 \end{frame}
 
@@ -951,7 +1088,7 @@ allocation.
     the header of \(o\)
     \li \If \(\id{free'} > \kw{limit}\)
     \li \Then \(\proc{SeqAlloc} \gets \kw{nil}\)\RComment Insufficient memory
-    \li \Else \(\proc{Write}(o)\)\RComment At the address \kw{free}
+    \li \Else \(\proc{Write}(o, \kw{free})\)\RComment At the address \kw{free}
     \li       \(\kw{free} \gets \id{free'}\)\RComment Bump pointer
     \li       \(\proc{SeqAlloc} \gets \kw{free}\)
         \End
