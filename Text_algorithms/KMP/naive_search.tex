@@ -47,12 +47,13 @@ Na\"{\i}vely matching pattern~\(p\) against text~\(t\)
 
 \begin{codebox}
 \(\proc{Naive}(p, t)\)\\
-\li \(i \gets 0\); \(j \gets 0\)
-\li \While \(i < \len{p}\) \LogAnd \(j < \len{t}\)
-\li \Do \If \(p[i] = t[j]\)
-\li \Then \(i \gets i + 1\); \(j \gets j + 1\)
-\li \Else \(i \gets 0\); \(j \gets j - i + 1\) \>\>\>\>\>\>\Comment We
-slide \(p\) by 1. \End \End
+\li \((i, j) \gets (0, 0)\)
+\li \While \(i < \len{p}\) \LogAnd \(j < \len{t}\) \kw{do}
+\li \> \If \(p[i] = t[j]\)
+\li    \Then \((i, j) \gets (i + 1, j + 1)\)
+\li    \Else \((i, j) \gets (0, j - i + 1)\) \>\>\>\>\>\>\Comment We
+slide \(p\) by 1.
+       \End
 \li \(\proc{Naive} \gets i = \len{p}\)
 \end{codebox}
 

@@ -593,14 +593,14 @@ The idea is to compute all the values of \(\MPfailure{x}{}{i}\) for \emph{increa
 \begin{codebox}
 \(\proc{Next}(x)\)\\
 \li \(\id{next}[0] \gets -1\)
-\li \For \(i \gets 1\) \To \(\len{x} - 1\)
-\li \Do \(j \gets i - 1\)
-\li     \Repeat
+\li \For \(i \gets 1\) \To \(\len{x} - 1\) \kw{do}
+\li \> \(j \gets i - 1\)
+\li \> \Repeat
 \li       \(j \gets \id{next}[j]\)\RComment
 \(\MPfailureName_{x}[j] < j < i\)
 \li       \Until \(j = -1\) \LogOr \(x[j] = x[i-1]\)
-\li     \(\id{next}[i] \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
-= 1+\MPfailure{x}{q}{i-1}\)
+\li \> \(\id{next}[i] \gets 1 + j\)\RComment \(\MPfailure{x}{}{i}
+= 1 + \MPfailure{x}{q}{i-1}\)
     \End
 \li \(\proc{Next} \gets \id{next}\)
 \end{codebox}
@@ -670,15 +670,14 @@ example of pattern is \(p=a^{m}\).
   \frametitle{Morris-Pratt algorithm}
 
 Let us parameterise the search with the failure function:
-
 \begin{codebox}
 \(\proc{Find} (p, t, \id{next})\)\\
-\li \(i \gets 0\); \(j \gets 0\)
-\li \While \(i < \len{p}\) \LogAnd \(j < \len{t}\)
-\li \Do \If \(i = -1\) \LogOr \(p[i] = t[j]\)
-\li \Then \(i \gets i + 1\); \(j \gets j + 1\)
-\li \Else \(i \gets \id{next}[i]\)\RComment \(j\) invariant
-\End \End
+\li \((i, j) \gets (0, 0)\)
+\li \While \(i < \len{p}\) \LogAnd \(j < \len{t}\) \kw{do}
+\li \> \If \(i = -1\) \LogOr \(p[i] = t[j]\)
+\li    \Then \((i, j) \gets (i + 1, j + 1)\)
+\li    \Else \(i \gets \id{next}[i]\)\RComment \(j\) invariant
+       \End
 \li \If \(i = \len{p}\)
 \li \Then \(\proc{Find} \gets j - \len{p}\)\RComment Index of first occurrence
 \li \Else \(\proc{Find} \gets -1\)\RComment Not found

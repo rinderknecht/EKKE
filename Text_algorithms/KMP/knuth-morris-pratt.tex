@@ -106,11 +106,10 @@ outgoing label is still~\(a\), it loses its destination.
 \begin{codebox}
 \(\proc{Next'} (x)\)\\
 \li \(\id{next} \gets \proc{Next}(x)\)
-\li \For \(i \gets 1\) \To \(\len{x} - 1\)
-\li \Do \(j \gets \id{next}[i]\)
-\li \If \(j \geqslant 0\) \LogAnd \(x[j] = x[i]\)
-\li \Then \(\id{next}[i] \gets \id{next}[j]\) \End
-\End
+\li \For \(i \gets 1\) \To \(\len{x} - 1\) \kw{do}
+\li \> \(j \gets \id{next}[i]\)
+\li \> \kw{if} \(j \geqslant 0\) \LogAnd \(x[j] = x[i]\)
+       \kw{then} \(\id{next}[i] \gets \id{next}[j]\)
 \li \(\proc{Next'} \gets \id{next}\)
 \end{codebox}
 
@@ -126,16 +125,13 @@ edges \(i \dashrightarrow j\)).
 \begin{codebox}
 \(\proc{Next'} (x)\)\\
 \li \(\id{next}[0] \gets -1\); \(j \gets 0\)
-\li \For \(i \gets 1\) \To \(\len{x} - 1\)
-\li \Do \If \(x[j] = x[i]\)
+\li \For \(i \gets 1\) \To \(\len{x} - 1\) \kw{do}
+\li \> \If \(x[j] = x[i]\)
 \li   \Then \(\id{next}[i] \gets \id{next}[j]\)
-\li   \Else \(\id{next}[i] \gets j;\)
-\li     \While \(j \geqslant 0\) \LogAnd \(x[j] \neq x[i]\)
-\li     \Do \(j \gets next[j]\)
-        \End
+\li   \Else \(\id{next}[i] \gets j\)
+\li     \While \(j \geqslant 0\) \LogAnd \(x[j] \neq x[i]\) \kw{do} \(j \gets next[j]\)
       \End
-\li \(j \gets j + 1\)
-      \End
+\li \> \(j \gets j + 1\)
 \li \(\proc{Next'} \gets \id{next}\)
 \end{codebox}
 

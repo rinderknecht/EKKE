@@ -113,16 +113,26 @@ of~\(y\).
 \frametitle{The prefix predicate}
 
 An imperative definition:
-
 \begin{codebox}
 \(\proc{Prefix} (x, t)\)\\
 \li \(i \gets 0\)
-\li \While \(i < \text{min}(\len{x}, \len{t}\!)\)
-\li \Do \If \(x[i] = t[i]\)
-\li \Then \(i \gets i + 1\)
-\li \Else \(i \gets \len{x} + 1\) \End \End
-\li \(\proc{Prefix} \gets i = \len{x}\) \End
+\li \While \(i < \text{min}(\len{x}, \len{t}\!)\) \kw{do}
+\li \> \(i \gets 1 + \) \kw{if} \(x[i] = t[i]\) \kw{then} \(i\)
+\kw{else} \(\len{x}\)
+\li \(\proc{Prefix} \gets i = \len{x}\)
 \end{codebox}
+
+
+%% \begin{codebox}
+%% \(\proc{Prefix} (x, t)\)\\
+%% \li \(i \gets 0\)
+%% \li \While \(i < \text{min}(\len{x}, \len{t}\!)\) \kw{do}
+%% \li \> \If \(x[i] = t[i]\)
+%% \li \Then \(i \gets i + 1\)
+%% \li \Else \(i \gets \len{x} + 1\)
+%%     \End
+%% \li \(\proc{Prefix} \gets i = \len{x}\)
+%% \end{codebox}
 
 Does it terminate? What test cases would be meaningful? Is it correct?
 Is it optimal?
@@ -143,10 +153,10 @@ A single static assignment definition:
 \begin{codebox}
 \(\proc{Prefix'} (i,x, t)\)\\
 \li \If \(i < \text{min}(\len{x}, \len{t}\!)\)
-\li \Then \If \(x[i] = t[i]\)
-\li       \Then \(\proc{Prefix'}(i + 1, x, t)\)
-\li       \Else \(\proc{Prefix'}(\len{x} + 1, x, t)\) \End
-\li \Else \(\proc{Prefix'} \gets i = \len{x}\) \End
+\li \Then \proc{Prefix'}(\(1 + \) \kw{if} \(x[i] = t[i]\) \kw{then} \(i\)
+\kw{else} \(\len{x}, x, t)\)
+\li \Else \(\proc{Prefix'} \gets i = \len{x}\)
+    \End
 \end{codebox}
 
 \end{frame}
