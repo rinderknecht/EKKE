@@ -729,17 +729,13 @@ First, here is how to add a word \(w \in \Sigma^{+}\) to a trie
 \(\delta\) is considered here as an array which is modified in place.
 \begin{codebox}
 \(\proc{Add} (w, (Q, \Sigma, \delta, q_0, F))\)\\
-\li \(p \gets q_0\); \(i \gets 0\)
-\li \While \(\delta[p,w[i]]\) is defined\RComment Recognise as much as possible
-\li   \Do \(p \gets \delta[p,w[i]]\); \(i \gets i + 1\)
-      \End
-\li \For \(j \gets i\) \To \(\len{w} - 1\)\RComment Add the rest
-\li \Do \(q \gets \proc{New-state}(Q)\);
-     \(Q \gets Q \cup \{q\}\);
-     \(\delta[p, w[j]] \gets q\);
-     \(p \gets q\)
-    \End
-\li  \(F \gets F \cup \{p\}\)
+\li \((p, i) \gets (q_0, 0)\)
+\li \While \(\delta[p,w[i]]\) is defined \kw{do}\>\RComment Read as much as possible
+\li   \> \((p, i) \gets (\delta[p,w[i]], i + 1)\)
+\li \For \(j \gets i\) \To \(\len{w} - 1\) \kw{do}\>\RComment Add the rest
+\li \> \(q \gets \proc{New-state}(Q)\)
+\li \> \((Q, \delta[p, w[j]], p) \gets (Q \cup \{q\}, q, q)\)
+\li \(F \gets F \cup \{p\}\)
 \end{codebox}
 
 \end{frame}
