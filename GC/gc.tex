@@ -337,7 +337,7 @@ allocation.
 
   Obviously, the bit marks from the first phase constitute the
   information carried over to the sweeping phase, but they also play
-  an essential role during marking: they tell the traversal algorithm
+  an essential rÔle during marking: they tell the traversal algorithm
   to not visit a vertex more than once, so the total cost of
   traversing the graph remains \textbf{linear in the number of
     vertices}.
@@ -1214,7 +1214,7 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Sequential Allocation}
 
   We assume that the collector
   \begin{itemize}
@@ -1246,8 +1246,30 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Copying collectors}
 
+  There is a class of collectors that \textbf{move objects} after they
+  have been allocated, in particular to move them next to each
+  other. This is called \textbf{compaction}, and it gets rid of
+  fragmentation until the next cycle.
+
+  \bigskip
+
+  The simplest of copying collectors is Cheney's algorithm.
+
+  \bigskip
+
+  The general idea is simple enough. The heap is divided in two spaces
+  of same size: one where allocation occurs, one free. Whenever the
+  former is full, the live objects are scanned and copied next to each
+  other at the start of the latter. Then the rôle of the two
+  semispaces is reversed, in particular, dead objects are not
+  collected individually: the whole semispace where they are is now
+  \emph{considered} free.
+
+  \bigskip
+
+  Care must be taken to preserve sharing when copying the objects.
 
 \end{frame}
 
