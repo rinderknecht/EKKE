@@ -754,6 +754,7 @@ allocation.
   \]
   The general case (trees, graphs) is more complicated, but this gives
   the gist of it.
+
 \end{frame}
 
 
@@ -771,9 +772,8 @@ allocation.
 
   \bigskip
 
-  In such a view of the heap, we see a series of blocks, either of
-  (allocated) objects --- in which case they start with a header ---
-  or not in use (free blocks).
+  In such a view of the heap, we see a series of blocks, either
+  allocated to objects or free --- both kinds starting with a header.
 
   \bigskip
 
@@ -798,24 +798,22 @@ allocation.
       list}.
 
   \end{itemize}
-  Objects have a one-word header. \textbf{Free blocks need a header}
-  too:
+  Objects have a header. \textbf{Free blocks need a header} too:
   \begin{enumerate}
 
-    \item To distinguish an allocated object from a free block, we
+    \item to distinguish an allocated object from a free block, we
       store in the first word a \textbf{number unique to all free
-        blocks}.
+        blocks};
 
-    \item In the second word, the \textbf{size of the block} is
-      stored.
+    \item in the second word, the \textbf{size of the block}.
 
     \item Since free and allocated blocks share the same space (no
       partitioning of the heap), we need to connect the all free
-      blocks --- in a manner reminiscent of how the objects are
-      connected to each other in a graph. So the third word of their
-      header contains a \textbf{pointer to the next free block},
-      making up the free list. The address of the first free block
-      will be held in a global variable.
+      blocks in a manner reminiscent of how the objects are
+      interconnected in a graph. So the third word of their header
+      contains a \textbf{pointer to the next free block}, making up
+      the free list. The address of the first free block will be held
+      in a global variable.
 
   \end{enumerate}
 
@@ -825,9 +823,9 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  In all, free blocks require three-word header, which is acceptable,
+  In all, free blocks require three-word headers, which is acceptable,
   as, for instance, we have seen that a simple linked list requires
-  three words of data (the header is metadata).
+  three words of data (plus the header, which is metadata).
 
   \bigskip
 
@@ -840,12 +838,12 @@ allocation.
     \item a procedure \(\proc{Allocate}(o)\) that looks up a free
       block large enough to contain the objet~\(o\), allocates and
       initialises the memory, and updates the free list (leaving
-      perhaps a smaller free block) ---~otherwise fails;
+      perhaps a smaller free block behind), and otherwise fails;
 
-    \item a procedure \(\proc{Free}(o)\) that turns an allocated
-      object~\(o\) into a free block that is in turn registered with
-      the free list, perhaps after coalescing it with any contiguous
-      ones.
+    \item a procedure \(\proc{Free}(a)\) that turns the object
+      allocated at address~\(a\) into a free block that is in turn
+      registered with the free list, perhaps after coalescing it with
+      any contiguous ones.
 
   \end{enumerate}
 
@@ -861,18 +859,19 @@ allocation.
     \(\proc{Sweep}()\)\\
     \li \(a \gets \text{start of the heap}\)\RComment There is always a
     block at address \(a\)
-    \li \While \(a < \text{end of the heap}\) \kw{do}
+    \li \While \(a < \text{end of the heap}\) \kw{do}\RComment
+    Increasing addresses
     \li \> \(n \gets \proc{Size}(a)\)\RComment Includes the header
     \li \> \If \(a\) is an allocated object \(o\)
     \li    \Then \If \(o\) is marked\RComment \(o\) is alive
     \li          \Then remove the mark\RComment Write the header
-    \li          \Else \proc{Free}(o)\RComment \(o\) is dead
+    \li          \Else \proc{Free}(a)\RComment \(o\) is dead
                  \End
            \End
     \li \> \(a \gets a + n\)
   \end{codebox}
   Note how we call \(\proc{Size}(a)\) \emph{before} calling
-  \(\proc{Free}(o)\), as the latter could destroy the information
+  \(\proc{Free}(a)\), as the latter could destroy the information
   needed by \proc{Size} by coalescing the newly freed block with
   others.
 
@@ -910,9 +909,9 @@ allocation.
   \bigskip
 
   Let \(\proc{Next}(p)\) be the address of the free block immediately
-  after the free block~\(p\), and it is an \(l\)\hyp{}value
-  ---~\(\proc{Size}(p)\) too. The value \(\proc{Size}(o)\) is the size
-  of~\(o\) as recorded in the header. Let \textbf{free} be the head of
+  after the free block~\(p\). It is an \(l\)\hyp{}value, and
+  \(\proc{Size}(p)\) too. The value \(\proc{Size}(o)\) is the size
+  of~\(o\) as recorded in its header. Let \textbf{free} be the head of
   the free list.
   \begin{codebox}
     \(\proc{FirstFit}(o)\)\RComment Use in stead of \proc{Allocate} in
@@ -940,8 +939,10 @@ allocation.
     \(\proc{Update}(\id{previous}, \id{current}, o)\)\RComment
     \(\proc{Size}(current) \geqslant \proc{Size}(o)\)\\
     \li \If \(\proc{Size}(current) = \proc{Size}(o)\)
-    \li \Then \(\proc{Next}(previous) \gets \proc{Next}(current)\)
-    \li \Else \(\id{rest} \gets \id{current} + \; \proc{Size}(o)\)
+    \li \Then \(\proc{Next}(previous) \gets
+    \proc{Next}(current)\)\RComment Drop the block
+    \li \Else \(\id{rest} \gets \id{current} + \;
+    \proc{Size}(o)\)\RComment Header size managed
     \li       \(\proc{Next}(rest) \gets \proc{Next}(current)\)
     \li       \(\proc{Size}(rest) \gets \proc{Size}(current) - \proc{Size}(o)\)
     \li       \(\proc{Next}(previous) \gets \id{rest}\)
@@ -973,14 +974,20 @@ allocation.
 
   \bigskip
 
-  First-fit allocation tends to accummulate small free blocks at the
-  beginning of the free list, slowing further allocations.
+  How to fuse the remaining free block, if any, with a contiguous one
+  (lower or higher, depending where the object is allocated)? This is
+  called \textbf{coalescence}, which reduces fragmentation.
 
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Garbage Collection/Next-fit Allocation}
+
+  First-fit allocation tends to accummulate small free blocks at the
+  beginning of the free list, slowing further allocations.
+
+  \bigskip
 
   To avoid this, \textbf{next-fit allocation} starts searching a free
   block where the last allocation succeeded. When the end is reached,
@@ -1000,8 +1007,8 @@ allocation.
   \frametitle{Garbage Collection/Best-fit Allocation}
 
   \textbf{Best-fit allocation} finds the first smallest free block
-  that fits the object. This avoids splitting large blocks that could
-  otherwise be used later.
+  that fits the object, thus not splitting large blocks.
+  \vspace*{-5mm}
   \begin{codebox}
     \(\proc{BestFit}(o)\)\\
     \li \((\id{bestPrev}, \id{best}, \id{bestSize}, \id{previous}, \id{current})
