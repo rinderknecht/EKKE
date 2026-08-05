@@ -563,7 +563,7 @@ allocation.
   previous optimisation applies only because the compiler somehow
   informed the GC that this is a value of the list data type.
   \begin{codebox}
-    \(\proc{Mark}()\)\RComment General\\
+    \(\proc{Mark}()\)\RComment General depth-first traversal\\
     \li \For \kw{each} root \(r\) \kw{do} push \(r\)
     \li \While the stack is not empty \kw{do}
     \li \> pop a pointer \(o\)
@@ -577,10 +577,65 @@ allocation.
 \end{frame}
 
 \begin{frame}
+\frametitle{Garbage Collection/Tree traversals/Depth-first}
+
+Depending on the data structure we use to hold \(\proc{Children}(o)\),
+we get different traversals.
+
+\bigskip
+
+In the case of traversing a \textbf{tree}, here are two examples of
+\textbf{depth-first traversals}:
+
+\bigskip
+
+\begin{columns}
+  \column{0.5\textwidth}
+    \begin{center}
+      \includegraphics[bb=71 619 211 721]{depth-first_1}
+    \end{center}
+    This is a rightward traversal.
+  \column{0.5\textwidth}
+    \begin{center}
+      \includegraphics[bb=71 619 211 721]{depth-first_2}
+    \end{center}
+    This is a leftward traversal.
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Garbage Collection/Tree traversals/Breadth-first}
+
+Here are two examples of \textbf{breadth-first traversals}:
+
+\bigskip
+
+\begin{columns}
+  \column{0.5\textwidth}
+    \begin{center}
+      \includegraphics[bb=71 619 211 721]{breadth-first_1}
+    \end{center}
+    This is a rightward traversal.
+  \column{0.5\textwidth}
+    \begin{center}
+      \includegraphics[bb=71 619 211 721]{breadth-first_2}
+    \end{center}
+    This is an alternating traversal.
+\end{columns}
+
+\bigskip
+
+\end{frame}
+
+
+\begin{frame}
   \frametitle{Garbage Collection/Traversal Stack}
 
-  As we just saw, the size of the traversal stack can be linear in the
-  size of the reachable data. But how is that stack implemented?
+  As we saw in the program, the size of the traversal stack can be
+  linear in the size of the reachable data. But how is that stack
+  implemented?
 
   \bigskip
 
@@ -1054,6 +1109,14 @@ allocation.
        \textbf{linear time} in the worst case.
 
    \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+
 
 \end{frame}
 
