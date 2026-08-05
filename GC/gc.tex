@@ -25,6 +25,9 @@
 \newcommand\OCaml{\lang{OCaml}}
 \newcommand\Python{\lang{Python}}
 
+\newcommand\Cpp{\mbox{\textsf{C} \hspace*{-2.5mm} \raise 0.7mm \hbox
+{${\scriptscriptstyle \textsf{++}}$}}\xspace}
+
 \frenchspacing  % Follow French conventions after a period
 
 % ------------------------------------------------------------------------
@@ -559,6 +562,8 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection/Traversal Stack}
 
+  \label{Mark}
+
   In general, an object will have more than two pointers, and the
   previous optimisation applies only because the compiler somehow
   informed the GC that this is a value of the list data type.
@@ -631,11 +636,39 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 
 \begin{frame}
+  \frametitle{Garbage Collection}
+
+  But how \proc{Children} knows what fields of an object are pointers
+  and which are not, for example, integers and floating\hyp{}point
+  numbers? There are several approaches.
+  \begin{itemize}
+
+    \item If the programming language is statically and strongly
+      typed, the collector might use types to tell pointers and
+      scalars apart.
+
+    \item The first bit of words can be used to distinguish pointers
+      and scalars. For example, \OCaml uses only 63 bits to encode
+      values, including pointers, as the leftmost bit is used to
+      `type' them.
+
+    \item If words have a valid interpretation as pointers, we can
+      assume they are pointers. This what \textbf{conservative GCs}
+      do. They over\hyp{}approximate live objects, so some dead
+      objects might not be freed. This what GCs for \C and \Cpp do
+      (those languages have no GC by default).
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
   \frametitle{Garbage Collection/Traversal Stack}
 
-  As we saw in the program, the size of the traversal stack can be
-  linear in the size of the reachable data. But how is that stack
-  implemented?
+  As we saw in the program page~\pageref{Mark}, the size of the
+  traversal stack can be linear in the size of the reachable data. But
+  how is that stack implemented?
 
   \bigskip
 
@@ -1114,9 +1147,50 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
+  \frametitle{Garbage Collection/Improving Free Lists}
+
+  In a first\hyp{}fit context, a special case of Cartesian trees
+  called \emph{treaps} are useful to speed up search, as they are
+  totally ordered by addresses (like a BST) and partially by sizes
+  (like a heap).
+
+  \bigskip
+
+  In a best\hyp{}fit allocation strategy, the whole free list is
+  always traversed.
+
+  \bigskip
+
+  We could speed up the search by having the free blocks in a
+  \textbf{balanced search tree} ordered by sizes (as keys), for
+  example an AVL tree or a red\hyp{}black tree (RBT). This yields an
+  \(O(\log n)\) \emph{worst case} cost, where \(n\)~is the number of
+  available blocks.
+
+  \bigskip
+
+  But the height invariant of AVL trees is tricky to get right, and
+  deletion in RBTs is also difficult.
+
+\end{frame}
 
 
+\begin{frame}
+  \frametitle{Garbage Collection/Improving Free Lists}
+
+  For simpler implementations, but only with a logarithmic
+  \emph{average cost}, \textbf{binary search trees} (BSTs) are a good
+  compromise, or splay trees.
+
+  \bigskip
+
+  By far, the binary search trees are the simplest to implement.
+
+  \bigskip
+
+  It then saves time to enter only blocks of each size in the tree,
+  and to chain from that node the other blocks of same size: this
+  speeds up search, but also yields less rotations after a deletion.
 
 \end{frame}
 
