@@ -76,18 +76,22 @@ class Cell {
 \end{verbatim}
 Each cell contains an integer and a \textbf{pointer} to another
 cell. The pointer is implicit in the recursive occurrence of the type
-name \texttt{Cell}. It is either the address of an object in memory,
-or a special value \textbf{nil} (noted \texttt{null} in
-\Java). Consequently, each cell requires at least two
-\textbf{words} (one for each field and perhaps more, depending on the
-data layout).
+name \texttt{Cell}. Here, the field \texttt{content} is a primitive
+type, so it is not a pointer.
+
+\bigskip
+
+A pointer is either the address of an object in memory, or a special
+value \textbf{nil} (noted \texttt{null} in \Java). Consequently, each
+cell requires at least two \textbf{words} (one for each field and
+perhaps more, depending on the data layout).
 
 \end{frame}
 
 \begin{frame}[containsverbatim]
   \frametitle{Garbage Collection}
 
-  A cell can be allocated with the built-in function \texttt{new},
+  A cell can be allocated with the built-in function `\texttt{new}',
   like so:
 \begin{verbatim}
 Cell c = new Cell ();
@@ -105,9 +109,9 @@ type.
 
 \bigskip
 
-Then we can modify the contents of the fields it contains, as many
-times as we wish to. Every call to \texttt{new} returns the
-\textbf{address of a new block} drawn from the available memory.
+Then we can modify the contents of the fields, as many times as we
+wish to. Every call to `\texttt{new}' returns the \textbf{address of a
+  new block} drawn from the available memory.
 
 \end{frame}
 
@@ -122,12 +126,12 @@ necessary for the GC to \textbf{free the memory used by useless
 
 In some programming languages, like \C, this task is entirely
 delegated to the programmers. They have a predefined procedure
-\texttt{free} that frees a memory block:
+`\texttt{free}' that frees a memory block:
 \begin{verbatim}
 free(c);
 \end{verbatim}
-After it is executed, the block pointed at by~\texttt{c} is considered
-available again, so its address can be reused in a future
+After it is executed, the block pointed at by~`\texttt{c}' is
+considered available again, so its address can be reused by a future
 allocation.
 
 \end{frame}
@@ -138,7 +142,7 @@ allocation.
 
   \label{C_errors}
 
-  In \C, the premature of an object may lead to errors:
+  In \C, the premature release of an object may lead to errors:
   \begin{center}
     \includegraphics[width=0.8\textwidth]{wrong_free.png}
   \end{center}
@@ -150,8 +154,8 @@ allocation.
   \bigskip
 
   Another common mistake is freeing an already freed object (like
-  \texttt{B} above): this is an undefined behaviour and thus a source
-  of \textbf{non\hyp{}determinism}.
+  \texttt{B} above): this is an undefined behaviour in \C, and thus a
+  source of \textbf{non\hyp{}determinism}.
 
 \end{frame}
 
@@ -159,16 +163,16 @@ allocation.
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  In \Java, there is no equivalent to the \texttt{free} procedure of
+  In \Java, there is no equivalent to the `\texttt{free}' procedure of
   \C because the identifying and freeing of useless objects is left to
   the runtime system.
 
   \bigskip
 
   That part of the runtime is called the \textbf{garbage collector}
-  (GC), or `collector' in short. At regular intervals, it interrups
+  (GC), or `collector' in short. At regular intervals, it interrupts
   the program (called hereafter the \textbf{mutator}), analyses the
-  heap, find out the useless objects and free them.
+  heap, find out some or all useless objects, and frees them.
 
   \bigskip
 
@@ -197,8 +201,8 @@ allocation.
     \it If, at a certain moment, a program does not have (anymore) a
     pointer to an object, that object is considered useless.
   \end{center}
-  That condition is not true in \C, where pointers can be forged (type
-  casting) from integers, but it holds in \Java for example.
+  That condition is not true in \C, where pointers can be forged from
+  integers (by type casting), but it holds in \Java for example.
 
   \bigskip
 
@@ -229,9 +233,9 @@ allocation.
   \medskip
 
   What counts as global and local variable depends on the programming
-  language. In \Java, the former are the \texttt{static} fields
+  language. In \Java, the former are the `\texttt{static}' fields
   (a.k.a. instance fields), and the latter are methods arguments
-  (including \texttt{this}) and the variables declared in the method
+  (including `\texttt{this}') and the variables declared in the method
   being executed.
 
   \end{frame}
@@ -337,7 +341,7 @@ allocation.
 
   Obviously, the bit marks from the first phase constitute the
   information carried over to the sweeping phase, but they also play
-  an essential rÔle during marking: they tell the traversal algorithm
+  an essential rôle during marking: they tell the traversal algorithm
   to not visit a vertex more than once, so the total cost of
   traversing the graph remains \textbf{linear in the number of
     vertices}.
@@ -357,8 +361,9 @@ allocation.
   mark. This is the most common solution: put the mark into a
   \textbf{header}, that is, metadata about each object. The downside
   is that the cost per object becomes (at least) one word, even if
-  only a bit is required and one field of data (that is theworst case:
-  the size of the metadata is the same as that of the data).
+  only a bit is required and there is only one field of data (that is
+  the worst case: the size of the metadata is the same as that of the
+  data).
 
   \bigskip
 
@@ -367,8 +372,8 @@ allocation.
   many bit marks (64 on modern hardware architectures). This enables
   getting rid of the object headers and saving a lot of memory,
   especially if there are many small objects, at the expense of extra
-  time accessing and decoding the table (e.g. mapping object addresses
-  to bit positions).
+  time accessing and decoding the table (mapping object addresses to
+  bit positions and vice\hyp{}versa).
 
 \end{frame}
 
@@ -386,10 +391,11 @@ allocation.
     \li \If \(o \neq \kw{nil}\) \kw{and} \(o\) is not marked
     \li \Then \text{mark} \(o\)
     \li       \proc{DFS}(o.left)
-    \li       \proc{DFA}(o.right)
+    \li       \proc{DFS}(o.right)
         \End
   \end{codebox}
-  Note how we use tabulations to suggest blocks of instructions. Finally:
+  Note how we use indentation to suggest blocks of
+  instructions. Finally:
   \begin{codebox}
     \(\proc{Mark}()\)\\
     \li \For \kw{each} root \(r\) \kw{do} \proc{DFS}(r)
@@ -643,9 +649,9 @@ Here are two examples of \textbf{breadth-first traversals}:
   numbers? There are several approaches.
   \begin{itemize}
 
-    \item If the programming language is statically and strongly
-      typed, the collector might use types to tell pointers and
-      scalars apart.
+    \item Like a bitmap can be used to keep track of allocated
+      objects, the header of an object can contain a bitmap for the
+      fields that are pointers.
 
     \item The first bit of words can be used to distinguish pointers
       and scalars. For example, \OCaml uses only 63 bits to encode
@@ -673,21 +679,22 @@ Here are two examples of \textbf{breadth-first traversals}:
   \bigskip
 
   It cannot be allocated in the heap with the mutator's data, as the
-  heap must remain the same during a collection. Instead, is relies on
-  an array whose size is fixed beforehand.
+  heap must remain the same during a collection. Instead, it relies on
+  an array whose size is fixed beforehand (static data for the
+  collector).
 
   \bigskip
 
-  An element of that array then fits a word (interpreted as an
+  An element of that array then fits in a word (interpreted as an
   address), which is optimal.
 
   \bigskip
 
   Nevertheless, if the heap can contain up to \(n\)~objects, that
-  array should be of size~\(n\), even if not use completely. Moreover,
-  if each block contains at least three words (a header and two
-  pointers), then the length of the stack-array should be a third of
-  that of the heap, which is considerable.
+  array should be of size~\(n\), even if not used
+  completely. Moreover, if each block contains at least three words (a
+  header and two pointers), then the length of the stack-array should
+  be a third of that of the heap, which is considerable.
 
 \end{frame}
 
@@ -696,17 +703,21 @@ Here are two examples of \textbf{breadth-first traversals}:
   \frametitle{Garbage Collection}
 
   One obvious solution is having \textbf{a bounded stack} that is not
-  too large. If it becomes full, we drop any new pointer. At the end
-  of the marking, the collector knows that the graph was not traversed
-  in its entirety, because the stack overflow set a flag.
+  too large.
+
+  \bigskip
+
+  If it becomes full, we drop any new pointer. At the end of the
+  marking, the collector would know that the graph was not traversed
+  entirely (because a stack overflow sets a flag, for instance).
 
   \bigskip
 
   In that case, a linear sweep of the whole heap is performed:
   whenever a marked object is found to point to an unmarked object, we
-  run the marking algorithm from it. This process is iterated until a
-  fixed point (no new object is marked): all reachable objects have
-  then been marked.
+  run the marking algorithm from it, as if it were a root. This
+  process is iterated until a fixed point (no new object is marked):
+  all reachable objects have then been marked.
 
   \bigskip
 
@@ -741,22 +752,6 @@ Here are two examples of \textbf{breadth-first traversals}:
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  The DSW maintains three pointers:
-  \begin{enumerate}
-
-    \item \(q\)~points to the current node being visited (to be
-      marked or marked);
-
-    \item \(p\)~points to the previous visited node (\(p \rightarrow
-      \textbf{nil}\) if \(q \rightarrow A\));
-
-    \item \(r\)~points to the rest of the list (\(r \rightarrow
-      \textbf{nil}\) if \(q \rightarrow C\)).
-
-  \end{enumerate}
-
-  \medskip
-
   Initially:
   \[
   \begin{array}{ccccccccc}
@@ -767,12 +762,28 @@ Here are two examples of \textbf{breadth-first traversals}:
   \end{array}
   \]
 
+  \medskip
+
+  The DSW maintains three pointers:
+  \begin{enumerate}
+
+    \item \(q\)~points to the current node being visited (to be
+      marked or already marked);
+
+    \item \(p\)~points to the previous visited node (e.g. \(p
+      \rightarrow \textbf{nil}\) if \(q \rightarrow A\));
+
+    \item \(r\)~points to the rest of the list (e.g. \(r \rightarrow
+      \textbf{nil}\) if \(q \rightarrow C\)).
+
+  \end{enumerate}
+
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{Garbage Collection}
-  We can mark~\(A\) and set \(A\).next to point backwards to~\(p\):
+  \frametitle{Garbage Collection} We can mark~\(A\) (becomes \(A^*\))
+  and set \(A\).next to point backwards to~\(p\):
   \[
   \begin{array}{ccccccccc}
     \textbf{nil} & \longleftarrow & A^* & \hphantom{\longrightarrow} & B
@@ -796,7 +807,7 @@ Here are two examples of \textbf{breadth-first traversals}:
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  We can mark~\(B\) and set \(B\).next to point backwards to~\(A\):
+  We can mark~\(B\) and set \(B\).next to point backwards to~\(A^*\):
   \[
   \begin{array}{ccccccccc}
     \textbf{nil} & \longleftarrow & A^* & \longleftarrow & B^*
@@ -821,7 +832,7 @@ Here are two examples of \textbf{breadth-first traversals}:
 \begin{frame}
   \frametitle{Garbage Collection}
 
-  We can mark~\(C\) and set \(C\).next to point backwards to~\(B\):
+  We can mark~\(C\) and set \(C\).next to point backwards to~\(B^*\):
   \[
   \begin{array}{ccccccccc}
     \textbf{nil} & \longleftarrow & A^* & \longleftarrow & B^*
@@ -830,8 +841,9 @@ Here are two examples of \textbf{breadth-first traversals}:
     &&&& p        && q        && r
   \end{array}
   \]
-  We are done. To return, we need to reverse the pointers again, this
-  time by swapping \(p\)~and~\(r\):
+  We are done. To return, we need to reverse the pointers again using
+  the same algorithm, except this time we start swapping
+  \(p\)~and~\(r\):
   \[
   \begin{array}{ccccccccc}
     \textbf{nil} & \longleftarrow & A^* & \longleftarrow & B^*
@@ -896,7 +908,7 @@ Here are two examples of \textbf{breadth-first traversals}:
     \item in the second word, the \textbf{size of the block}.
 
     \item Since free and allocated blocks share the same space (no
-      partitioning of the heap), we need to connect the all free
+      partitioning of the heap), we need to connect all the free
       blocks in a manner reminiscent of how the objects are
       interconnected in a graph. So the third word of their header
       contains a \textbf{pointer to the next free block}, making up
@@ -924,7 +936,7 @@ Here are two examples of \textbf{breadth-first traversals}:
       empty;
 
     \item a procedure \(\proc{Allocate}(o)\) that looks up a free
-      block large enough to contain the objet~\(o\), allocates and
+      block large enough to contain the object~\(o\), allocates and
       initialises the memory, and updates the free list (leaving
       perhaps a smaller free block behind), and otherwise fails;
 
@@ -950,7 +962,8 @@ Here are two examples of \textbf{breadth-first traversals}:
     \li \While \(a < \text{end of the heap}\) \kw{do}\RComment
     Increasing addresses
     \li \> \(n \gets \proc{Size}(a)\)\RComment Includes the header
-    \li \> \If \(a\) is an allocated object \(o\)
+    \li \> \If \(a\) is an allocated object \(o\)\RComment All blocks
+    have a header
     \li    \Then \If \(o\) is marked\RComment \(o\) is alive
     \li          \Then remove the mark\RComment Write the header
     \li          \Else \proc{Free}(a)\RComment \(o\) is dead
@@ -960,8 +973,8 @@ Here are two examples of \textbf{breadth-first traversals}:
   \end{codebox}
   Note how we call \(\proc{Size}(a)\) \emph{before} calling
   \(\proc{Free}(a)\), as the latter could destroy the information
-  needed by \proc{Size} by coalescing the newly freed block with
-  others.
+  needed by \proc{Size}, by coalescing the newly freed block with
+  another.
 
 \end{frame}
 
@@ -976,7 +989,8 @@ Here are two examples of \textbf{breadth-first traversals}:
     \li \Then \(\proc{Mark}()\)\RComment Marking live objects
     \li       \(\proc{Sweep}()\)\RComment Reclaiming dead objects
     \li       \If \(\proc{IsEmpty}()\)\RComment Checking again
-    \li       \Then \(\proc{New} \gets \kw{nil}\)\RComment Memory is full
+    \li       \Then \(\proc{New} \gets \kw{nil}\)\RComment Memory is
+    really full
     \li       \Else \(\proc{New} \gets \proc{Allocate}(o)\)\RComment See next line
               \End
     \li  \Else \(\proc{New} \gets \proc{Allocate}(o)\)\RComment Fails if \(o\)
@@ -1058,7 +1072,7 @@ Here are two examples of \textbf{breadth-first traversals}:
   \end{codebox}
   Note how \proc{Update} must be a function: it returns the address of
   the allocated block, and so \proc{FirstFit} should be rewritten
-  sligthly.
+  slightly.
 
   \bigskip
 
@@ -1095,15 +1109,16 @@ Here are two examples of \textbf{breadth-first traversals}:
   \frametitle{Garbage Collection/Best-fit Allocation}
 
   \textbf{Best-fit allocation} finds the first smallest free block
-  that fits the object, thus not splitting large blocks.
+  that fits the object, thus not splitting large blocks that would
+  otherwise fit future, larger objects.
   \vspace*{-5mm}
   \begin{codebox}
     \(\proc{BestFit}(o)\)\\
     \li \((\id{bestPrev}, \id{best}, \id{bestSize}, \id{previous}, \id{current})
           \gets (\kw{nil}, \kw{nil}, \infty, \kw{nil}, \kw{free})\)
     \li \While \(\id{current} \neq \kw{nil}\) \kw{do}
-    \li \> \If \(\proc{Size}(o) \leqslant \proc{Size}(\id{current})\)
-               \kw{and} \(\proc{Size}(\id{current}) < \id{bestSize}\)
+    \li \> \If \(\proc{Size}(o) \leqslant \proc{Size}(\id{current})
+                < \id{bestSize}\)
     \li    \Then \((\id{bestPrev}, \id{best}, \id{bestSize}) \gets
                    (\id{previous}, \id{current}, \proc{Size}(current))\)
            \End
@@ -1131,7 +1146,7 @@ Here are two examples of \textbf{breadth-first traversals}:
        object can fit in none of those, even if the total available
        memory is large enough.
 
-     \item Another unpleasant effect of fragmentation is when that two
+     \item Another unpleasant effect of fragmentation is when two
        successive allocation requests are satisfied by free blocks
        that are very far apart in the free list: this breaks data
        locality, which incurs \textbf{cache misses} and virtual page
@@ -1169,14 +1184,19 @@ Here are two examples of \textbf{breadth-first traversals}:
 
   \bigskip
 
-  But the height invariant of AVL trees is tricky to get right, and
-  deletion in RBTs is also difficult.
+  In passing, it is then better to call this structure a \textbf{free
+    pool}.
 
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Garbage Collection/Improving Free Lists}
+
+  The height invariant of AVL trees is tricky to get right, and
+  deletion in RBTs is also difficult.
+
+  \bigskip
 
   For simpler implementations, but only with a logarithmic
   \emph{average cost}, \textbf{binary search trees} (BSTs) are a good
@@ -1188,9 +1208,9 @@ Here are two examples of \textbf{breadth-first traversals}:
 
   \bigskip
 
-  It then saves time to enter only blocks of each size in the tree,
-  and to chain from that node the other blocks of same size: this
-  speeds up search, but also yields less rotations after a deletion.
+  It then saves time to enter only blocks of each size in the BST, and
+  to chain from that node the other blocks of same size: this speeds
+  up search, but also yields less rotations after a deletion.
 
 \end{frame}
 
@@ -1198,8 +1218,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 \begin{frame}
   \frametitle{Garbage Collection/Sequential Allocation}
 
-  One way to address the locality and linearity issues is
-  \textbf{sequential allocation} whereby \textbf{the heap is
+  A completely different way to address the locality and linearity
+  issues is \textbf{sequential allocation} whereby \textbf{the heap is
     partitioned in two} areas: one for the objects (dead or alive) and
   a \textbf{free zone adjacent to it}. The GC has a pointer to the
   start of the free zone, and another to the upper limit of that zone
@@ -1209,6 +1229,39 @@ Here are two examples of \textbf{breadth-first traversals}:
   \begin{figure}
     \includegraphics[width=\textwidth]{seq_alloc.png}
   \end{figure}
+
+\end{frame}
+
+
+\begin{frame}[containsverbatim]
+  \frametitle{Garbage Collection/Pointer Alignement}
+
+  To illustrate pointer alignement, consider a word size of~4 bytes in
+  \C:
+\begin{verbatim}
+struct Example {
+    char  a;   // 1 byte
+    int   b;   // 4 bytes = 1 word
+    char  c;   // 1 byte
+};
+\end{verbatim}
+A value of this type does \textbf{not} occupy 6~bytes, but~12:
+\begin{itemize}
+
+  \item `\texttt{a}' starts at offset~0 (1~byte used);
+
+  \item 3~bytes of padding are inserted so `\texttt{b}' starts at
+    offset~4 (the closest multiple of~4);
+
+  \item `\texttt{b}' starts at offset~4 (4 bytes uses);
+
+  \item `\texttt{c}' starts at offset~8 (1 byte used);
+
+  \item 3~bytes of padding are added at the end so the whole structure
+    is a multiple of 4~bytes (word size), which is needed for uniform
+    indexing of arrays of values of type `\texttt{Example}'.
+
+\end{itemize}
 
 \end{frame}
 
@@ -1248,8 +1301,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 \begin{frame}
   \frametitle{Garbage Collection/Copying collectors}
 
-  There is a class of collectors that \textbf{move objects} after they
-  have been allocated, in particular to move them next to each
+  There is a class of collectors that \textbf{move/copy objects} after
+  they have been allocated, in particular to move them next to each
   other. This is called \textbf{compaction}, and it gets rid of
   fragmentation until the next cycle.
 
