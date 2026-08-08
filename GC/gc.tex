@@ -7,6 +7,10 @@
 \usepackage{xspace}
 \usepackage{hyphenat}
 \usepackage{adjustbox}
+\usepackage[absolute,overlay]{textpos}
+
+%\usepackage{svg}
+%\usepackage{pdfpages}
 %\usepackage{verbatim}
 
 % Pseudo-code typesetting (algorithms)
@@ -15,6 +19,10 @@
 
 \setbeamertemplate{theorems}[numbered]
 \input{beamer_cfg}
+
+
+
+\usepackage[center, frame, axes]{crop} % Draws a bounding line box frame
 
 \newcommand\lang[1]{\texttt{#1}\xspace}
 \newcommand\Java{\lang{Java}}
@@ -1323,6 +1331,248 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
   \bigskip
 
   Care must be taken to preserve sharing when copying the objects.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \includegraphics{gc-0.png}
+
+  The registers \textbf{sp} and \textbf{fp} are the \textbf{stack
+    pointer} and the \textbf{frame pointer}, respectively. (Between
+  them are the local variables of the current function.) The
+  \textbf{0} marks the bottom of the call stack.
+
+  \bigskip
+
+  (Graphics by Vladimir Keleshev.)
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \includegraphics[scale=0.8]{gc-1.png}
+  \begin{textblock*}{8cm}(45mm,55mm)
+    After some time, we have three stack frames, containing pointers
+    to heap\hyp{}allocated blocks. There are five blocks, in rounded
+    boxes, whose headers are marked with an~\textbf{H}. They contain
+    scalars and pointers. Cycles are allowed. Scalars are left blank
+    (both in the stack and the heap). Let us try to allocate a 4-word
+    block. We need to create another semispace, the \textbf{To-space}.
+  \end{textblock*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \includegraphics[scale=0.8]{gc-2.png}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  The original semispace is named \textbf{from-space} to distinguish
+  it from the newly allocated \textbf{to-space}, where copies are
+  created from the latter.
+
+  \bigskip
+
+  There is a \textbf{scan pointer} in the call stack that scans
+  (downwards) the words on the current frame, skipping scalars. We
+  copy the block pointed by the first pointer, and bump the
+  \textbf{allocation pointer} in the to-space.
+
+  \bigskip
+
+  The pointer in the stack is then updated with the copy. (Previous
+  value with a dashed line.)
+
+  \bigskip
+
+  The original block header is overwritten with a pointer to the copy:
+  this is the \textbf{forwarding pointer} (in grey). Forwarding
+  pointers are used to preserve sharing during copying.
+
+  \bigskip
+
+  The last pointer of the frame goes to the already copied block, and
+  is updated with the forwarding pointer.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \includegraphics[scale=0.8]{gc-3.png}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \includegraphics[scale=0.8]{gc-4.png}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \bigskip
+
+  We then start scanning the next (and last) frame.
+
+  \bigskip
+
+  We find a pointer to the from-space. We copy it, install the
+  forwarding pointer. Note how the copy has a pointer to the
+  from-space.
+
+  \bigskip
+
+  Finally, the allocation pointer is bumped again.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \includegraphics[scale=0.8]{gc-5.png}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  We have scanned the whole stack (arrived at the special word
+  \textbf{0}).
+
+  \bigskip
+
+  Two remarks:
+  \begin{enumerate}
+
+    \item There are other roots to scan: registers and global
+      variables (static memory). Registers can be pushed on the stack
+      before the scanning process.
+
+    \item We are not finished! There is still a block in the to-space
+      that points to the from-space. Just like we scanned the stack,
+      we scan the newly copied blocks in the to-space semispace (the
+      space from the scan pointer to the allocation pointer).
+
+  \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \includegraphics[scale=0.8]{gc-6.png}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  The to-space grew by one block (the third one).
+
+  \bigskip
+
+  We need to scan it, as it contains a pointer to the from-space. The
+  pointed block has a forwarding pointer, which use to update the
+  copied block. (The original pointer is now a dashed line.)
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \includegraphics[scale=0.8]{gc-7.png}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \includegraphics[scale=0.8]{gc-8.png}
+  \begin{textblock*}{8cm}(45mm,20mm)
+    The scan pointer is now just behind the allocation pointer: we are
+    done.
+
+    \medskip
+
+    We can see that two blocks in the from-space were not copied: they
+    were dead, but we don't need to free them: we simply \textbf{free
+      the whole from-space}.
+  \end{textblock*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Garbage Collection/Generational collector}
+
+  It was observed that new objects die young. Moreover, in functional
+  languages, those objects tend to be small (about three words of
+  contents).
+
+  \bigskip
+
+  Therefore we'd like to scan new blocks more frequently, and scan
+  older blocks more rarely. This distinction, young versus old
+  objects, each allocated in two separate spaces of the heap, gives
+  rise to \textbf{generational collectors}.
+
+  \bigskip
+
+  Each space, called a generation, can use their own collecting
+  algorithm, as long as, after the collection of the young generation,
+  the live young objects are promoted into the old generation.
+
+  \bigskip
+
+  Cheney's algorithm is a good choice for the young generation,
+  because its cost is proportional to the number of live objects: if a
+  lot of objects die young, the cost remains low.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection}
+
+  There are a lot more GC algorithms, like
+  \begin{itemize}
+
+    \item \textbf{incremental collectors} that do not stop the mutator
+      to collect completely the heap: instead they collect partially
+      what they can in a short cycle, making sure that, in the long
+      run no dead object leaks.
+
+    \item \textbf{concurrent collectors} that do not stop the mutator
+      at all, and even can handle multiple mutators sharing the same
+      heap (think multicore architectures).
+
+    \item \textbf{distributed collectors} that work when there are
+      heaps managed on distinct physical computers, each running one
+      or many mutators.
+
+  \end{itemize}
 
 \end{frame}
 

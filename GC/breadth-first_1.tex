@@ -1,0 +1,33 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=1cm]{\TC[name=root]}{
+  \pstree{\TC[name=s1]}{ 
+    \TC[name=s1s1] \TC[name=s1s2]
+  }
+  \TC[name=s2]
+  \pstree{\TC[name=s3]}{
+    \pstree{\TC[name=s3s1]}{
+      \TC[name=s3s1s1] \TC[name=s3s1s2] \TC[name=s3s1s3]
+    }
+  }
+}
+
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{root}{s1}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{s1}{s2}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=15]{->}{s2}{s3}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=0]{->}{s3}{s1s1}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{s1s1}{s1s2}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=35]{->}{s1s2}{s3s1}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{s3s1}{s3s1s1}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{s3s1s1}{s3s1s2}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{s3s1s2}{s3s1s3}
+\endTeXtoEPS
+
+\end{document}

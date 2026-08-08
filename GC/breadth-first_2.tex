@@ -1,0 +1,33 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pstricks,pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=1cm]{\TC[name=Broot]}{
+  \pstree{\TC[name=Bs1]}{ 
+    \TC[name=Bs1s1] \TC[name=Bs1s2]
+  }
+  \TC[name=Bs2]
+  \pstree{\TC[name=Bs3]}{
+    \pstree{\TC[name=Bs3s1]}{
+      \TC[name=Bs3s1s1] \TC[name=Bs3s1s2] \TC[name=Bs3s1s3]
+    }
+  }
+}
+
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{Broot}{Bs1}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{Bs1}{Bs2}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{Bs2}{Bs3}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=35]{->}{Bs3}{Bs3s1}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{Bs3s1}{Bs1s2}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=35]{->}{Bs1s2}{Bs1s1}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{Bs1s1}{Bs3s1s1}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{Bs3s1s1}{Bs3s1s2}
+\ncarc[linecolor=red,linestyle=dashed,arcangle=-35]{->}{Bs3s1s2}{Bs3s1s3}
+\endTeXtoEPS
+
+\end{document}
