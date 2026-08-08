@@ -1495,8 +1495,9 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
   \textbf{breadth\hyp{}first traversal of the live objects}, the tell
   tale being the space between the scan pointer and the allocation
   pointer being used as a queue of objects to traverse. (These are
-  sometimes called \textbf{grey}, whereas \textbf{white} objects are
-  those alive and \textbf{black} objects are dead).
+  called \textbf{grey objects}, whereas \textbf{black objects} have
+  been visited, as well as their descendants, and \textbf{white
+    objects} are unvisited, and, in the end, dead.)
 
   \bigskip
 
