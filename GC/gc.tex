@@ -1232,9 +1232,9 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 
 \begin{frame}[containsverbatim]
-  \frametitle{Garbage Collection/Pointer Alignement}
+  \frametitle{Garbage Collection/Pointer Alignment}
 
-  To illustrate pointer alignement, consider a word size of~4 bytes in
+  To illustrate pointer alignment, consider a word size of~4 bytes in
   \C:
 \begin{verbatim}
 struct Example {
@@ -1497,7 +1497,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
   pointer being used as a queue of objects to traverse. (These are
   called \textbf{grey objects}, whereas \textbf{black objects} have
   been visited, as well as their descendants, and \textbf{white
-    objects} are unvisited, and, in the end, dead.)
+    objects} are not visited, and, in the end, dead.)
 
   \bigskip
 
