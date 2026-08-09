@@ -1533,6 +1533,67 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \begin{codebox}
+    \(\proc{Init}()\)\\
+    \li \(\kw{free} \gets \id{fromSpace}\)
+  \end{codebox}
+
+  \begin{codebox}
+    \(\proc{New}(o)\)\\
+    \li \(\id{free'} \gets \kw{free} + \proc{Size}(o)\)
+    \li \kw{if} \(\id{free'} > \id{topFromSpace}\) \kw{then} \(\proc{Compact}()\)
+    \li \If \(\id{free'} > \id{topFromSpace}\)
+    \li \Then \(\proc{New} \gets \kw{nil}\)
+    \li \Else \(\proc{Write}(\kw{free}, o)\)
+    \li       \(\proc{New} \gets \kw{free}\)
+    \li       \(\kw{free} \gets \id{free'}\)
+        \End
+  \end{codebox}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \begin{codebox}
+    \(\proc{Compact}()\)\\
+    \li \(\id{scan} \gets \id{toSpace}\)
+    \li \(\kw{free} \gets \id{toSpace}\)\RComment Copy to the to-space
+    \li \For \kw{each} root \(r\) \kw{do} \(r \gets
+    \proc{Copy}(r)\)\RComment \kw{free} is bumped
+    \li \While \(\id{scan} < \kw{free}\) \kw{do}
+    \li \> \For \kw{each} \(p\) \kw{in} \(\proc{Children}(\id{scan})\) \kw{do}
+              \(p \gets \proc{Copy}(p)\)
+    \li \> \(\id{scan} \gets \id{scan} + \, \proc{Size}(\id{scan})\)
+    \li \((\id{fromSpace}, \id{toSpace}) \gets (\id{toSpace}, \id{fromSpace})\)
+    \li \((\id{topFromSpace}, \id{topToSpace}) \gets (\id{topToSpace},
+    \id{topFromSpace})\)
+  \end{codebox}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage Collection/Cheney's collector}
+
+  \begin{codebox}
+    \(\proc{Copy}(p)\)\\
+    \li \If \(\proc{Forwarded}(p)\)
+    \li \Then \(\proc{Copy} \gets \proc{Forwarding}(p)\)
+    \li \Else \(\proc{Move}(p, \kw{free})\)\RComment Cannot fail
+    \li       \(\proc{Forwarding}(p) \gets \kw{free}\)
+    \li       \(\proc{Copy} \gets \kw{free}\)
+    \li       \(\kw{free} \gets \kw{free} + \, \proc{Size}(p)\)
+        \End
+  \end{codebox}
+
+\end{frame}
+
 \begin{frame}
   \frametitle{Garbage Collection/Generational collector}
 
