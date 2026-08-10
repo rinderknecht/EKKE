@@ -1,0 +1,81 @@
+%%-*-latex-*-
+
+\documentclass{slides}
+
+\usepackage{pstricks,pst-node}
+\usepackage{pst-eps}
+
+\usepackage{xspace}
+\input{commands}
+
+\begin{document}
+
+\TeXtoEPS
+\psset{framearc=.2,arrows=->}
+\begin{psmatrix}[rowsep=20pt,colsep=40pt]
+  [name=sets_up]
+  \phantom{\begin{tabular}{@{}c@{}}
+     \tiny Set\\
+     \tiny Theory
+  \end{tabular}}
+  &&&
+  [name=ada_up]
+  \phantom{
+    \psframebox{
+      \begin{tabular}{@{}c@{}}
+        \tiny \Ada/\Clang\\
+        \tiny Programs
+      \end{tabular}}}\\
+  [name=sets]
+  \begin{tabular}{@{}c@{}}
+     \tiny Set\\
+     \tiny Theory
+  \end{tabular}
+  &[name=am1]
+   \psframebox{
+     \begin{tabular}{@{}c@{}}
+       \tiny Abstract\\
+       \tiny Machine \#1
+     \end{tabular}
+   }
+  &[name=etc]
+   \begin{tabular}{c}
+     \textbf{\ldots}
+   \end{tabular}
+  &[name=ada]
+   \psframebox{
+     \begin{tabular}{@{}c@{}}
+       \tiny \Ada/\Clang\\
+       \tiny Programs\
+     \end{tabular}
+   }\\
+  [name=sets_down]
+  \phantom{\begin{tabular}{@{}c@{}}
+     \tiny Set\\
+     \tiny Theory
+  \end{tabular}}
+  &&&
+  [name=ada_down]
+  \phantom{
+    \psframebox{
+      \begin{tabular}{@{}c@{}}
+        \tiny Ada/C\\
+        \tiny Programs
+      \end{tabular}}}
+
+\ncline{sets}{am1}
+\ncline{am1}{etc}
+\naput{\tiny refine}
+\ncline{etc}{ada}
+\naput{\tiny refine}
+\ncline{sets_up}{ada_up}
+\naput{\tiny more operational}
+\nbput{\tiny more concrete}
+\ncline{ada_down}{sets_down}
+\naput{\tiny more abstract}
+\nbput{\tiny more denotational}
+
+\end{psmatrix}
+\endTeXtoEPS
+
+\end{document}

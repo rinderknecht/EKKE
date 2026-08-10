@@ -1,0 +1,77 @@
+%%-*-latex-*-
+
+\documentclass{slides}
+
+\usepackage{pst-eps}
+\usepackage{pstricks,pst-node}
+
+\begin{document}
+
+\TeXtoEPS
+\small
+\psset{framearc=.2,arrows=->}
+\begin{psmatrix}[rowsep=15pt,colsep=12pt]
+    [name=source]
+    \begin{tabular}{c}
+       source\\
+       program
+    \end{tabular}
+  &[name=lexer]
+   \psframebox{
+     \begin{tabular}{c}
+       lexical\\
+       analyser
+     \end{tabular}
+   }
+  &[name=parser]
+   \psframebox{
+     \begin{tabular}{c}
+       syntax\\
+       analyser
+     \end{tabular}
+   }
+  &[name=semantics]
+   \psframebox{
+     \begin{tabular}{c}
+       semantic\\
+       analyser
+     \end{tabular}
+   }\\[10pt]
+   [name=target]
+   \begin{tabular}{c}
+     target\\
+     program
+   \end{tabular}
+  &[name=code_gen]
+   \psframebox{
+     \begin{tabular}{c}
+       code\\
+       generator
+     \end{tabular}
+   }
+  &[name=optimiser]
+   \psframebox{
+     \begin{tabular}{c}
+       code\\
+       optimiser
+     \end{tabular}
+   }
+  &[name=intermediate]
+   \psframebox{
+     \begin{tabular}{c}
+       intermediate\\
+       code\\
+       generator
+     \end{tabular}
+   }
+\ncline{source}{lexer}
+\ncline{lexer}{parser}
+\ncline{parser}{semantics}
+\ncline{semantics}{intermediate}
+\ncline{intermediate}{optimiser}
+\ncline{optimiser}{code_gen}
+\ncline{code_gen}{target}
+\end{psmatrix}
+\endTeXtoEPS
+
+\end{document}

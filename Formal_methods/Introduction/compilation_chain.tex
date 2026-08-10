@@ -1,0 +1,63 @@
+%%-*-latex-*-
+
+\documentclass{slides}
+
+\usepackage{pst-eps}
+\usepackage{pstricks,pst-node}
+
+\begin{document}
+
+\TeXtoEPS
+\small
+\psset{framearc=.2,arrows=->}
+\begin{psmatrix}[rowsep=15pt,colsep=52pt]
+    [name=source]
+    \begin{tabular}{c}
+       annotated\\
+       source\\
+       program
+    \end{tabular}
+  & [name=preprocessor]
+    \psframebox{
+      \begin{tabular}{c}
+        preprocessor
+      \end{tabular}
+    }
+  & [name=compiler]
+    \psframebox{
+      \begin{tabular}{c}
+        compiler
+      \end{tabular}
+    }\\[10pt]
+    [name=executable]
+    \begin{tabular}{c}
+      absolute\\
+      machine\\
+      code
+    \end{tabular}
+  & [name=linker]
+    \psframebox{
+      \begin{tabular}{c}
+        linker
+      \end{tabular}}
+  & [name=assembler]
+    \psframebox{
+      \begin{tabular}{c}
+        assembler
+      \end{tabular}
+    }\\[10pt]
+    & [name=libraries]
+    \begin{tabular}{c}
+      libraries \& externals
+    \end{tabular}
+  &
+\end{psmatrix}
+\ncline{source}{preprocessor}
+\ncline{preprocessor}{compiler}\naput{source}\nbput{program}
+\ncline{compiler}{assembler}\nbput{target}\naput{assembly}
+\ncline{assembler}{linker}\nbput{relocatable}\naput{machine code}
+\ncline{libraries}{linker}
+\ncline{linker}{executable}
+\endTeXtoEPS
+
+\end{document}
