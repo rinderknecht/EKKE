@@ -1,14 +1,15 @@
 %%-*-latex-*-
 
-\documentclass{slides}
+\documentclass{article}
 
-\usepackage{pst-eps}
-\usepackage{pstricks,pst-node}
+\usepackage[T1]{fontenc}
+\usepackage{pstcol,pst-node,pst-eps}
+
+\newcommand{\Show}[1]{\psframebox{\textsc{\textsf#1}}}
 
 \begin{document}
 
 \TeXtoEPS
-\small
 \psset{framearc=.2,arrows=->}
 \begin{psmatrix}[rowsep=15pt,colsep=52pt]
     [name=source]
@@ -17,39 +18,17 @@
        source\\
        program
     \end{tabular}
-  & [name=preprocessor]
-    \psframebox{
-      \begin{tabular}{c}
-        preprocessor
-      \end{tabular}
-    }
-  & [name=compiler]
-    \psframebox{
-      \begin{tabular}{c}
-        compiler
-      \end{tabular}
-    }\\[10pt]
+  & [name=preprocessor]\Show{preprocessor}
+  & [name=compiler]\Show{compiler}\\[10pt]
     [name=executable]
     \begin{tabular}{c}
       absolute\\
       machine\\
       code
     \end{tabular}
-  & [name=linker]
-    \psframebox{
-      \begin{tabular}{c}
-        linker
-      \end{tabular}}
-  & [name=assembler]
-    \psframebox{
-      \begin{tabular}{c}
-        assembler
-      \end{tabular}
-    }\\[10pt]
-    & [name=libraries]
-    \begin{tabular}{c}
-      libraries \& externals
-    \end{tabular}
+  & [name=linker]\Show{linker}
+  & [name=assembler]\Show{assembler}\\[10pt]
+  & [name=libraries]libraries \& externals
   &
 \end{psmatrix}
 \ncline{source}{preprocessor}

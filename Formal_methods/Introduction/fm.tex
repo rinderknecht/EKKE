@@ -4,31 +4,18 @@
 
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
-\usepackage{amssymb,amsmath}
+\usepackage{lmodern}
+\usepackage{beramono}          % Bold in verbatim
+\usepackage{hyphenat}          % \hyp{} is a breakable dash
 \usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{alltt}
+\usepackage{amssymb,amsmath}
 
 % Draws a bounding line box frame:
 %\usepackage[center, frame, axes]{crop}
 
-% Language
-%
-\usepackage{hyphenat}          % \hyp{} is a breakable dash
-\usepackage{alltt}
-\usepackage{beramono}          % Bold in verbatim
-
 \frenchspacing  % Follow French conventions after a period
-
-% Maths & Logic
-%
-\usepackage{stmaryrd}
-\usepackage{mathpartir}
-
-% Graphics
-%
-\usepackage{graphicx}
-
-% New environments and commands
-%
 
 % Input files
 %
@@ -82,21 +69,15 @@
   \frametitle{The case of Ariane~5}
 
   In June 1996, the maiden launch of the European rocket Ariane~5
-  ended in its self\hyp{}destruction.
-
-  \bigskip
-
-  The cause was in the software controlling the trajectory.
+  ended in its self\hyp{}destruction. The cause was in the software
+  controlling the trajectory.
 
   \bigskip
 
   This piece of software was designed with the requirements of
-  Ariane~4, \textbf{not} Ariane~5.
-
-  \bigskip
-
-  Accordingly, some ranges of physical parameters were taken from
-  Ariane~4, and wrongly assumed in the programming of Ariane~5.
+  Ariane~4, \textbf{not} Ariane~5. Accordingly, some ranges of
+  physical parameters were taken from Ariane~4, and wrongly assumed in
+  the programming of Ariane~5.
 
   \bigskip
 
@@ -590,7 +571,7 @@
   \frametitle{The B~method / Refinement}
 
   \begin{center}
-    \includegraphics[bb=71 519 505 721, scale=0.75]{refinement}
+    \includegraphics[bb=71 583 377 721]{refinement}
   \end{center}
 
 \end{frame}
@@ -909,9 +890,9 @@
   \frametitle{General architecture of a C compiler}
 
   The compiler is one link in a \textbf{tool chain}:
-
-  \vspace*{-20mm}
-  \includegraphics[bb=71 350 405 721,scale=0.55]{compilation_chain}
+  \begin{center}
+    \includegraphics[bb=71 587 400 721,scale=0.95]{compilation_chain}
+  \end{center}
 
 \end{frame}
 
