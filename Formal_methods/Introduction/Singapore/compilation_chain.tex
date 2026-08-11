@@ -1,0 +1,42 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pstcol,pst-node,pst-eps}
+
+\newcommand{\Show}[1]{\psframebox{\textsc{\textsf#1}}}
+
+\begin{document}
+
+\TeXtoEPS
+\psset{framearc=.2,arrows=->}
+\begin{psmatrix}[rowsep=15pt,colsep=52pt]
+    [name=source]
+    \begin{tabular}{c}
+       annotated\\
+       source\\
+       program
+    \end{tabular}
+  & [name=preprocessor]\Show{preprocessor}
+  & [name=compiler]\Show{compiler}\\[10pt]
+    [name=executable]
+    \begin{tabular}{c}
+      absolute\\
+      machine\\
+      code
+    \end{tabular}
+  & [name=linker]\Show{linker}
+  & [name=assembler]\Show{assembler}\\[10pt]
+  & [name=libraries]libraries \& externals
+  &
+\end{psmatrix}
+\ncline{source}{preprocessor}
+\ncline{preprocessor}{compiler}\naput{source}\nbput{program}
+\ncline{compiler}{assembler}\nbput{target}\naput{assembly}
+\ncline{assembler}{linker}\nbput{relocatable}\naput{machine code}
+\ncline{libraries}{linker}
+\ncline{linker}{executable}
+\endTeXtoEPS
+
+\end{document}
