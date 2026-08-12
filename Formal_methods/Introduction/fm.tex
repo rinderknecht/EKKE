@@ -15,7 +15,8 @@
 
 \title{Introduction to Formal Methods}
 \author{Christian Rinderknecht}
-\date{25 October 2008}
+\institute{Eszterházy Károly Katolikus Egyetem}
+\date{September 2026}
 
 \begin{document}
 
@@ -31,9 +32,18 @@
 
   \bigskip
 
-  The reasons for using them are generally: reduced maintenance costs
-  (particularly corrective maintenance), robustness (by explicitly
-  delimiting the software's scope of validity), and reliability.
+  The reasons for using them are generally:
+  \begin{itemize}
+
+    \item reduced maintenance costs (particularly corrective
+      maintenance),
+
+    \item robustness (by explicitly delimiting the software's scope of
+      validity),
+
+    \item and reliability.
+
+  \end{itemize}
 
   \bigskip
 
@@ -62,8 +72,8 @@
 
   \bigskip
 
-  Some recent advances with AI agents (LeanZip) renews the hope of
-  affordable formal methods.
+  Some recent advances with AI agents (LeanZip) renew the hope of
+  more affordable formal methods.
 
   \bigskip
 
@@ -86,8 +96,8 @@
   \bigskip
 
   In computing there are achievements that ought to make us smile
-  too. But which ones? Faced with a huge program that works
-  \emph{almost}, what should one do?
+  too. But which ones? Faced with a huge program that \emph{almost}
+  works, what should one do?
   \begin{itemize}
 
     \item Try to complete and correct it so that it works correctly
@@ -111,21 +121,21 @@
   \frametitle{Limits and the engineer}
 
   Some limits on the use of formal methods are lifted by technical
-  progress, but some limits are not due to electronics but are
-  intrinsic to mathematics, and hence to computation. It is thus
-  possible to prove that certain problems are not solvable and never
-  will be. Knowledge of these extrinsic and inherent limits is
-  therefore part of formal methods.
+  progress, but some limits are not due to electronics because they
+  are intrinsic to mathematics, and hence to computation. It is thus
+  possible to prove that \textbf{certain problems are not solvable and
+    never will be}. Knowledge of these extrinsic and inherent limits
+  is therefore part of formal methods.
 
   \bigskip
 
   Nowadays, the software industry strongly promotes
-  `pick\hyp{}and\hyp{}choose technology' and the parade of buzzwords
-  in \emph{curricula vitæ}. This is why it is important for the
-  computer engineer to understand the foundations of the discipline,
-  which are independent of any fashionable technology: this way, he or
-  she will be able to correctly grasp tools in terms of the concepts
-  they involve.
+  pick\hyp{}and\hyp{}choose technologies and parades of
+  buzzwords. This is why it is important for the computer engineer to
+  understand the foundations of the discipline, which are independent
+  of any fashionable technology: this way, he or she will be able to
+  correctly \textbf{grasp tools in terms of the concepts} they
+  involve.
 
 \end{frame}
 
@@ -212,8 +222,7 @@
 
   During the flight, a value overflowed, causing an exception to be
   raised, but not handled, which lead to the self\hyp{}destruction of
-  the launcher (the control system believed that the rocket was
-  off\hyp{}course).
+  the rocket (the control system believed that it was off course).
 
 \end{frame}
 
@@ -262,15 +271,6 @@
 
   \bigskip
 
-  \Ada itself is not to blame.
-
-  \bigskip
-
-  Instead of going into the details of what went wrong, let us
-  consider what happened next.
-
-  \bigskip
-
   Some researchers at \Inria (Gonthier \& Deutsch) proposed a static
   analyser for \Ada that could have caught the error that lead to the
   loss of Ariane~5, and discovered many other errors.
@@ -301,21 +301,15 @@
   I joined that company in 2000 to work on the static analysis of
   JavaCard. The idea was to translate JavaCard and other languages
   (\Clang and \Cpp) to \Ada, for which there was already a static
-  analyser, following the explosion of Ariane~5.
-
-  \bigskip
-
-  The translation did not need to preserve all behaviours, only those
-  who could go wrong (run\hyp{}time errors).
+  analyser, following the explosion of Ariane~5. The translation did
+  not need to preserve all behaviours, only those who could go wrong
+  (run\hyp{}time errors).
 
   \bigskip
 
   The company was a success and is now part of \textbf{Mathworks
-    Inc.}, known for MATLAB and \Simulink.
-
-  \bigskip
-
-  PolySpace (the tool) is well known in the avionics industry.
+    Inc.}, known for MATLAB and \Simulink. PolySpace (the tool) is
+  well known in the avionics industry.
 
 \end{frame}
 
@@ -329,9 +323,9 @@
   \bigskip
 
   It makes an \textbf{over\hyp{}approximation} of the behaviours of a
-  program, then deduce properties on those, and finally translates
-  back the abstract properties in terms of the original behaviours of
-  the program.
+  program, then deduce properties of them, and finally translates back
+  the abstract properties in terms of the original behaviours of the
+  program.
 
   \bigskip
 
@@ -370,11 +364,7 @@
 
   A behaviour of a system, or \textbf{trace}, can be thought as a line
   from one state to the next. We show four traces as black, thick
-  lines.
-
-  \bigskip
-
-  One of the traces actually ends in an error.
+  lines. (One of the traces actually ends in an error.)
 
 \end{frame}
 
@@ -391,20 +381,20 @@
 \begin{frame}
   \frametitle{Abstract interpretation / An illustration}
 
-  We need to characterise the erroneous states in a simple manner, at
-  the cost of over\hyp{}approximating them: this means to abstract the
-  property `To be erroneous' so it becomes easier to check.
+  We need to characterise the erroneous states in a simple manner,
+  even if we over\hyp{}approximate them: this means to abstract the
+  property `To be erroneous.' so it becomes easy to check.
 
   \bigskip
 
   For example, we can abstract the error property by a red square
-  containing the set of erroneous states, instead of being the set
-  itself.
+  containing the set of erroneous states, instead of being the exact,
+  scattered set itself.
 
   \bigskip
 
-  A square can be defined by three numbers only, and it is easy to
-  check whether a given state belongs to it: if so, we deem it an
+  A square can be defined by a tiny amount of numbers, and it is easy
+  to check whether a given state belongs to it: if so, we deem it an
   error.
 
   \bigskip
@@ -543,15 +533,15 @@
   \bigskip
 
    Frama-C is actually a software suite which includes a static
-   analyser, but also software to interactively prove that the source
-   code satisfies some \textbf{functional specifications} provided by
-   the user.
+   analyser based on abstract interpretation, but also plug\hyp{}ins
+   to interactively prove that the source code satisfies some
+   \textbf{functional specifications} provided by the user (like model
+   checking).
 
    \bigskip
 
-   Recently, Frama-C has been used by Dassault Aviation to detect
-   common weaknesses in real\hyp{}time software running on the Falcon
-   jets.
+   Frama-C has been used by Dassault Aviation to detect common
+   weaknesses in real\hyp{}time software running on the Falcon jets.
 
    \bigskip The code base of Frama-C is almost entirely written in
    \OCaml (perhaps the largest \OCaml code base in the world).
@@ -597,25 +587,25 @@
 
   \bigskip
 
-  The use of the \textsf{B} method by GEC-Alsthom and, more recently,
+  The use of the \textbf{B method} by GEC-Alsthom and, more recently,
   by Matra Transport International for the Calcutta metro (1992) and
   line~14 (1999) of the Paris metro illustrates this approach.
 
   \bigskip
 
-  This method allows the initial specification to be refined step by
-  step and provides a tool (based on set theory) for proving at each
-  step the conformity (correctness) of the refinement with respect to
-  the previous step. The final phase consists of producing several
-  tens of thousands of lines of \textsf{C} code, for which one then
-  has, by transitivity, a proof of correctness with respect to the
-  initial specification.
+  This method allows the \textbf{initial specification to be refined
+    step by step} and provides a tool (based on set theory) for
+  proving at each step the conformity (correctness) of the refinement
+  with respect to the previous step. The final phase consists of
+  producing several tens of thousands of lines of \textsf{C} code, for
+  which one then has, by transitivity, a \textbf{proof of correctness with
+  respect to the initial specification}.
 
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{A success story: the Parisian métro line~14}
+  \frametitle{A success story: the Parisian metro line~14}
 
   \begin{center}
     \includegraphics[scale=0.6]{ligne-14-Chatelet.eps}
@@ -627,16 +617,15 @@
 
 
 \begin{frame}
-  \frametitle{The Parisian métro line~14}
+  \frametitle{The Parisian metro line~14}
 
   In October 1999, opened in Paris the first entirely automated metro
   line (number~14).
 
   \bigskip
 
-  Some people thought that the trains were controlled at a distance,
-  but they actually moved and stopped based on decisions taken by
-  themselves, with inputs from sensors and communication networks.
+  The trains move and stop based on decisions taken by themselves,
+  with inputs from sensors and communication networks.
 
   \bigskip
 
@@ -658,7 +647,7 @@
 
 
 \begin{frame}
-  \frametitle{The Parisian métro line~14}
+  \frametitle{The Parisian metro line~14}
 
   The train system comprises four subsystems:
   \begin{enumerate}
@@ -689,7 +678,7 @@
 
 
 \begin{frame}
-  \frametitle{The Parisian métro line~14}
+  \frametitle{The Parisian metro line~14}
 
   The system architecture is naturally distributed and is made of
   \begin{enumerate}
@@ -710,7 +699,7 @@
 
 
 \begin{frame}
-  \frametitle{The Parisian métro line~14}
+  \frametitle{The Parisian metro line~14}
 
   In the operation control centre, operators monitor scheduled train
   programs for each day and supervise events received from the
@@ -736,11 +725,11 @@
 
 
 \begin{frame}
-  \frametitle{The Parisian métro line~14}
+  \frametitle{The Parisian metro line~14}
 
   In order to bring strong correctness assurances in software, it is
   paramount to carefully specify the expected behaviours and delimit
-  the field of application of the mathematical proofs.
+  the scope of the mathematical proofs.
 
   \bigskip
 
@@ -755,11 +744,11 @@
    French researcher. It comprises
    \begin{enumerate}
 
-     \item a formal notation to expression specifications,
+     \item a formal notation to express specifications,
 
      \item a design methodology,
 
-     \item and software tools as a support.
+     \item and software tools.
 
    \end{enumerate}
 
@@ -952,8 +941,8 @@
 
 \begin{alltt}
 \small
-\textbf{REFINEMENT} gcd_R1 /* refinement of ... */
-\textbf{REFINES} gcd /* the previous machine */
+\textbf{REFINEMENT} gcd_R1 /* refinement of ...        */
+\textbf{REFINES} gcd       /* ... the previous machine */
 \textbf{OPERATIONS}
  rr <-- gcd (xx,yy) = /* No room to handle xx < yy */
    \textbf{BEGIN}
@@ -1069,21 +1058,20 @@
 
   The first row makes up the analysis and the second is the synthesis.
 
-  \smallskip
+  \medskip
 
   \includegraphics[width=0.9\textwidth]{phases}
 
-  A real compiler has many more stages than shown above, and is always
-  a complex piece of software where more errors are likely. Those
-  errors can be silent: some erroneous code can be emitted only for
-  certain classes of programs, which is a serious problem for embedded
-  applications.
+  A real compiler is more complex than shown above, and errors are
+  likely. Some errors can be silent: some erroneous code can be
+  emitted only for certain classes of programs, which is a serious
+  problem for embedded applications.
 
   \bigskip
 
-  Xavier Leroy at \Inria (France) has spearheaded the design and
-  implementation of a \textbf{certified \Clang compiler}, called
-  \textbf{CompCert}, using \Coq.
+  Xavier Leroy at \Inria (France) lead the design and implementation
+  of a \textbf{certified \Clang compiler}, called \textbf{CompCert},
+  using \Coq.
 
 \end{frame}
 
@@ -1682,12 +1670,16 @@ when given as input a positive integer.
 
   The first point rests on a good understanding of the client's needs,
   an understanding that the client cannot always articulate from the
-  outset. A \textbf{maieutic} process must therefore take place
-  between the client and the designer in order to bring out the
-  properties of the expected result. The designer builds a formal
-  model step by step, which he or she does not necessarily share with
-  the client but whose logical implications are discussed with the
-  client in order to refine the properties.
+  outset.
+
+  \bigskip
+
+  A \textbf{maieutic} process must therefore take place between the
+  client and the designer in order to bring out the properties of the
+  expected result. The designer builds a formal model step by step,
+  which he or she does not necessarily share with the client but whose
+  logical implications are discussed with the client in order to
+  refine the properties.
 
 \end{frame}
 
@@ -1862,7 +1854,7 @@ when given as input a positive integer.
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{... and some good notes}
+  \frametitle{... and some good news}
 
   Formal methods place heavy demands on the early phases of
   development (specification, design), at the risk of giving a
@@ -2066,10 +2058,10 @@ Regarding the first point:
 \begin{itemize}
 
   \item The data manipulated by programs can be described by
-  combinations of elementary sets (integers, characters, etc.) such
-  as Cartesian products (for \texttt{struct} in the \textsf{C}
-  language) or unions (for \texttt{union} in \textsf{C}), for
-  example.
+    combinations of elementary sets (integers, characters, etc.) such
+    as Cartesian products (for \texttt\small {struct} in the
+    \textsf{C} language) or unions (for \texttt{\small union} in
+    \textsf{C}), for example.
 
   \item Computability theory teaches us of the existence of limits,
   that is, here, of unrealisable specifications.
@@ -2319,14 +2311,14 @@ example
 \frametitle{Cantor's diagonalisation}
 
 One may then ask whether there exist sets whose cardinality is greater
-than $\aleph_0$, i.e. uncountable sets. The answer is yes: \emph{the
-set of subsets of a countable set is not countable.}
+than $\aleph_0$, that is uncountable sets. The answer is yes:
+\textbf{the set of subsets of a countable set is not countable.}
 
 \bigskip
 
-This is proven by a technique called \emph{diagonalisation}. Let
-$A = \{a_0, a_1, \ldots\}$ be a countable set and let $S$ be the set
-of its subsets.
+This is proven by a technique called \textbf{diagonalisation}. Let $A
+= \{a_0, a_1, \ldots\}$ be a countable set and let $S$ be the set of
+its subsets.
 
 \bigskip
 
@@ -2405,20 +2397,10 @@ a finite set of cardinality $n$ is $2^n$.
 \end{itemize}
 
 There are therefore more solutions than computable solutions
-(solutions obtainable by algorithms). We speak of \emph{decidable
-problems} for those whose solution is computable and of
-\emph{undecidable problems} for those whose solution is not
+(solutions obtainable by algorithms). We speak of \textbf{decidable
+  problems} for those whose solution is computable and of
+\textbf{undecidable problems} for those whose solution is not
 computable.
-
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}
-
-%% \bibliographystyle{plain}
-%% \bibliography{fm}
-%% \nocite{*}
 
 \end{frame}
 
