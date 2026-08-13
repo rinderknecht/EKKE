@@ -1,0 +1,99 @@
+%-*-latex-*-
+
+% Shell prompting
+%
+\newcommand{\shellprompt}{\textcolor{red}{\texttt{}\$}}
+\newcommand{\shellin}[1]{\textsf{\shellprompt{}\ {#1}}}
+
+% OCaml toplevel
+%
+\newcommand{\camlprompt}{\texttt{\textcolor{blue}{\#}}}
+%\newcommand{\semi}{\texttt{\textbf{;;}}}
+\newcommand{\topin}[1]{\texttt{\textbf{\#}\ {#1}\textbf{;;}}}
+\newcommand{\topout}[1]{\emph{\texttt{\textcolor{green}{#1}}}}
+\newcommand{\error}[1]{\emph{\texttt{\textcolor{red}{#1}}}}
+
+% Tokens
+%
+\newcommand{\tok}[1]{\small \cst{#1}\xspace}
+
+\newcommand{\Teof}{\tok{EOF}}
+
+\newcommand{\Tident}{\tok{IDENT}}
+\newcommand{\Tint}{\tok{INT}}
+\newcommand{\Tplus}{\tok{PLUS}}
+\newcommand{\Tminus}{\tok{MINUS}}
+\newcommand{\Ttimes}{\tok{TIMES}}
+\newcommand{\Tslash}{\tok{SLASH}}
+\newcommand{\Tequal}{\tok{EQUAL}}
+\newcommand{\Tarrow}{\tok{ARROW}}
+\newcommand{\Tlpar}{\tok{LPAR}}
+\newcommand{\Trpar}{\tok{RPAR}}
+\newcommand{\Tlet}{\tok{LET}}
+\newcommand{\Trec}{\tok{REC}}
+\newcommand{\Tin}{\tok{IN}}
+\newcommand{\Tfun}{\tok{FUN}}
+\newcommand{\Tmatch}{\tok{MATCH}}
+\newcommand{\Tif}{\tok{IF}}
+\newcommand{\Tthen}{\tok{THEN}}
+\newcommand{\Telse}{\tok{ELSE}}
+\newcommand{\Ttrue}{\tok{TRUE}}
+\newcommand{\Tfalse}{\tok{FALSE}}
+\newcommand{\Tand}{\tok{AND}}
+\newcommand{\Tor}{\tok{OR}}
+\newcommand{\Tnot}{\tok{NOT}}
+
+% ocamllex
+%
+\newcommand{\Xrule}{\kwd{rule}\xspace}
+\newcommand{\Xparse}{\kwd{parse}\xspace}
+
+% Abstract Syntax
+%
+\newcommand{\clos}[3]{\cst{Clos} \, \lpar{#1},#2,#3\rpar}
+
+% Meta-variable
+%
+\newcommand{\meta}[1]{\overline{#1}}
+
+% Judgements (evaluation and typing)
+%
+\newcommand{\ceval}[2]{{#1} \twoheadrightarrow {#2}}
+\newcommand{\eval}[3]{{#1} \vdash {#2} \twoheadrightarrow {#3}}
+\newcommand{\meval}[3]{\eval{#1}{\src{#2}}{#3}}
+\newcommand{\evalb}[2]{\ceval{#1}{#2}}
+\newcommand{\ieval}[5]{{#1}/{#2} \vdash {#3} \twoheadrightarrow {#4}/{#5}}
+\newcommand{\trel}[3]{{#1} \vdash {#2} : {#3}}
+\newcommand{\dom}[1]{\mathrm{dom} (#1)}
+\newcommand{\codom}[1]{\mathrm{codom} (#1)}
+\newcommand{\subst}[3]{{#1}[#2 \leftarrow #3]}
+
+% Syntax analyser
+%
+\newcommand{\src}[1]{\langle\!\langle{#1}\rangle\!\rangle}
+%\newcommand{\src}[1]{\llbracket{#1}\rrbracket}
+
+% Decorated AST node 
+%
+\newcommand{\mknode}[3]%
+  {#1~[tnpos=l]{\textbf{#2}}~[tnpos=r]{\textcolor{red}{#3}}}
+
+% Comments and examples
+%
+\newcommand{\remarque}{\textbf{Remarque}\xspace}
+\newcommand{\remarques}{\textbf{Remarques}\xspace}
+\newcommand{\exemple}{\textbf{Exemple}\xspace}
+\newcommand{\exemples}{\textbf{Exemples}\xspace}
+
+% Regular formal langages
+%
+%\newcommand{\R}[1]{{\cal R} ({#1}^{*})}
+\newcommand{\Reg}[1]{{\cal R} ({#1}^{*})}
+
+% AST annotation (typed expression)
+%
+\newcommand{\te}[2]{{#1}^{#2}}
+
+% Type Unification
+%
+\newcommand{\mgu}{\textsf{mgu}\xspace}

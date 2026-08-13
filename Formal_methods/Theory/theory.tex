@@ -1,0 +1,1618 @@
+\documentclass[compress,dvipdfmx]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{beramono}          % Bold in verbatim
+\usepackage{hyphenat}          % \hyp{} is a breakable dash
+\usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{alltt}
+\usepackage{amssymb,amsmath,stmaryrd}
+\usepackage{mathpartir}
+\usepackage{multicol}
+\usepackage{clrscode}
+\usepackage{url}
+
+\input{commands}
+\input{ocaml_syntax}
+\input{beamer_cfg}
+
+\newcommand{\Ada}{\textsf{Ada}\xspace}
+\newcommand{\Java}{\textsf{Java}\xspace}
+\newcommand{\OCaml}{\textsf{OCaml}\xspace}
+\newcommand{\Maude}{\textsf{Maude}\xspace}
+\newcommand{\Csharp}{\textsf{C}\raise 0.7mm \hbox{\(\scriptscriptstyle \textsf{\#}\)}\xspace}
+\newcommand{\NaN}{\textsf{NaN}\xspace}
+\newcommand{\true}{\textsf{true}\xspace}
+\newcommand{\false}{\textsf{false}\xspace}
+
+\title{A Theory of Programming}
+\author{Christian Rinderknecht}
+\institute{Eszterházy Károly Katolikus Egyetem}
+\date{September 2026}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\begin{frame}
+  \frametitle{Introduction}
+
+  This lecture proposes a stepwise introduction to a foundation of
+  programming and the analyses to write reliable and efficient
+  software.
+
+  \bigskip
+
+  There are many different frameworks. We choose here a formal logic
+  where relations and functions are the main building blocks. This
+  entails that the meaning of \textbf{functional programs} can often
+  be made very precise. (We will cover imperative programs later.)
+
+  \bigskip
+
+  It is a good framework to get a sense of \textbf{static analyses},
+  and, as such, it stands a prominent place in the field of formal
+  methods and \textbf{compiler construction}.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Introduction}
+
+  In a later lecture, we will learn a specific programming language
+  called \textbf{\OCaml}, enabling you to put in practice what you
+  have learnt.
+
+  \bigskip
+
+  Most textbooks and courses on \OCaml propose a traditional approach:
+  basic concepts, data structures, algorithms.
+
+  \bigskip
+
+  By contrast, this lecture is not specific to \OCaml and is
+  theoretical because it introduces many concepts that are used in
+  functional programming and \textbf{compiler construction}.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{String rewriting}
+
+  Let us consider a string of white and black beads, like \(\circ
+  \bullet \bullet \bullet \circ \circ \bullet\), and a one-player game
+  whose unique move consists in replacing two adjacent beads with only
+  one according to the rules
+  \begin{equation*}
+    \bullet \; \circ   \xrightarrow{\alpha} \bullet\qquad\qquad
+    \circ   \; \bullet \xrightarrow{\beta} \bullet\qquad\qquad
+    \bullet \; \bullet \xrightarrow{\gamma} \circ
+  \end{equation*}
+
+  The rules~\(\alpha\), \(\beta\)~and~\(\gamma\) make up a simple
+  \textbf{string\hyp{}rewriting system}.
+
+  \bigskip
+
+  Rules \(\alpha\)~and~\(\beta\) can be conceived as:\\ \emph{`A black
+  bead absorbs the white bead next to it.'}
+
+  \bigskip
+
+  The goal of this game is to end up with as few beads as possible, so
+  our example may lead to the \textbf{rewrites}
+  \begin{equation*}
+    \circ \bullet \bullet \, \fbox{\(\bullet \, \circ\)} \circ \bullet
+    \xrightarrow{\alpha} \circ \bullet \bullet \, \fbox{\(\bullet \,
+      \circ\)} \, \bullet \xrightarrow{\alpha} \fbox{\(\circ \,
+      \bullet\)} \bullet \bullet \bullet \xrightarrow{\beta} \bullet
+    \bullet \fbox{\(\bullet \, \bullet\)} \xrightarrow{\gamma} \bullet \,
+    \fbox{\(\bullet \, \circ\)} \xrightarrow{\alpha} \fbox{\(\bullet
+      \, \bullet\)} \xrightarrow{\gamma} \circ
+  \end{equation*}
+
+  \medskip
+
+  \noindent where the part of the string to be rewritten next is
+  framed.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Normal forms and termination}
+
+  Other compositions of the rules lead to the same result~\(\circ\) as
+  well. Some others bring all\hyp{}white or all\hyp{}black strings,
+  like \(\circ \, \circ\) and~\(\bullet\).
+
+  \bigskip
+
+  Strings that can not be further rewritten, or \textbf{reduced}, are
+  called \textbf{normal forms}.
+
+  \bigskip
+
+  We may wonder whether all strings have a normal form, and, if so, if
+  it is unique and, furthermore, if it is either all\hyp{}white or
+  all\hyp{}black.
+
+  \bigskip
+
+  First, let us note that the system is \textbf{terminating}, that is,
+  there is no infinite chain of rewrites, because the number of beads
+  strictly decreases in all the rules.
+
+  \bigskip
+
+  This is not a necessary condition in general, for instance, \(\circ
+  \; \bullet \xrightarrow{\beta} \bullet \circ \circ\) would preserve
+  termination because the composition \(\beta\alpha\alpha\) would be
+  equivalent to the original rule~\(\beta\).
+
+  \bigskip
+
+  In particular, this means that any string has a normal form.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Invariants}
+
+  Second, notice how the parity of the number of black beads is
+  \textbf{invariant} through each rule and how there is no rewrite
+  rule for two adjacent white beads.
+
+  \bigskip
+
+  Therefore, if there are \(2p\) initial black beads, then composing
+  rules \(\alpha\)~and~\(\beta\) lead to an all\hyp{}black string,
+  which can be reduced by applying rule~\(\gamma\) to contiguous pairs
+  of beads into an all\hyp{}white string made of \(p\)~beads.
+
+  \bigskip
+
+  Otherwise, the same all\hyp{}black string can be reduced by applying
+  alternatively \(\gamma\)~and~\(\beta\) on the left end or
+  \(\gamma\)~and~\(\alpha\) on the right end, yielding~\(\circ\).
+
+  \bigskip
+
+  Similarly, if there is an initial odd number of black beads, we
+  always end up with one black bead.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Confluence}
+
+  Consequently, normal forms are not unique. A simple example is
+  \begin{equation*}
+    \circ \circ \xleftarrow{\gamma} \bullet \bullet \circ
+    \xrightarrow{\alpha} \bullet \bullet \xrightarrow{\gamma}
+    \circ
+  \end{equation*}
+
+  \medskip
+
+  Systems where normal forms are unique are \textbf{confluent}.
+
+  \bigskip
+
+  If we think of a rewrite step as an elementary computation, it
+  becomes clear that confluence is a desirable property for carrying
+  out computations, as we would expect, for instance, an arithmetic
+  expression to have the same value no matter the order of the small
+  steps.
+
+  \bigskip
+
+  A systemic order of rule application is called a \textbf{reduction
+    strategy}.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Completing a system}
+
+  We can obtain confluence by adding the rule~\(\delta\):
+  \begin{equation*}
+    \bullet \; \circ   \xrightarrow{\alpha} \bullet\qquad\qquad
+    \circ   \; \bullet \xrightarrow{\beta} \bullet\qquad\qquad
+    \bullet \; \bullet \xrightarrow{\gamma}
+    \circ\qquad\qquad
+    \circ\; \circ \xrightarrow{\delta} \circ
+  \end{equation*}
+  the result of the game is always one bead, whose colour depends on
+  the original parity of the black beads as before.
+
+  \bigskip
+
+  To see why, let us consider first that two non\hyp{}overlapping
+  parts of a string can be rewritten in parallel, so they are not a
+  concern.
+
+  \bigskip
+
+  The interesting cases occur when two applications of rules (maybe of
+  the same rule) lead to different strings because they do
+  overlap. For instance,
+  \begin{equation*}
+    \circ \, \circ \xleftarrow{\gamma} \bullet \bullet
+    \circ \xrightarrow{\alpha} \bullet \, \bullet
+  \end{equation*}
+
+  \medskip
+
+  The important point is that \(\circ \, \circ\) and \(\bullet \,
+  \bullet\) can be rewritten into~\(\circ\) at the next step by
+  \(\delta\)~and~\(\gamma\), respectively.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Critical pairs}
+
+  In general, what matters is that all pairs of strings resulting from
+  the application of overlapping rules, called \textbf{critical
+    pairs}, can be rewritten to the same string: they are
+  \textbf{joinable}.
+
+  \bigskip
+
+  In our example, all interactions occur on substrings made of three
+  beads, so we must examine eight cases:
+  \begin{center}
+    \includegraphics[]{bullets}
+  \end{center}
+
+  In all the cases, the divergences are joinable in one step at most.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Local confluence}
+
+  If all critical pairs are joinable after a divergence in one ore
+  more rewrites, the system is \textbf{locally confluent}.
+
+  \bigskip
+
+  Moreover, if the system is also terminating, then \textbf{every}
+  string has exactly \textbf{one} normal form (a strong property
+  entailing confluence).
+
+  \bigskip
+
+  Sometimes, as seen previously, a non\hyp{}confluent system can be
+  completed to become confluent, via a \textbf{completion procedure}.
+
+  \bigskip
+
+  In the case of terminating systems, one of such semi\hyp{}decision
+  procedures is the \textbf{Knuth\hyp{}Bendix algorithm}.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Ground and linear rewrite systems}
+
+  The system we defined is \textbf{ground}, that is, it involves no
+  variables.
+
+  \bigskip
+
+  These allow a finite system to denote an infinite number of ground
+  rules if variables range over infinite sets, or simply, they reduce
+  the size of rewrite systems.
+
+  \bigskip
+
+  For instance, our continued example is equivalent to
+  \begin{equation*}
+    \bullet \; \circ \xrightarrow{\alpha} \bullet
+    \qquad\qquad
+    \circ \; x \xrightarrow{\beta+\delta} x
+    \qquad\qquad
+    \bullet \; \bullet \xrightarrow{\gamma} \circ
+  \end{equation*}
+
+  \medskip
+
+  If we accept multiple occurrences of a variable on the
+  left\hyp{}hand side of a rule, a so\hyp{}called \textbf{non
+    left\hyp{}linear rule}, we can further decrease the size of the
+  system:
+  \begin{equation*}
+    x  \; x \xrightarrow{\gamma+\delta} \circ\qquad\qquad
+    x  \; y \xrightarrow{\alpha+\beta} \bullet
+  \end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Ordered rewrite systems}
+
+  Notice that there is now an implicit order over the rules: the rule
+  \(\gamma+\delta\) must be examined first for a \textbf{match} with a
+  part of the current string, because it is included in the second
+  (set \(x=y\) in \(\alpha+\beta\)).
+
+  \bigskip
+
+  Non\hyp{}linear systems are equational theories due the implicit
+  equality on substructures, which is complex: we will limit ourselves
+  to \textbf{linear systems}.
+
+  \bigskip
+
+  In general, the order in which the rules are written on the page is
+  their \textbf{logical order}.
+
+  \bigskip
+
+  Moreover, let us remark that the system does not specify that
+  \(x\)~must either be~`\(\circ\)' or~`\(\bullet\)': this should be
+  stated nevertheless somewhere else.
+
+  \bigskip
+
+  Generally speaking, this means that the \textbf{type} of the
+  variables has to be defined elsewhere or inferred from the variable
+  uses.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{A simple calculator}
+
+  Perhaps, after playing with beads, the simplest thing is an integer
+  calculator, that is, integers and the four basic arithmetic
+  operators.
+
+  \bigskip
+
+  An \textbf{expression} may be built using these operations, integers
+  and parentheses. For example \((2+3)\times(4+5)\) is an expression.
+
+  \bigskip
+
+  A \textbf{value}  is an integer, therefore  it is a special  case of
+  expression.
+
+  \bigskip
+
+  What a calculator does is to match an input expression with a value,
+  the result. For example, the above expression evaluates in~\(45\).
+
+  \bigskip
+
+  This process is called \textbf{evaluation}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Evaluation as rewriting expressions/Reductions}
+
+  The evaluation of arithmetic expressions can be defined as a series
+  of transformations leading to a value (the result). These
+  transformations are called \textbf{rewrites} and a series of
+  rewrites is a \textbf{reduction} or, more generally, a
+  \textbf{computation}.
+
+  \bigskip
+
+  As we learnt in school long time ago, the way to perform these
+  rewrites is to select a part of the current expression consisting of
+  an operator and its arguments \emph{as values}, then to replace this
+  sub-expression by the operation result.
+
+  \bigskip
+
+  In the following reduction, let us underline the sub-expression to
+  be rewritten and print in bold the result of each step:
+  \begin{equation*}
+    (2+3) \times (\underline{4+5}) \rightarrow (\underline{2+3})
+    \times \textbf{9} \rightarrow \underline{\textbf{5} \times 9}
+    \rightarrow \textbf{45}
+  \end{equation*}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Strategy of evaluation and rewrite systems}
+
+  Note that there are different ways to choose the sub-expression. For
+  example:
+  \begin{equation*}
+    (\underline{2+3}) \times (4+5) \rightarrow \textbf{5} \times
+    (\underline{4+5}) \rightarrow \underline{5 \times \textbf{9}}
+    \rightarrow \textbf{45}
+  \end{equation*}
+  It is usual to write, as a summary: \((2+3)\times(4+5)
+  \xrightarrow{*} 45\) or \((2+3)\times(4+5)=45\).
+
+  \bigskip
+
+  So, there are two concepts involved here:
+  \begin{enumerate}
+
+    \item the selection of a sub-expression made of an operator and
+      its arguments as values,
+
+    \item the rewriting of such sub-expression into a value.
+
+  \end{enumerate}
+  They are defined by a \textbf{rewrite system}.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Rewrite rules}
+
+  A rewrite system is a set of \textbf{rewrite rules}.
+
+  \bigskip
+
+  Rewriting rules specify how to perform a rewrite.
+
+  \bigskip
+
+  For example, let us assume that we have an infinite set of rewriting
+  rules, that is. an infinite rewrite system, like:
+  \begin{align*}
+    0 + 0 & \rightarrow 0\\
+    0 + 1 & \rightarrow 1\\
+    \dots & \rightarrow \dots\\
+    124 - 57 & \rightarrow 67\\
+    \dots & \rightarrow \dots
+  \end{align*}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Conditional rewrite rules and meta-variables}
+
+  This rewrite system is not enough for the kind of expressions we
+  want to evaluate, where it is possible to combine operations, like
+  \((2+3) \times (4+5)\).
+
+  \bigskip
+
+  So let us extend our system with rules that specify the
+  sub-expressions we can rewrite.
+
+  \bigskip
+
+  Consider the multiplication:
+  \begin{equation*}
+    e_1 \times e_2 \rightarrow e'_1 \times e_2 \quad \text{if} \; e_1
+    \rightarrow e'_1
+  \end{equation*}
+  where \(e_1\), \(e'_1\) and \(e_2\) denote any expression and are
+  called \textbf{meta-variables}.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Instance of a rewrite rule}
+
+  An \textbf{instance} of this rule is obtained when the
+  meta-variables are replaced by expressions.
+
+  \bigskip
+
+  For example, \( (2+3) \times (4+5) \rightarrow 5 \times (4+5) \) is
+  an instance since \(2 + 3 \rightarrow 5\). To understand why,
+  replace \(e_1\) by \(2+3\), \(e'_1\) by \(5\) and \(e_2\) by
+  \(4+5\).
+
+  \bigskip
+
+  Let us rewrite \(((2 + 3) \times 6) \times (4+5)\). First, we see
+  that the previous rule has the required shape, i.e., the left side
+  of the arrow is \(e_1 \times e_2\) and if \(e_1 = (2+3) \times 6\)
+  and \(e_2 = 4+5\) then \(e_1 \times e_2\) is exactly the expression
+  we wish to rewrite. So, we replace \(e_1\) and \(e_2\) by their
+  associated expressions in the rule and we get an instance of it:
+  \begin{equation*}
+    ((2 + 3) \times 6) \times (4+5) \rightarrow e'_1 \times (4+5)
+    \quad \text{if} \; (2+3) \times 6 \rightarrow e'_1
+  \end{equation*}
+  Therefore, we now know that we have to rewrite \((2 + 3) \times 6\).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Instance of a rewrite rule (cont)}
+
+  We need another instance of the same rule. This time, let \(e_1 =
+  2+3\) and \(e_2 = 6\). We get
+  \begin{equation*}
+    (2+3) \times 6 \rightarrow e'_1 \times 6 \quad \text{if} \; 2 + 3
+    \rightarrow e'_1
+  \end{equation*}
+  It is important to understand that this latter \(e'_1\) is not the
+  same as the former: they belong to two different instances of the
+  same rule. The latter \(e'_1\) is actually easy to find, since we
+  have all the rules for basic cases as \(2 + 3 \rightarrow
+  5\). Hence, \(e'_1 = 5\) and the second instance is now complete:
+  \begin{equation*}
+    (2+3) \times 6 \rightarrow 5 \times 6 \quad \text{if} \; 2 + 3
+    \rightarrow 5
+  \end{equation*}
+  Going backwards, this implies that the former \(e'_1\) is \(5 \times
+  6\). So, the first instance is
+  \begin{equation*}
+    ((2+3) \times 6) \times (4+5) \rightarrow (5 \times 6) \times
+    (4+5) \quad \text{if} \; 2 + 3 \rightarrow 5
+  \end{equation*}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Instance of a rewrite rule (cont)}
+
+  Our rule for multiplication, \(e_1 \times e_2 \rightarrow e'_1
+  \times e_2\), actually depends on another, \(e_1 \rightarrow
+  e'_1\). It is usual to write them this way:
+  \begin{mathpar}
+    \inferrule*[right=\(\TirName{Mult}_1\)]
+               {e_1 \rightarrow e'_1}
+               {e_1 \times e_2 \rightarrow e'_1 \times e_2}
+  \end{mathpar}
+  This is called an \textbf{inference rule}. Note that it has a name,
+  \(\TirName{Mult}_1\). The rewrite rule on the top, acting as a
+  condition for the rule on the bottom, is called a
+  \textbf{premise}. The rule at the bottom is called a
+  \textbf{conclusion}.
+
+  \bigskip
+
+  A \textbf{substitution} is a mapping from meta-variables to
+  expressions which applies to an inference rule or rewrite rule. For
+  example, let \(\sigma\) be the following substitution: \(\{e_1
+  \mapsto (2+3) \times 6; e_2 \mapsto 4+5\}\). This notation is
+  equivalent to \(\sigma(e_1) = (2+3) \times 6\) and \(\sigma(e_2) =
+  4+5\).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Instance of a rewrite rule (cont)}
+
+  Now we can make a clear definition of the notion of `instance of a
+  rule':
+
+  \medskip
+
+  \begin{quote}
+    \emph{An instance of a rule is a rule in which some meta-variables
+    \(e_i\) are replaced by expressions \(\sigma(e_i)\).}
+  \end{quote}
+  For example, here is the instance of \(\TirName{Mult}_1\) using
+  previously defined substitution \(\sigma\), and noted
+  \(\sigma(\TirName{Mult}_1)\):
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma(\TirName{Mult}_1)\)]
+               {(2 + 3) \times 6 \rightarrow e'_1}
+               {((2+3) \times 6) \times (4+5) \rightarrow e'_1 \times (4+5)}
+  \end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Instance of a rewrite rule (cont)}
+
+  Now how do we find (a mapping for) \(e'_1\)?
+
+  \bigskip
+
+  Let us define another substitution \(\sigma'=\{e_1 \mapsto 2 + 3;
+  e_2 \mapsto 6\}\) and apply it:
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma'(\TirName{Mult}_1)\)]
+        {2 + 3 \rightarrow e'_1}
+        {(2 + 3) \times 6 \rightarrow e'_1 \times 6}
+  \end{mathpar}
+  Note that the meta-variable \(e'_1\) in
+  \(\sigma'(\TirName{Mult}_1)\) is not the same as in
+  \(\sigma(\TirName{Mult}_1)\): they should have a different mapping.
+
+  \bigskip
+
+  We have a basic rewrite rule \(2 + 3 \rightarrow 5\), thus we extend
+  \(\sigma'\) with \(e'_1 \mapsto 5\) and get
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma'(\TirName{Mult}_1)\)]
+        {2 + 3 \rightarrow 5}
+        {(2 + 3) \times 6 \rightarrow 5 \times 6}
+  \end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Instance of a rewrite rule (cont)}
+
+  Therefore we can extend \(\sigma\) with \(e'_1 \mapsto 5 \times 6\)
+  and we get
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma(\TirName{Mult}_1)\)]
+       {(2 + 3) \times 6 \rightarrow 5 \times 6}
+       {((2+3) \times 6) \times (4+5) \rightarrow (5 \times 6) \times (4+5)}
+  \end{mathpar}
+  We can summarise this rewrite using the two instances of
+  \(\TirName{Mult}_1\) as
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma(\TirName{Mult}_1)\)] {
+      \inferrule*[right=\(\;\sigma'(\TirName{Mult}_1)\)]
+                 {2 + 3 \rightarrow 5}
+                 {(2 + 3) \times 6 \rightarrow 5 \times 6}
+    }
+    {((2+3) \times 6) \times (4+5) \rightarrow (5 \times 6) \times (4+5)}
+  \end{mathpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Instance of a rewrite rule (cont)}
+
+  But what about the rewrite of an expression like \(7 \times (4+5)\)?
+
+  \bigskip
+
+  Let us define another substitution on \(\TirName{Mult}_1\):
+  \(\sigma' = \{e_1 \mapsto 7; e_2 \mapsto 4+5\}\).
+
+  \bigskip
+
+  The corresponding instance is
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma'(\TirName{Mult}_1)\)]
+        {7 \rightarrow e'_1}
+        {7 \times (4 + 5) \rightarrow e'_1 \times (4 +5)}
+  \end{mathpar}
+  But there is no rule of shape `\(v \rightarrow \dots\)', where \(v\)
+  is \emph{a value because a value is, by definition, an expression
+  completely reduced.}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Completing the multiplication rule}
+
+  This means that we need another rule for the evaluation of the
+  \emph{right} argument of `\(\times\)':
+  \begin{mathpar}
+    \inferrule*[right=\(\TirName{Mult}_2\)]
+        {e_2 \rightarrow e'_2}
+        {e_1 \times e_2 \rightarrow e_1 \times e'_2}
+  \end{mathpar}
+  This inference rule says that we can rewrite a product by rewriting
+  its right argument.
+
+  \bigskip
+
+  For example, here is the instance \(\sigma'(\TirName{Mult}_2)\):
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma'(\TirName{Mult}_2)\)]
+        {4 + 5 \rightarrow 9}
+        {7 \times (4+5) \rightarrow 7 \times 9}
+  \end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Strategy}
+
+  But now, something interesting happens.
+
+  \bigskip
+
+  Consider again \((2 + 3) \times (4+5)\): both \(\TirName{Mult}_1\)
+  and \(\TirName{Mult}_2\) can be instantiated by substitution
+  \(\sigma'' = \{e_1 \mapsto 2+3; e_2 \mapsto 4+5\}\):
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma''(\TirName{Mult}_1)\)]
+        {2 + 3 \rightarrow 5}
+        {(2+3) \times (4+5) \rightarrow 5 \times (4+5)}
+    \and
+    \inferrule*[right=\(\sigma''(\TirName{Mult}_2)\)]
+        {4 +5 \rightarrow 9}
+        {(2+3) \times (4+5) \rightarrow (2+3) \times 9}
+  \end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Strategy}
+
+  This means that \emph{our system does not specify the order of
+  evaluation of \(\times\) arguments.}
+
+  \bigskip
+
+  In other words, our rewrite system does not select only one
+  sub\hyp{}expression to rewrite at each step.
+
+  \bigskip
+
+  We need a \textbf{strategy} to complete it.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Finiteness and soundness of reductions}
+
+  At this point, it is clear that these reductions satisfy the
+  following properties:
+  \begin{itemize}
+
+    \item \textbf{Finiteness.} All the reductions are finite, i.e.,
+      all the computations terminate.
+
+    \item \textbf{Soundness.} All the reductions of an expression end
+      with the same value, if any.
+
+  \end{itemize}
+
+  About the second point, note indeed that \emph{some expressions have
+  no value}, as
+  \begin{equation*}
+    (\underline{2+3})/(4-4) \rightarrow \textbf{5}/(\underline{4-4})
+    \rightarrow 5/\textbf{0} \nrightarrow
+  \end{equation*}
+  The reduction is finite but does not end with a value: this
+  situation corresponds to an \textbf{error}, usually called
+  \textbf{run\hyp{}time error} in programming languages. Expression
+  \(5/0\) is \textbf{stuck}.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Another model of run-time errors}
+
+  We can modify the calculator so that, in case of error (here, the
+  only one is the division by zero), the result of a rewrite is a
+  special value, called \NaN (\emph{Not a Number}). Then we add the
+  following rules:
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\TirName{DivZero}\)]
+       {}
+       {e/0 \rightarrow \NaN}
+    \and
+    \inferrule*[right=\(\quad\TirName{Div-Err}_1\)]
+       {}
+       {\NaN/e \rightarrow \NaN}
+    \and
+    \inferrule*[right=\(\quad\TirName{Div-Err}_2\)]
+       {}
+       {e/\NaN \rightarrow \NaN}
+    \and
+    \inferrule*[right=\(\quad\TirName{Mult-Err}_1\)]
+      {}
+      {\NaN \times e \rightarrow \NaN}
+    \and
+    \inferrule*[right=\(\quad\TirName{Mult-Err}_2\)]
+       {}
+       {e \times \NaN \rightarrow \NaN}
+    \and
+    \inferrule*[right=\(\quad\TirName{Add-Err}_1\)]
+       {}
+       {\NaN + e \rightarrow \NaN}
+    \and
+    \inferrule*[right=\(\quad\TirName{Add-Err}_2\)]
+       {}
+       {e + \NaN \rightarrow \NaN}
+    \and
+    \inferrule*[right=\(\quad\TirName{Sub-Err}_1\)]
+       {}
+       {\NaN - e \rightarrow \NaN}
+    \and
+    \inferrule*[right=\(\quad\TirName{Sub-Err}_2\)]
+       {}
+       {e - \NaN \rightarrow \NaN}
+\end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Another model of run-time errors (cont)}
+
+  The rationale of this system is that once an error occurs, no other
+  computations (leading to integer values) are required and the
+  reduction can end as soon as possible.
+
+  \bigskip
+
+  In this case:
+  \begin{equation*}
+    (2+3)/(4-4) \rightarrow 5/(4-4) \rightarrow 5/0 \rightarrow \NaN
+  \end{equation*}
+  or, even the shortest possible:
+  \begin{equation*}
+    (2+3)/(4-4) \rightarrow (2+3)/0 \rightarrow \NaN
+  \end{equation*}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Another model of run-time errors/Rephrasing soundness}
+
+  The interesting phenomenon here is that, now, any reduction ends in
+  a value. In the previous rewrite system, any reduction ends either
+  in a value or a \textbf{stuck expression}, i.e., an expression that
+  cannot be rewritten further.
+
+  \bigskip
+
+  With the new system, that explicitly specifies the reduction of the
+  \NaN error, the soundness property can be rephrased as
+
+  \medskip
+
+  \begin{quote}
+    \emph{All the reductions of an expression end with the same value.}
+  \end{quote}
+  Obviously, the drawback of the new system is that it requires a lot
+  of additional rules, and, as the system is augmented with new rules,
+  new rules for the errors have to be added... or are forgotten by
+  mistake.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Specifying the strategy}
+
+  It is possible to force an order of evaluation on the arguments of
+  \(\times\). Assume we want to reduce the left argument first.
+
+  \bigskip
+
+  The idea is to change \(\TirName{Mult}_2\) so that instead
+  of~\(e_1\), which stands for any expression, we specify a
+  value~\(v\):
+  \begin{mathpar}
+    \inferrule*[right=\(\TirName{New-Mult}_2\)]
+       {e_2 \rightarrow e'_2}
+       {v \times e_2 \rightarrow v \times e'_2}
+  \end{mathpar}
+  This way, it is not possible anymore to instantiate this rule with
+  expression \((2+3) \times (4+5)\) because \(2+3\) is not a value.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Specifying the strategy}
+
+  The only possible reduction is:
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma_1(\TirName{Mult}_1)\)]
+       {2 + 3 \rightarrow 5}
+       {(2+3) \times (4+5) \rightarrow 5 \times (4+5)}
+    \and
+    \inferrule*[right=\(\sigma_2(\TirName{New-Mult}_2)\)]
+       {4 + 5 \rightarrow 9}
+       {5 \times (4+5) \rightarrow 5 \times 9}
+  \end{mathpar}
+  where \(\sigma_1=\{e_1 \mapsto 2+3; e_2 \mapsto 4+5\}\) and
+  \(\sigma_2=\{v \mapsto 5; e_2 \mapsto 4+5\}\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Determinism}
+
+  We have specified the strategy \textbf{in} the rewrite system.
+
+  \bigskip
+
+  Also, with \(\TirName{New-Mult}_2\), given an expression, there is
+  only one rule that can be applied (or none): this is sometimes
+  called \textbf{determinism}, or \textbf{determinacy}:
+
+  \bigskip
+
+  \textbf{Determinism.} If \(e_1 \rightarrow e'_1\) and \(e_2
+  \rightarrow e'_2\) then \(e'_1 = e'_2\).
+
+  \bigskip
+
+  This is a stronger property than soundness, i.e., it implies
+  soundness. Indeed, determinism implies that there is only one
+  reduction from an expression to its value (if any).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Pragmatics of programming languages}
+
+  In many programming languages, the order of evaluation of operator
+  arguments is not specified, which usually means that there is a
+  sentence in the official document which defines the language like:
+  `The order of evaluation of the arguments of operators and functions
+  is not specified.'
+
+  \bigskip
+
+  Formally, this means that the underlying rewrite system is
+  \textbf{non-deterministic}.
+
+  \bigskip
+
+  One notable exception is \Java, which specifies that the arguments
+  are always evaluated from left to right, i.e., following the order
+  of writing.
+
+  \bigskip
+
+  Of course, if an order is specified, as in \Java, the compilers of
+  these languages must implement it. Otherwise one is chosen
+  arbitrarily and may change from one release to another.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Rewrite systems as models of languages}
+
+  By studying rewrite systems, we can learn the basic concepts
+  involved in programming languages, because rewrite systems are
+  extremely simple.
+
+  \bigskip
+
+  There are some languages, like \Maude, whose programs actually are
+  rewrite systems.
+
+  \bigskip
+
+  Some compilers transform the input program (called \textbf{source})
+  and output a program, called \textbf{byte-code}, which can be
+  reduced by a rewrite system.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Rewrite systems as models of languages}
+
+  This is the case of \Java. This is why, in general, we need a
+  \textbf{\Java virtual machine} (JVM) to run the program: this JVM
+  performs the reductions according to a rewrite system.
+
+  \bigskip
+
+  Even if there is no byte-code, we always can interpret what the
+  program does by studying a rewrite system which models it.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Sequentiality and parallelism}
+
+  Some programming languages, like \Ada, allow the programmer to
+  specify that different parts of its program can actually be executed
+  separately: this is called, in general, \textbf{parallelism}. This
+  parallelism is possible only if the underlying rewrite system is
+  non-deterministic.
+
+  \bigskip
+
+  Indeed, if all the strategies lead to the same value (soundness
+  property), it is possible to reduce different parts of an expression
+  in parallel if the rewrite system allows it.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Sequentiality and parallelism}
+
+  For example, the first argument of \(\times\) can be computed
+  \emph{at the same time} as its second argument. In the case of
+  \((2+3) \times (4+5)\), this means that we can reduce in parallel
+  \(2+3\), with \(\TirName{Mult}_1\), and \(4+5\), with
+  \(\TirName{Mult}_2\), then \(5 \times 9\) is finally rewritten in
+  \(45\) (after \textbf{synchronisation} of the two reductions).
+
+\end{frame}
+
+
+%------------------------------------------------------------------------
+%
+\begin{frame}[fragile]
+  \frametitle{Order of evaluation in C}
+
+  In case of C, the order of evaluation arguments of arithmetic
+  operators and functions is not specified, it actually depends on the
+  compiler and its version. Therefore it would be dangerous to rely on
+  the order of evaluation in C.
+
+  \bigskip
+
+  Why is the order left unspecified? Simply because of possible
+  \textbf{side-effects}. Imagine the following situation:
+{\small
+\begin{verbatim}
+int n = 0;
+int f () { n++; return n; };
+int g () { n = 2; return n; };
+int main () { return f() + g() + n; }
+\end{verbatim}
+}
+What is the result?
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Boolean expressions}
+
+  Let~\(\wedge\) represent the conjunction (`and'), \(\vee\) the
+  disjunction (`or'), \(\neg\) the negation (`not'), and let the
+  two values \true and \false.
+
+  \bigskip
+
+  The definition of the conjunction of values is very simple:
+  \begin{mathpar}
+    \inferrule
+       {}
+       {\true \wedge \true \rightarrow \true}
+    \and
+    \inferrule
+       {}
+       {\true \wedge \false \rightarrow \false}\\
+    \inferrule
+       {}
+       {\false \wedge \true \rightarrow \false}
+    \and
+    \inferrule
+       {}
+       {\false \wedge \false \rightarrow \false}
+\end{mathpar}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Boolean expressions made simpler}
+
+  This system can even be made simpler, by means of meta-variables:
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\TirName{True}\)]
+       {}
+       {\true \wedge \true \rightarrow \true}\\
+    \inferrule*[right=\(\quad\TirName{False}_1\)]
+       {}
+       {\false \wedge v \rightarrow \false}\\
+    \inferrule*[right=\(\quad\TirName{False}_2\)]
+       {}
+       {v \wedge \false \rightarrow \false}
+  \end{mathpar}
+  where \(v\) denotes any value, i.e., either \true or \false.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Boolean expressions}
+
+  So, if we define the rewrite of boolean expressions (not just the
+  values \true and \false) as
+  \begin{mathpar}
+    \inferrule*[right=\(\TirName{\(\wedge_1\)}\)]
+       {e_1 \rightarrow e'_1}
+       {e_1 \wedge\, e_2 \rightarrow e'_1 \wedge\, e_2}
+    \and
+    \inferrule*[right=\(\TirName{\(\wedge_2\)}\)]
+       {e_2 \rightarrow e'_2}
+       {e_1 \wedge\, e_2 \rightarrow e_1 \wedge\, e'_2}
+  \end{mathpar}
+  then, for example,
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma_1(\wedge_1)\)]
+       {\false \wedge\; \true \rightarrow \false
+        \quad \TirName{False}_1}
+       {(\false \wedge\; \true) \wedge\, (\true \wedge\, \true)
+         \rightarrow \false \wedge\, (\true \wedge\, \true)}
+  \end{mathpar}
+  where \(\sigma_1=\{e_1 \mapsto \false \wedge \true; e_2 \mapsto
+  \true \wedge \true; e'_1 \mapsto \false\}\).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Boolean expressions}
+
+  Then
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma_2(\wedge_2)\)]
+       {\true \wedge\, \true \rightarrow \true \quad \TirName{True}}
+       {\false \wedge\, (\true \wedge\, \true) \rightarrow \false \wedge\,
+  \true}
+  \end{mathpar}
+  where \(\sigma_2 = \{e_1 \mapsto \false; e_2 \mapsto \true \wedge
+  \true; e'_1 \mapsto \true\}\).
+
+  \bigskip
+
+  and, finally, we can instantiate \(\TirName{False}_1\) with
+  \(\sigma_3 = \{v \mapsto \true\}\):
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\sigma_3(\TirName{False}_1)\)]
+       {}
+       {\false \wedge\, \true \rightarrow \false}
+  \end{mathpar}
+  In this example, we computed both arguments of \(\wedge\) to reach
+  the value.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Boolean expressions}
+
+  But the inspection of the basic rules shows that if one of the
+  arguments of \(\wedge\) reduces to \false, then there is no need to
+  reduce the other argument: the rewrite will always be
+  \false. Therefore, it is more efficient to extend the rules on
+  values to the expressions:
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\TirName{False}_1\)]
+       {}
+       {\false \wedge e \rightarrow \false}
+    \and
+    \inferrule*[right=\(\quad\TirName{False}_2\)]
+       {}
+       {e \wedge \false \rightarrow \false}\\
+    \inferrule*[right=\(\quad\TirName{True}_1\)]
+       {}
+       {\true \wedge e \rightarrow e}
+    \and
+    \inferrule*[right=\(\quad\TirName{True}_2\)]
+       {}
+       {e \wedge \true \rightarrow e}
+  \end{mathpar}
+  where \(e\) represents any boolean expression. Then, now
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\sigma_3(\TirName{False}_1)\)]
+       {}
+       {\false \wedge\, (\true \wedge\, \true) \rightarrow \false}
+  \end{mathpar}
+  where \(\sigma_3 = \{e \mapsto \true \wedge \true\}\).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Boolean expressions}
+
+  Try to reduce
+  \begin{equation*}
+    (\true \wedge (\false \wedge \true)) \wedge (\true \wedge (\true
+    \wedge \true))
+  \end{equation*}
+  Note that this rewrite system is not deterministic. If we enforce
+  that the left argument of \(\wedge\) is completely reduced first,
+  then we can check if it is \true or \false: in the latter case, we
+  do not need to reduce the right argument.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]
+  \frametitle{Boolean expressions}
+
+  This is easy to specify:
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\wedge_{\TirName{True}}\)]
+       {}
+       {\true \wedge e \rightarrow e}
+    \and
+    \inferrule*[right=\(\quad\wedge_{\TirName{False}}\)]
+       {}
+       {\false \wedge e \rightarrow \false}\\
+    \inferrule*[right=\(\wedge\)]
+       {e_1 \rightarrow e'_1}
+       {e_1 \wedge\, e_2 \rightarrow e'_1 \wedge\, e_2}
+  \end{mathpar}
+  Many programming languages, as C, use this strategy. It allows the
+  programmers to write handy code like
+{\small
+\begin{verbatim}
+while (index <= max && tab[index] > 0) ...
+\end{verbatim}
+}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Boolean expressions (cont)}
+
+  Note that this strategy (left argument before the right one) is not
+  optimal in general: the first argument may reduce to
+  \true. \emph{Finding an optimal strategy is not always possible.}
+  For example, we could add another rule that shortens sometimes the
+  reductions:
+  \begin{mathpar}
+    \inferrule*[right=\(\wedge_{\TirName{Refl}}\)]
+       {}
+       {e \wedge e \rightarrow e}
+  \end{mathpar}
+  This rule explicitly specifies the \textbf{reflexivity} of the
+  conjunction.
+
+  But the system becomes non-deterministic because there is now an
+  overlap between rule \(\wedge_{\TirName{Refl}}\) and both
+  \(\wedge_{\proc{True}}\) and \(\wedge_{\proc{False}}\) (consider for
+  example \(\true \wedge \false\)).
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Determinism versus non-determinism}
+
+  Let us summarise the concepts of determinism and
+  non\hyp{}determinism.
+  \begin{itemize}
+
+    \item The determinism means that, for any expression, there is
+      only one rule to rewrite it. This implies that, every time a
+      program is run with the same input, the output will the
+      same. This is a useful property, called soundness, in particular
+      for debugging.
+
+    \item Non-determinism means that, for any expression, there may be
+      several rules to rewrite it. Moreover,
+      \begin{itemize}
+
+         \item if the rewrite system is sound, the output will always
+           be the same for any run on the same input, even if the
+           trace may be different each time, which makes the debugging
+           more difficult.
+
+         \item the rewrite system may be unsound.
+
+      \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]
+  \frametitle{Determinism versus non-determinism (cont)}
+
+  Some programming languages have features that may be both
+  non\hyp{}deterministic and unsound.
+
+  \bigskip
+
+  Perhaps the most infamous case is in C, where variables do not need
+  to be initialised at their declaration:
+{\small
+\begin{verbatim}
+int a;
+\end{verbatim}
+}
+  If the programmer forgets to give a value to the variable, any access
+  to it is unspecified.
+
+  \bigskip
+
+  Practically, this means that whatever is located in the memory at
+  the location of the variable will be used at each read access. Of
+  course, this value may change from one run of the program to
+  another, even on the same input.
+
+  \bigskip
+
+  Maybe not.
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Commutativity and its consequences}
+
+  We may try another rewrite system for \(\wedge\):
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\TirName{True}\)]
+       {\true \wedge e \rightarrow e}
+       {}
+    \and
+    \inferrule*[right=\(\quad\TirName{False}\)]
+       {}
+       {\false \wedge e \rightarrow e}\\
+    \inferrule*[right=\(\wedge\)]
+       {e_1 \rightarrow e'_1}
+       {e_1 \wedge e_2 \rightarrow e'_1 \wedge e_2}
+    \and
+    \inferrule*[right=\(\TirName{Comm}\)]
+       {}
+       {e_1 \wedge e_2 \rightarrow e_2 \wedge e_1}
+  \end{mathpar}
+  While this system is in theory fine, there are two practical
+  problems:
+  \begin{enumerate}
+
+    \item it is \textbf{not deterministic} due to \(\TirName{Comm}\)
+      that overlaps with all the other rules;
+
+    \item it may \textbf{not terminate} due to rule
+      \(\TirName{Comm}\):
+      \begin{align*}
+        \true \wedge \false
+        & \;\xrightarrow{\TirName{Comm}}\;
+        \false \wedge \true \;\xrightarrow{\TirName{Comm}}\; \true
+        \wedge \false\\
+        & \;\xrightarrow{\TirName{Comm}}\; \false
+        \wedge \true \rightarrow \cdots
+      \end{align*}
+
+  \end{enumerate}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]
+  \frametitle{Non-termination}
+
+  Now some reductions may not be finite, which models
+  \textbf{non\hyp{}termination}.
+
+  \bigskip
+
+  This particular kind of non-termination, due to commutativity, is
+  the model in programming languages of so-called `\textbf{infinite
+    loops}' that do not allocate memory, i.e., that do not require
+  additional memory at each loop step. Equivalently, it corresponds to
+  a \emph{recursive call} like
+{\small
+\begin{verbatim}
+bool and(bool e1, bool e2) {
+  ... return and(e2, e1); ... }
+\end{verbatim}
+}
+  Anyway, in presence of infinite reductions, the soundness property
+  must be weakened as follows:
+  \begin{quote}
+    \textbf{Weak soundness.} \emph{All finite reductions of an
+    expression end with the same value, if any.}
+  \end{quote}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Non-termination (cont)}
+
+  Let us define the negation:
+  \begin{mathpar}
+    \inferrule
+       {}
+       {\neg \true \rightarrow \false}
+    \and
+    \inferrule
+       {}
+       {\neg \false \rightarrow \true}
+  \end{mathpar}
+  It is also well known that the negation satisfies \(e = \neg\neg
+  e\). So we could imagine another rewrite rule
+  \begin{equation*}
+    \neg\neg e \rightarrow e
+  \end{equation*}
+  This is fine, this rule simplifies double negations. But what if we
+  had the converse rule?
+  \begin{equation*}
+    e \rightarrow \neg\neg e \qquad \text{where} \; e \; \text{is not a
+  value.}
+  \end{equation*}
+  This allows infinite reductions: \(e \rightarrow \neg\neg e
+  \rightarrow e \rightarrow \neg\neg e \rightarrow \dots\)
+
+% excluded middle: e or ~e
+% non-contradiction: ~(e and ~e)
+% de Morgan applied to non-contradiction: ~(e and ~e) = ~e or ~~e
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Summary}
+
+  There are three kinds of reductions:
+  \begin{enumerate}
+
+    \item Finite and ending in a value
+  \[e_1 \rightarrow e_2 \rightarrow \dots \rightarrow v\]
+
+    \item Finite but ending in a stuck expression
+  \[e_1 \rightarrow e_2 \rightarrow \dots \rightarrow e_n
+    \nrightarrow\]
+
+    \item Infinite
+  \[e_1 \rightarrow e_2 \rightarrow \cdots\]
+
+  \end{enumerate}
+
+\end{frame}
+
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Conditioned expressions}
+
+  At this point, boolean expressions can be
+  \begin{itemize}
+
+    \item \Xtrue (a value)
+
+    \item \Xfalse (a value)
+
+    \item \(e_1 \wedge e_2\)
+
+    \item \(e_1 \vee e_2\)
+
+    \item \(\neg e_1\)
+
+  \end{itemize}
+  where \(e_1\) and \(e_2\) are boolean expressions. Let us extend our
+  boolean expressions with a \textbf{conditioned expression}:
+  \begin{itemize}
+
+     \item \Xif \(e_1\) \Xthen \(e_2\) \Xelse \(e_3\)
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}
+  \frametitle{Conditioned expressions (cont)}
+
+  It is easy to extend the rewrite system to cope with conditioned:
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\TirName{If-True}\)]
+       {}
+       {\Xif \; \Xtrue \; \Xthen \; e_2 \; \Xelse \; e_3 \rightarrow e_2}
+    \and
+    \inferrule*[right=\(\quad\TirName{If-False}\)]
+       {}
+       {\Xif \; \Xfalse \; \Xthen \; e_2 \; \Xelse \; e_3 \rightarrow e_3}
+    \and
+    \inferrule*[right=\(\TirName{If}\)]
+       {e_1 \rightarrow e'_1}
+       {\Xif \; e_1 \; \Xthen \; e_2 \; \Xelse \; e_3
+        \rightarrow \Xif \;
+        e'_1 \; \Xthen \; e_2 \; \Xelse \; e_3}
+  \end{mathpar}
+  This means that the \textbf{conditional expression} \(e_1\) must be
+  completely reduced \emph{before} the others. This is the usual way
+  in programming languages, the rationale being to avoid unnecessary
+  computations (evaluating \(e_2\) and~\(e_3\) is not necessary).
+
+\end{frame}
+
+
+\end{document}
