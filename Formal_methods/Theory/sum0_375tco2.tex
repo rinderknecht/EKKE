@@ -1,0 +1,91 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath,amssymb}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\raisebox{-3pt}{\(=\)}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\Tn}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\(3\)}
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\texttt{::}}}{
+        \TR{\(5\)}
+        \TR{\rnode[r]{empty}{\texttt{[]}}}
+      }
+    }
+  }
+}
+\hspace*{-17pt}
+\phantom{%
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\fun{sum}\(_0\)}}{
+  \Tn
+  \Tn
+}}
+\hspace*{-2pt}
+\phantom{%
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\fun{sum}\(_0\)}}{
+  \TR{\(10\)}
+  \Tn
+}}
+\hspace*{-2pt}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[rb]{arg1}{\TR{\fbox{\fun{sum}\(_0\)}}}}{
+  \psset{nodesepB=2pt}
+  \TR{\(15\)}
+  \Tn
+}
+\hspace*{8pt}
+\raisebox{-3pt}{\(\xrightarrow{\delta}\)}
+\hspace*{-3pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\Tn}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\(3\)}
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\texttt{::}}}{
+        \TR{\(5\)}
+        \TR{\texttt{[]}}
+      }
+    }
+  }
+}
+\hspace*{-17pt}
+\phantom{%
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\fun{sum}\(_0\)}}{
+  \Tn
+  \Tn
+}}
+\hspace*{-2pt}
+\phantom{%
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\fun{sum}\(_0\)}}{
+  \TR{\(10\)}
+  \Tn
+}}
+\hspace*{-2pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\Tn}{
+  \TR{\rnode[r]{fifteen}{\(15\)}}
+  \Tn
+}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]{\TR{\rnode[cb]{circ}{\(\circ\)}}}{}
+%
+\nccurve[angleA=-90,angleB=20,nodesepA=-1pt,nodesepB=2pt]{->}{circ}{fifteen}
+%
+\nccurve[angleA=-45,angleB=10,ncurvA=1,nodesepA=8pt]{->}{arg1}{empty}
+\endTeXtoEPS
+
+\end{document}

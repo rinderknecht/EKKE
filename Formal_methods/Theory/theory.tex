@@ -18,6 +18,7 @@
 \input{ocaml_syntax}
 \input{beamer_cfg}
 
+\newcommand\Clang{\textsf{C}\xspace}
 \newcommand{\Ada}{\textsf{Ada}\xspace}
 \newcommand{\Java}{\textsf{Java}\xspace}
 \newcommand{\OCaml}{\textsf{OCaml}\xspace}
@@ -26,6 +27,9 @@
 \newcommand{\NaN}{\textsf{NaN}\xspace}
 \newcommand{\true}{\textsf{true}\xspace}
 \newcommand{\false}{\textsf{false}\xspace}
+\newcommand\fun[1]{\textsf{#1}}
+\newcommand\el{[\,]}
+\newcommand\cons[2]{{#1}\!::\!{#2}}
 
 \title{A Theory of Programming}
 \author{Christian Rinderknecht}
@@ -74,8 +78,7 @@
   \bigskip
 
   By contrast, this lecture is not specific to \OCaml and is
-  theoretical because it introduces many concepts that are used in
-  functional programming and \textbf{compiler construction}.
+  theoretical.
 
 \end{frame}
 
@@ -133,13 +136,9 @@
   \bigskip
 
   Strings that can not be further rewritten, or \textbf{reduced}, are
-  called \textbf{normal forms}.
-
-  \bigskip
-
-  We may wonder whether all strings have a normal form, and, if so, if
-  it is unique and, furthermore, if it is either all\hyp{}white or
-  all\hyp{}black.
+  called \textbf{normal forms}. We may wonder whether all strings have
+  a normal form, and, if so, if it is unique and, furthermore, if it
+  is either all\hyp{}white or all\hyp{}black.
 
   \bigskip
 
@@ -230,8 +229,8 @@
     \circ\qquad\qquad
     \circ\; \circ \xrightarrow{\delta} \circ
   \end{equation*}
-  the result of the game is always one bead, whose colour depends on
-  the original parity of the black beads as before.
+  The result of the game is now always one bead whose colour depends
+  on the original parity of the black beads as before.
 
   \bigskip
 
@@ -287,9 +286,8 @@
 
   \bigskip
 
-  Moreover, if the system is also terminating, then \textbf{every}
-  string has exactly \textbf{one} normal form (a strong property
-  entailing confluence).
+  Moreover, if the system is also terminating, then \textbf{every
+    string has exactly one normal form}.
 
   \bigskip
 
@@ -330,9 +328,8 @@
   \medskip
 
   If we accept multiple occurrences of a variable on the
-  left\hyp{}hand side of a rule, a so\hyp{}called \textbf{non
-    left\hyp{}linear rule}, we can further decrease the size of the
-  system:
+  left\hyp{}hand side of a rule (that is, not left\hyp{}linear), we
+  can further decrease the size of the system:
   \begin{equation*}
     x  \; x \xrightarrow{\gamma+\delta} \circ\qquad\qquad
     x  \; y \xrightarrow{\alpha+\beta} \bullet
@@ -363,7 +360,7 @@
   \bigskip
 
   Moreover, let us remark that the system does not specify that
-  \(x\)~must either be~`\(\circ\)' or~`\(\bullet\)': this should be
+  \(x\)~must either be~\((\circ)\) or~\((\bullet)\): this should be
   stated nevertheless somewhere else.
 
   \bigskip
@@ -515,7 +512,7 @@
     \rightarrow e'_1
   \end{equation*}
   where \(e_1\), \(e'_1\) and \(e_2\) denote any expression and are
-  called \textbf{meta-variables}.
+  called \textbf{meta\hyp{}variables}.
 
 \end{frame}
 
@@ -555,7 +552,7 @@
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Instance of a rewrite rule (cont)}
+  \frametitle{Instance of a rewrite rule}
 
   We need another instance of the same rule. This time, let \(e_1 =
   2+3\) and \(e_2 = 6\). We get
@@ -585,11 +582,11 @@
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Instance of a rewrite rule (cont)}
+  \frametitle{Instance of a rewrite rule}
 
   Our rule for multiplication, \(e_1 \times e_2 \rightarrow e'_1
   \times e_2\), actually depends on another, \(e_1 \rightarrow
-  e'_1\). It is usual to write them this way:
+  e'_1\). It is usual to write them vertically:
   \begin{mathpar}
     \inferrule*[right=\(\TirName{Mult}_1\)]
                {e_1 \rightarrow e'_1}
@@ -616,7 +613,7 @@
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Instance of a rewrite rule (cont)}
+  \frametitle{Instance of a rewrite rule}
 
   Now we can make a clear definition of the notion of `instance of a
   rule':
@@ -642,14 +639,14 @@
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Instance of a rewrite rule (cont)}
+  \frametitle{Instance of a rewrite rule}
 
   Now how do we find (a mapping for) \(e'_1\)?
 
   \bigskip
 
-  Let us define another substitution \(\sigma'=\{e_1 \mapsto 2 + 3;
-  e_2 \mapsto 6\}\) and apply it:
+  We define another substitution \(\sigma'=\{e_1 \mapsto 2 + 3; e_2
+  \mapsto 6\}\) and apply it:
   \begin{mathpar}
     \inferrule*[right=\(\sigma'(\TirName{Mult}_1)\)]
         {2 + 3 \rightarrow e'_1}
@@ -675,7 +672,7 @@
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Instance of a rewrite rule (cont)}
+  \frametitle{Instance of a rewrite rule}
 
   Therefore we can extend \(\sigma\) with \(e'_1 \mapsto 5 \times 6\)
   and we get
@@ -700,7 +697,7 @@
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Instance of a rewrite rule (cont)}
+  \frametitle{Instance of a rewrite rule}
 
   But what about the rewrite of an expression like \(7 \times (4+5)\)?
 
@@ -718,8 +715,8 @@
         {7 \times (4 + 5) \rightarrow e'_1 \times (4 +5)}
   \end{mathpar}
   But there is no rule of shape `\(v \rightarrow \dots\)', where \(v\)
-  is \emph{a value because a value is, by definition, an expression
-  completely reduced.}
+  is a \emph{value} (because a value is, by definition, an expression
+  completely reduced).
 
 \end{frame}
 
@@ -730,7 +727,7 @@
   \frametitle{Completing the multiplication rule}
 
   This means that we need another rule for the evaluation of the
-  \emph{right} argument of `\(\times\)':
+  \emph{right} argument of \((\times)\):
   \begin{mathpar}
     \inferrule*[right=\(\TirName{Mult}_2\)]
         {e_2 \rightarrow e'_2}
@@ -782,7 +779,7 @@
   \frametitle{Strategy}
 
   This means that \emph{our system does not specify the order of
-  evaluation of \(\times\) arguments.}
+  evaluation of the arguments to \((\times)\).}
 
   \bigskip
 
@@ -809,7 +806,7 @@
       all the computations terminate.
 
     \item \textbf{Soundness.} All the reductions of an expression end
-      with the same value, if any.
+      with the same value, if any. (Think confluence.)
 
   \end{itemize}
 
@@ -880,7 +877,7 @@
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Another model of run-time errors (cont)}
+  \frametitle{Another model of run-time errors}
 
   The rationale of this system is that once an error occurs, no other
   computations (leading to integer values) are required and the
@@ -903,12 +900,12 @@
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Another model of run-time errors/Rephrasing soundness}
+  \frametitle{Rephrasing soundness}
 
   The interesting phenomenon here is that, now, any reduction ends in
-  a value. In the previous rewrite system, any reduction ends either
-  in a value or a \textbf{stuck expression}, i.e., an expression that
-  cannot be rewritten further.
+  a value (since errors are values). In the previous rewrite system,
+  any reduction ends either in a value or a \textbf{stuck expression},
+  i.e., an expression that cannot be rewritten further.
 
   \bigskip
 
@@ -934,7 +931,7 @@
   \frametitle{Specifying the strategy}
 
   It is possible to force an order of evaluation on the arguments of
-  \(\times\). Assume we want to reduce the left argument first.
+  \((\times)\). Assume we want to reduce the left argument first.
 
   \bigskip
 
@@ -983,7 +980,7 @@
 
   Also, with \(\TirName{New-Mult}_2\), given an expression, there is
   only one rule that can be applied (or none): this is sometimes
-  called \textbf{determinism}, or \textbf{determinacy}:
+  called \textbf{determinism}.
 
   \bigskip
 
@@ -1095,7 +1092,7 @@
 \begin{frame}
   \frametitle{Sequentiality and parallelism}
 
-  For example, the first argument of \(\times\) can be computed
+  For example, the first argument of \((\times)\) can be computed
   \emph{at the same time} as its second argument. In the case of
   \((2+3) \times (4+5)\), this means that we can reduce in parallel
   \(2+3\), with \(\TirName{Mult}_1\), and \(4+5\), with
@@ -1323,7 +1320,7 @@ What is the result?
   programmers to write handy code like
 {\small
 \begin{verbatim}
-while (index <= max && tab[index] > 0) ...
+while (index < max && tab[index] > 0) ...
 \end{verbatim}
 }
 
@@ -1365,11 +1362,11 @@ while (index <= max && tab[index] > 0) ...
   non\hyp{}determinism.
   \begin{itemize}
 
-    \item The determinism means that, for any expression, there is
-      only one rule to rewrite it. This implies that, every time a
-      program is run with the same input, the output will the
-      same. This is a useful property, called soundness, in particular
-      for debugging.
+    \item Determinism means that, for any expression, there is only
+      one rule to rewrite it. This implies that, every time a program
+      is run with the same input, the output will be the same. This is
+      a useful property, called soundness, in particular for
+      debugging.
 
     \item Non-determinism means that, for any expression, there may be
       several rules to rewrite it. Moreover,
@@ -1378,7 +1375,7 @@ while (index <= max && tab[index] > 0) ...
          \item if the rewrite system is sound, the output will always
            be the same for any run on the same input, even if the
            trace may be different each time, which makes the debugging
-           more difficult.
+           more difficult, but enable parallel reductions.
 
          \item the rewrite system may be unsound.
 
@@ -1391,7 +1388,7 @@ while (index <= max && tab[index] > 0) ...
 % ------------------------------------------------------------------------
 %
 \begin{frame}[fragile]
-  \frametitle{Determinism versus non-determinism (cont)}
+  \frametitle{Determinism versus non-determinism}
 
   Some programming languages have features that may be both
   non\hyp{}deterministic and unsound.
@@ -1414,10 +1411,6 @@ int a;
   the location of the variable will be used at each read access. Of
   course, this value may change from one run of the program to
   another, even on the same input.
-
-  \bigskip
-
-  Maybe not.
 
 \end{frame}
 
@@ -1488,8 +1481,11 @@ bool and(bool e1, bool e2) {
   ... return and(e2, e1); ... }
 \end{verbatim}
 }
-  Anyway, in presence of infinite reductions, the soundness property
-  must be weakened as follows:
+  Anyway, in the presence of infinite reductions, the soundness
+  property must be weakened as follows:
+
+  \bigskip
+
   \begin{quote}
     \textbf{Weak soundness.} \emph{All finite reductions of an
     expression end with the same value, if any.}
@@ -1501,7 +1497,7 @@ bool and(bool e1, bool e2) {
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Non-termination (cont)}
+  \frametitle{Non-termination}
 
   Let us define the negation:
   \begin{mathpar}
@@ -1560,7 +1556,7 @@ bool and(bool e1, bool e2) {
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Conditioned expressions}
+  \frametitle{Conditional expressions}
 
   At this point, boolean expressions can be
   \begin{itemize}
@@ -1577,7 +1573,7 @@ bool and(bool e1, bool e2) {
 
   \end{itemize}
   where \(e_1\) and \(e_2\) are boolean expressions. Let us extend our
-  boolean expressions with a \textbf{conditioned expression}:
+  boolean expressions with a \textbf{conditional expression}:
   \begin{itemize}
 
      \item \Xif \(e_1\) \Xthen \(e_2\) \Xelse \(e_3\)
@@ -1589,9 +1585,9 @@ bool and(bool e1, bool e2) {
 % ------------------------------------------------------------------------
 %
 \begin{frame}
-  \frametitle{Conditioned expressions (cont)}
+  \frametitle{Conditional expressions}
 
-  It is easy to extend the rewrite system to cope with conditioned:
+  It is easy to extend the rewrite system to cope with conditionals:
   \begin{mathpar}
     \inferrule*[right=\(\quad\TirName{If-True}\)]
        {}
@@ -1607,10 +1603,871 @@ bool and(bool e1, bool e2) {
         \rightarrow \Xif \;
         e'_1 \; \Xthen \; e_2 \; \Xelse \; e_3}
   \end{mathpar}
-  This means that the \textbf{conditional expression} \(e_1\) must be
-  completely reduced \emph{before} the others. This is the usual way
-  in programming languages, the rationale being to avoid unnecessary
+  This means that the boolean expression \(e_1\) must be completely
+  reduced \emph{before} the others. This is the usual way in
+  programming languages, the rationale being to avoid unnecessary
   computations (evaluating \(e_2\) and~\(e_3\) is not necessary).
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Term rewriting}
+
+  More general are the \textbf{term\hyp{}rewriting systems}, where a
+  \textbf{term} is a mathematical object built on tuples, integers and
+  variables.
+
+  \bigskip
+
+   Let us consider the following totally ordered system:
+   \begin{align*}
+     (0,m) &\xrightarrow{1} m\\
+     (n,m) &\xrightarrow{\smash 2} (n-1, n \times m)\\
+     n     &\xrightarrow{\smash 3} (n,1)
+   \end{align*}
+
+   Arithmetic operators \((-)\)~and~\((\cdot)\) are defined out of the
+   system and \(m\)~and~\(n\) are variables denoting natural numbers.
+
+   \bigskip
+
+   Would the rules not be ordered as they are actually laid out, the
+   second rule would match any pair. Instead, it can be assumed that
+   \(n \neq 0\) when matching with it.
+
+   \bigskip
+
+   The last rule is to be tried last, as it matches all terms.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Transitive closures}
+
+  We can easily see that all the compositions of rewrites starting
+  with a natural number~\(n\) end with the factorial of~\(n\):
+  \smallskip
+  \begin{equation*}
+    n \xrightarrow{3} (n,1)
+    \xrightarrow{2} \dots
+    \xrightarrow{2} (0,n!)
+    \xrightarrow{1}
+    n!, \quad \text{for \(n \in \mathbb{N}\)}.
+  \end{equation*}
+
+  Let us note \((\xrightarrow{n})\) the composition of
+  \((\rightarrow)\) repeated \(n-1\)~times:
+  \begin{align*}
+    (\xrightarrow{1})   &:= (\rightarrow)\\
+    (\xrightarrow{\smash{n+1}}) & :=
+    (\rightarrow) \circ (\xrightarrow{\smash{n}}),
+    \quad\text{with \(n > 0\)}.
+  \end{align*}
+
+  The \textbf{transitive closure} of \((\rightarrow)\) is defined as
+  \begin{equation*}
+    (\twoheadrightarrow) := \bigcup_{i > 0}{(\xrightarrow{i})}.
+  \end{equation*}
+
+  The factorial function coincides with the transitive closure of
+  \((\rightarrow)\): \(n \twoheadrightarrow n!\). Let
+  \((\xrightarrow{*})\) be the reflexive\hyp{}transitive closure of
+  \((\rightarrow)\), that is,
+  \begin{equation*}
+    (\xrightarrow{*}) := (=) \cup (\twoheadrightarrow).
+  \end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Functions}
+
+  \begin{itemize}
+
+    \item A confluent system defines a \textbf{partial function}.
+
+    \item If the system is also terminating, we get a
+      \textbf{function}.
+
+    \item We can name functions: for example, \(\fun{c}(1,
+      \fun{d}(n))\)~is a term constructed with \textbf{function names}
+      \fun{c}~and~\fun{d}, as well as variable~\(n\).
+
+    \item A tuple tagged with a function name, like \(\fun{f}(x,y)\),
+      is called a \textbf{function call}.
+
+    \item The components of the tuples are then called
+      \textbf{arguments}, for example \(\fun{d}(n)\) is the second
+      argument of the call \(\fun{c}(1, \fun{d}(n))\).
+
+    \item It is possible for a function call to hold no arguments,
+      like \(\fun{d}()\).
+
+    \item We restrict the left\hyp{}hand sides of rules to be function
+      calls.
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Trees}
+
+  The topological understanding of a function call or a tuple is the
+  finite \textbf{tree}. A tree is a hierarchical layout of
+  information, for example:
+  \begin{center}
+    \includegraphics{tree_for_term}
+  \end{center}
+
+   The disks are called \textbf{nodes} and the segments which connect
+   two nodes are called \textbf{edges}. The topmost node (with a
+   diameter) is called the \textbf{root} and the bottommost ones
+   (\(\bullet\)) are called the \textbf{leaves}. All nodes except the
+   leaves are seen to downwardly connect to some other nodes, called
+   \textbf{children}. Upwardly, each node but the root is connected to
+   another node, called its \textbf{parent}.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Trees}
+
+  \textbf{Trees are pervasive} in informatics, especially in
+  functional programming, but not only. Structured documents, like
+  books, articles, and web pages, are composed of chapters, sections,
+  paragraphs, figures, appendices, indices, etc.
+
+  \bigskip
+
+  The occurrences of these components are mutually constrained; for
+  instance, it is understood that a section is part of a chapter and
+  that appendices are located at the end of a document.
+
+  \bigskip
+
+  This hierarchical layout is meant to facilitate reading, and it
+  supports the search for specific items of information.
+
+  \bigskip
+
+  When considering computer systems, these data must be uniformly
+  encoded by means of a formal language.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Terms as trees}
+
+  Trees can be used to depict terms as follows. A function call is a
+  tree whose root is the function name and the children are the trees
+  denoting the arguments.
+
+  \bigskip
+
+  A tuple can be considered as having an invisible function name
+  represented by a node with a period (\texttt{.}) in the tree, in
+  which case the components of the tuple are its children. For
+  example,
+  \begin{center}
+    \includegraphics{tree}
+  \end{center}
+  is the tree corresponding to the tern
+  \(\fun{f}((\fun{g}(0),(x,1)),(),\fun{g}(y))\).
+
+  \bigskip
+
+  Note that tuples, except the empty tuple, are not represented in the
+  tree, since they encode the structure itself, which is already laid
+  out. The number of arguments of a function is called \textbf{arity}.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Functional languages}
+
+  \begin{itemize}
+
+    \item For programming, we only consider confluent systems because
+      they define partial functions.
+
+    \item To have only one reduction chain per term to the normal
+      form, we may also enforce that rules are ordered.
+
+    \item We also enforce that normal forms must be \textbf{values},
+      that is, terms without function calls or only with calls to
+      functions not occurring on the left\hyp{}hand sides.
+
+    \item In other words, irreducible calls of defined functions are
+      not allowed in values.
+
+    \item Systems with these constraints make up a \textbf{functional
+      language}.
+
+    \item A program here is a term, and evaluating it means to rewrite
+      the term
+      \begin{enumerate}
+        \item to a value,
+        \item or to end in error with a normal form that is not a value,
+        \item or to never terminate.
+      \end{enumerate}
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Termination}
+
+  We do not require by construction that all functional programs
+  terminate, although that is a desirable property, but we
+  nevertheless speak of `functions' instead of `partial functions'
+  (which would be technically correct).
+
+  \bigskip
+
+  If we enforce termination, we loose
+  \textbf{Turing\hyp{}completeness}: we cannot program all computable
+  functions.
+
+  \bigskip
+
+  The termination of rewrite systems and, in particular, functional
+  programs, is an \textbf{undecidable problem} in general.
+
+  \bigskip
+
+  Nevertheless, there exists a set of well\hyp{}known \textbf{decision
+    criteria}, which we will use when programming recursive functions
+  in \OCaml.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Call-by-value}
+
+  If a function call contains at least one other function call, there
+  is a choice as to which one to reduce first.
+
+  \bigskip
+
+  One reduction strategy, named \textbf{call-by-value}, consists in
+  always reducing the arguments before the call itself. Unfortunately,
+  call-by-value enables otherwise terminating rewrites to not
+  terminate. For instance, let us consider
+  \begin{equation*}
+    \fun{f}(x) \xrightarrow{\alpha} 0\qquad
+    \fun{g}() \xrightarrow{\beta} \fun{g}()
+  \end{equation*}
+  We have \(\fun{f}(\fun{g}()) \xrightarrow{\alpha} 0\) but
+  \(\fun{f}(\fun{g}()) \xrightarrow{\beta} \fun{f}(\fun{g}())
+  \xrightarrow{\beta} \dots\)
+
+  \bigskip
+
+  Despite the loss of expressiveness, we shall retain in this lecture
+  the call by value, as it is the strategy of \OCaml and it is easy to
+  follow.
+
+  \bigskip
+
+  In general, the order in which the arguments of a function call are
+  evaluated is not specified.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Call-by-value}
+
+  Another reason to choose call-by-value is that it allows us to
+  restrict the shape of the left\hyp{}hand sides, called
+  \textbf{patterns}, to one, outermost function call.
+
+  \bigskip
+
+  For instance, we can then disallow, for being useless, a
+  rule like
+
+  \begin{equation*}
+    \fun{plus}(x,\fun{plus}(y,z)) \rightarrow
+    \fun{plus}(\fun{plus}(x,y),z).
+  \end{equation*}
+
+  \noindent because, following call\hyp{}by\hyp{}value, the argument
+  \(\fun{plus}(y,z)\) must be evaluated before the outermost call,
+  therefore it cannot be part of any pattern.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Higher-order programs, recursion, $\lambda$-calculus}
+
+  Most functional languages allow \textbf{higher\hyp{}order function}
+  definitions, whereas standard term\hyp{}rewriting systems do
+  not. For example:
+  \begin{equation*}
+    \fun{f}(g,0) \rightarrow 1
+    \qquad
+    \fun{f}(g,n) \rightarrow n \times g(g,n-1)
+    \qquad
+    \fun{fact}(n) \rightarrow \fun{f}(\fun{f},n)
+  \end{equation*}
+  where \(n \in \mathbb{N}\). Note that these two definitions are
+  \textbf{not} recursive, yet the function \fun{fact} is the factorial
+  function. A function definition is \textbf{recursive} if the name of
+  the definition occurs on at least one right\hyp{}hand side.
+
+  \bigskip
+
+  An adequate theoretical framework to understand higher\hyp{}order
+  functions is \textbf{\(\lambda\)-calculus}. In fact,
+  \(\lambda\)-calculus features prominently in the semantics of
+  programming languages, even not functional ones.
+
+  \bigskip
+
+  For didactic purposes, we began with rewrite systems because they
+  offer implicit pattern matching (that is, rule selection).
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Stacks in a functional setting}
+
+  We show how to express linear data structures in a purely functional
+  language and how to compute with them. The simplest of those
+  structures is the \textbf{stack}.
+
+  \bigskip
+
+  A stack can be thought of as a finite series of items that can only
+  be accessed sequentially from one end, called the \textbf{top},
+  following the analogy with a stack of material objects.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Stacks in a functional setting}
+
+  To define a stack in a functional language, one uses calls to
+  undefined functions to model all the possible shapes a stack can
+  take.
+
+  \bigskip
+
+  Here, a stack can be either empty or not.
+
+  \bigskip
+
+  Let \(\fun{nil}()\) be the irreducible call that denotes an empty
+  stack (that is, the function `\fun{nil}' is undefined).
+
+  \bigskip
+
+  If not empty, the stack then must contain a topmost (first) item,
+  and a \textbf{substack}, that is, the stack made of all the items
+  but the first.
+
+  \bigskip
+
+  Let \(\fun{cons}(x,s)\) denote the non\hyp{}empty stack with the
+  item~\(x\) on top and the \textbf{immediate substack}~\(s\).
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Inductive definition of stacks}
+
+  \begin{itemize}
+
+    \item The previous definition is intuitive, but not formal yet.
+
+    \item Data structures are usually defined \textbf{inductively}.
+
+    \item Let~\(\mathcal{T}\) be the set of all possible terms and
+      \(\mathcal{S} \subset \mathcal{T}\) be the set of all stacks.
+
+    \item Formally, \(\mathcal{S}\)~can by defined by
+      \textbf{induction} as the smallest set such that
+      \begin{enumerate}
+
+        \item \(\fun{nil}() \in \mathcal{S}\);
+
+        \item if \(x \in \mathcal{T}\) and \(s \in \mathcal{S}\), then
+          \(\fun{cons}(x,s) \in \mathcal{S}\).
+      \end{enumerate}
+
+    \item We take the smallest set because we do not want
+      in~\(\mathcal{S}\) terms that were not constructed by the
+      inductive rules (this is called the \textbf{smallest fixed
+        point} of the inductive relation).
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Appending a stack}
+
+  \begin{itemize}
+
+    \item For all \(s, t \in \mathcal{S}\), let us consider the
+      functional program
+      \begin{align*}
+        \fun{cat}(\fun{nil}(),t) &\xrightarrow{\alpha} t\\
+        \fun{cat}(\fun{cons}(x,s),t) &\xrightarrow{\smash\beta}
+        \fun{cons}(x,\fun{cat}(s,t))
+      \end{align*}
+
+    \item This is a functional program suitable for
+      call\hyp{}by\hyp{}value reduction strategy, because the function
+      calls in the patterns (that is, left\hyp{}hand sides) are
+      irreducible.
+
+    \item The right\hyp{}hand sides are stacks, so a call to
+      `\fun{cat}' is a stack.
+
+    \item Rule~\(\alpha\) says that, if the first stack is empty, the
+      value is the second.
+
+    \item In rule~\(\beta\), the first stack is not empty, and its top
+      item is the top of the final stack~(\(x\)), the immediate
+      substack~(\(s\)) being used in a call to `\fun{cat}' with the
+      second stack~(\(t\)) unchanged.
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Appending a stack}
+
+  This function appends the second stack at the bottom of a
+  \textbf{copy} of the first. (The function name `\fun{cat}' stands
+  for `catenation', and is slightly better than `\fun{app}').
+
+  \bigskip
+
+  We could also say that this function appends a copy of the first
+  stack on top of the other. But this is not the same as pushing the
+  first stack on top of the other, like
+  \begin{equation*}
+    \fun{cat}(s,t) \rightarrow \fun{cons}(s,t) \qquad
+    \text{Wrong!}
+  \end{equation*}
+
+  This is \textbf{not} appending: here, the stack~\(s\) becomes an
+  item of the resulting stack, but we want only the \textbf{contents}
+  of~\(s\) to be pushed on top of~\(t\), not their container.
+
+  \bigskip
+
+  Analogy: You may think of an empty stack as a empty cardboard box,
+  open topside, and every item pushed in it is like a book that you
+  put on the topmost book, or at the bottom of the box if this is the
+  first book.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Appending a stack}
+
+  Let us set the abbreviations
+  \begin{itemize}
+
+    \item \(\el := \fun{nil}()\),
+
+    \item \(\cons{x}{s} := \fun{cons}(x,s)\),
+
+  \end{itemize}
+  after the convention of the programming language \OCaml.
+
+  \bigskip
+
+  We can further abbreviate
+  \begin{itemize}
+
+    \item \(\cons{x_1}{\cons{x_2}{\cons{\dots}{\cons{x_n}{s}}}} :=
+      \fun{cons}(x_1, \fun{cons}(x_2, \dots \fun{cons}(x_n,s)))\)
+
+    \item \([x] := \cons{x}{\el}\)
+
+    \item \([x_1; x_2, \dots; x_n] :=
+          \cons{x_1}{\cons{x_2}{\cons{x_3}{\cons{\ldots}{\cons{x_n}{\el}}}}}\).
+
+  \end{itemize}
+
+  Our system now becomes a bit more legible:
+  \begin{align*}
+    \fun{cat}(        \el,t) &\xrightarrow{\alpha} t\\
+    \fun{cat}(\cons{x}{s},t) &\xrightarrow{\smash{\beta}}
+    \cons{x}{\fun{cat}(s,t)}
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Pattern matching}
+
+  \begin{itemize}
+
+    \item Let us compute \(\fun{cat}([1;2],[3])\).
+
+    \item We need to find the first rule that is matched by this call.
+
+    \item Remember that the arguments must be values before you do
+      that.
+
+    \item Intuitively, this means that we compare the call with the
+      patterns, that is, the left\hyp{}hand sides of the rules, in
+      order.
+
+    \item Here, rule~\(\alpha\) is not matched because \([1;2] \neq
+      []\).
+
+    \item Rule~\(\beta\) is matched because \([1;2] = 1::[2]\) and
+      equals the sub\hyp{}pattern \(x::s\) if we assign \(x := 1\) and
+      \(s := [2]\). Also, trivially, \(t := [3]\) works.
+
+    \item After the rule~\(\beta\) is selected, the assignments are
+      used to replace the variables in the right\hyp{}hand sides.
+
+    \item The whole evaluation is
+    \begin{equation*}
+      \fun{cat}([1;2],[3])
+      \xrightarrow{\beta}
+      \cons{1}{\fun{cat}([2],[3])}
+      \xrightarrow{\beta}
+      \cons{1}{\cons{2}{\fun{cat}(\el,[3])}}
+      \xrightarrow{\alpha}
+                    [1;2;3].
+    \end{equation*}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Abstract syntax trees}
+
+  \begin{itemize}
+
+    \item Depending on the context, we may use the arborescent
+      depiction of terms to bring to the fore certain aspects of a
+      computation.
+
+    \item For example, it may be interesting to show how parts of the
+      output (the right\hyp{}hand side) are actually \textbf{shared}
+      with the input (the left\hyp{}hand side).
+
+    \item In other words, how much (new) data is created by a given
+      rule.
+
+    \item This concept supposes that terms reside in some sort of
+      space and that they can be referred to from different other
+      terms.
+
+    \item This abstract space serves as a model of an interpreter's
+      memory, called the \textbf{heap}.
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Data sharing}
+
+  \begin{itemize}
+
+    \item Consider for instance
+      \medskip
+      \begin{center}
+        \includegraphics[bb=71 655 298 712]{cat_dag}
+      \end{center}
+      which is the same definition of `\fun{cat}' as given above:
+      \begin{equation*}
+        \fun{cat}(\el,t) \xrightarrow{\alpha} t
+        \qquad\qquad\qquad
+        \fun{cat}(\cons{x}{s},t) \xrightarrow{\beta}
+        \cons{x}{\fun{cat}(s,t)}
+      \end{equation*}
+
+    \item The arrows on certain edges denote data sharing.
+
+    \item When trees are used to visualise terms, they are called
+      \textbf{abstract syntax trees} (AST).
+
+    \item When some trees share subtrees, the whole \textbf{forest}
+      (set of trees) is called a \textbf{directed acyclic graph}
+      (DAG).
+
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Data sharing and evaluation}
+
+  The evaluation of \(\fun{cat}([1;2],[3])\) is:
+  \bigskip
+  \begin{center}
+    \includegraphics[bb=71 621 276 732]{cat123_push}
+  \end{center}
+
+  Note that each right-hand side shows only the rewritten call, not
+  the whole term.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Data sharing and evaluation}
+
+  Therefore, to reconstruct the value, we need to work leftwards and
+  replace the rewritten call by the right-hand side:
+  \begin{center}
+    \includegraphics[bb=71 624 248 715]{cat123_pop0}
+  \end{center}
+
+  \bigskip
+
+  We do not show the calls that have been replaced by their values.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Data sharing and evaluation}
+
+  \begin{center}
+    \includegraphics[bb=71 623 210 715]{cat123_pop1}
+    \qquad\quad
+    \includegraphics[bb=71 621 212 715]{cat123_pop2}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Call stack}
+
+  We can see that the value of the second argument, [3], is shared
+  with the value of the call, as well as the integers~1 and~2.
+
+  \bigskip
+
+  We saw how rewrites accumulated rightwards until the result had to
+  be reconstructed by replacing leftwards the right-hand sides.
+
+  \bigskip
+
+  This dynamic is that of a stack, but a stack holding suspended
+  function calls (that is, awaiting their values) and references to
+  ASTs in the heap. This is the \textbf{call stack}.
+
+  \bigskip
+
+  The top of the stack (here, the rightmost abstract syntax tree) is
+  the next term to be rewritten, unless the call on the left\hyp{}hand
+  side is the original call, in which case the top is its value.
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Garbage collection}
+
+  \begin{itemize}
+
+    \item In the abstract syntax trees (AST), the nodes with the calls
+      that are replaced by their values have been immediately
+      removed. In fact, they could have been removed later, in any
+      order.
+
+    \item The process which identifies and discards useless ASTs is
+      called the \textbf{garbage collector} (GC).
+
+    \item A term is useless if it cannot be accessed from anywhere in
+      the call stack.
+
+    \item Contrary to the heap, which can be thought of as an
+      unordered set of trees (a forest of DAGs), the call stack is an
+      ordered set that can be efficiently extended or reduced.
+
+    \item The garbage collector can be conceived as a process
+      interleaved with the process of evaluation.
+
+    \item Like evaluators of functional programs, garbage collectors
+      may also have different strategies (as to when dispose of
+      useless data).
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Tail call optimisation}
+
+  Let us define a function that sums integers in a non\hyp{}empty
+  list:
+  \begin{equation*}
+    \fun{sum}([n]) \xrightarrow{\alpha} n\qquad
+    \fun{sum}(\cons{n}{s}) \xrightarrow{\beta} n + \fun{sum}(s)
+  \end{equation*}
+
+  The view of the system with maximum sharing is:
+  \begin{center}
+    \includegraphics{sum_dag}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Tail call optimisation}
+
+  The first phase of the evaluation of \(\fun{sum}([3;7;5])\) is:
+  \begin{center}
+    \includegraphics[bb=72 635 404 721,scale=0.99]{sum375_push}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Tail call optimisation}
+
+  The second phase (replacing the pending calls with their values) is
+  \begin{center}
+    \includegraphics[bb=72 644 380 721]{sum375_pop}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Tail call optimisation}
+
+  The same, with a garbage collector that collects after each
+  replacement:
+  \begin{center}
+    \includegraphics[bb=149 585 448 662]{sum375_pop1}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Tail call optimisation}
+
+  Let us consider an alternate version of \fun{sum}:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}l@{}}
+      \fun{sum}_1(\cons{n}{t}) & \xrightarrow{\gamma}
+      & \fun{sum}_0(n,t).\\
+      \fun{sum}_0(n,\el) & \xrightarrow{\delta} & n\\
+      \fun{sum}_0(n,\cons{m}{s}) & \xrightarrow{\epsilon}
+      & \fun{sum}_0(n+m,s).
+    \end{array}
+  \end{equation*}
+
+  For \(\fun{sum}_1([3;7;5])\) we have the evaluation
+  \begin{center}
+    \includegraphics[bb=71 643 340 722]{sum0_375_0}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Tail call optimisation}
+
+  \begin{center}
+    \includegraphics[bb=71 641 346 721]{sum0_375_1}
+    \includegraphics[bb=71 639 384 721]{sum0_375_2}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Tail call optimisation}
+
+  Notice that, in the case of \fun{sum}$_0$, we found the result (15)
+  at the end of the first phase (of growing the call stack).
+
+  \bigskip
+
+  Therefore, there is no need for a second phase, which replaces the
+  pending calls by their values: we can discard all those calls at
+  once after the first phase.
+
+  \bigskip
+
+  Or, to see it even more clearly, let us rewrite the same first phase
+  and assume that the collector reclaims immediately the useless
+  pending calls:
+  \begin{center}
+    \includegraphics[bb=71 640 325 721]{sum0_375tco0}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Tail call optimisation}
+
+  \begin{center}
+    \includegraphics[bb=71 628 350 721]{sum0_375tco1}
+    \includegraphics[bb=71 639 366 721]{sum0_375tco2}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Tail call optimisation}
+
+  As we see now, we can keep the size of the call stack constant, if
+  we reclaim the top at each new rewrite.
+
+  \bigskip
+
+  This optimisation is called \textbf{tail call optimisation}.
+
+  \bigskip
+
+  Intuitively, a call in \textbf{tail position} is a call whose value
+  is the value of the previously rewritten call.
+
+  \bigskip
+
+  For example, the call \(f(x)\) in \(1 + f(x)\) is not in tail
+  position, because its value needs to be incremented.
+
+  \bigskip
+
+  Most compilers of functional languages detect and implement that
+  optimisation that saves memory, including the \Clang compiler of
+  \textsf{GCC}.
 
 \end{frame}
 

@@ -1,0 +1,90 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath,amssymb}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\raisebox{-3pt}{\(=\)}\hspace*{3pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\Tn}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\(3\)}
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\rnode[r]{fiveRoot1}{\texttt{::}}}}{
+        \TR{\(5\)}
+        \TR{\texttt{[]}}
+      }
+    }
+  }
+}
+\hspace*{-17pt}
+\phantom{%
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\fun{sum}\(_0\)}}{
+  \Tn
+  \Tn
+}}
+\hspace*{-2pt}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[rb]{arg1}{\TR{\fbox{\fun{sum}\(_0\)}}}}{
+  \psset{nodesepB=2pt}
+  \TR{\(10\)}
+  \Tn
+}
+%
+\hspace*{5pt}
+\raisebox{-3pt}{\(\xrightarrow{\epsilon}\)}
+\hspace*{-3pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\Tn}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\(3\)}
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\texttt{::}}}{
+        \TR{\rnode[tr]{five}{\(5\)}}
+        \TR{\rnode[r]{empty5}{\texttt{[]}}}
+      }
+    }
+  }
+}
+\hspace*{-17pt}
+\phantom{%
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\fun{sum}\(_0\)}}{
+  \Tn
+  \Tn
+}}
+\hspace*{-2pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\Tn}{
+  \TR{\rnode[rb]{ten}{\(10\)}}
+  \Tn
+}
+\hspace*{-2pt}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[rb]{arg2}{\TR{\fbox{\fun{sum}\(_0\)}}}}{
+  \psset{nodesepB=2pt}
+  \pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]%
+    {\rnode[lb]{plusA2}{\rnode[rb]{plusB2}{\TR{\(+\)}}}}{
+      \Tn
+      \Tn
+  }
+  \Tn
+}
+%
+\nccurve[angleA=-45,angleB=10,ncurvA=1,nodesepA=8pt]{->}{arg1}{fiveRoot1}
+%
+\nccurve[angleA=-135,angleB=-60,ncurv=1.5,nodesepA=4pt]{->}{plusA2}{ten}
+\nccurve[angleA=-45,angleB=20,nodesepA=4pt]{->}{plusB2}{five}
+\nccurve[angleA=-45,angleB=10,ncurv=1,nodesepA=8pt]{->}{arg2}{empty5}
+\endTeXtoEPS
+
+\end{document}

@@ -1,0 +1,36 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+
+\begin{document}
+
+\TeXtoEPS
+\psset{radius=3pt}
+\pstree[levelsep=17pt,treesep=14pt]{\TC[fillstyle=hlines]}{
+  \pstree{\TC}{
+    \pstree{\TC}{
+      \pstree{\TC}{
+        \TC*[linecolor=black]
+        \TC*[linecolor=black]
+      }
+      \TC*[linecolor=black]
+    }
+    \pstree{\TC}{
+      \TC*[linecolor=black]
+      \TC*[linecolor=black]
+    }
+  }
+  \Tn
+  \TC*[linecolor=black]
+  \pstree{\TC}{
+    \pstree{\TC}{
+      \TC*[linecolor=black]
+    }
+    \TC*[linecolor=black]
+  }
+}
+\endTeXtoEPS
+
+\end{document}

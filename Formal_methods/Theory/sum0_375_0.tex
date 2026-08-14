@@ -1,0 +1,93 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pst-tree, pst-eps}
+\usepackage{amsmath,amssymb}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]{\TR{\fbox{\fun{sum}\(_1\)}}}{
+  \psset{nodesepB=2pt}
+  \pstree[nodesepA=2pt]{\TR{\texttt{::}}}{
+    \TR{\(3\)}
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\texttt{::}}}{
+        \TR{\(5\)}
+        \TR{\texttt{[]}}
+      }
+    }
+  }
+}
+\hspace*{-13pt}
+\raisebox{-3pt}{\(\xrightarrow{\smash\gamma}\)}
+\hspace*{2pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{sum}\(_1\)}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\rnode[rt]{three1}{\(3\)}}
+    \pstree{\TR{\rnode[r]{sevenRoot1}{\texttt{::}}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\texttt{::}}}{
+        \TR{\(5\)}
+        \TR{\texttt{[]}}
+      }
+    }
+  }
+}
+\hspace*{-21pt}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[lb]{acc1}{\rnode[rb]{arg1}{\TR{\fbox{\fun{sum}\(_0\)}}}}}{
+  \Tn
+  \Tn
+}
+%
+\hspace*{4pt}
+\raisebox{-3pt}{\(\xrightarrow{\smash\epsilon}\)}
+\hspace*{2pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{sum}\(_1\)}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\rnode[rt]{three4}{\rnode[rb]{three4b}{\(3\)}}}
+    \pstree{\TR{\rnode[r]{sevenRoot4}{\texttt{::}}}}{
+      \TR{\rnode[r]{seven4}{\(7\)}}
+      \pstree{\TR{\rnode[rb]{fiveRoot4}{\texttt{::}}}}{
+        \TR{\(5\)}
+        \TR{\texttt{[]}}
+      }
+    }
+  }
+}
+\hspace*{-17pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[lb]{acc7}{\rnode[rb]{arg7}{\TR{\fun{sum}\(_0\)}}}}{
+  \Tn
+  \Tn
+}
+\hspace*{1pt}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[lb]{acc8}{\rnode[rb]{arg8}{\TR{\fbox{\fun{sum}\(_0\)}}}}}{
+  \psset{nodesepB=2pt}
+  \pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]%
+    {\rnode[lb]{plusA1}{\rnode[rb]{plusB1}{\TR{\(+\)}}}}{
+      \Tn
+      \Tn
+  }
+  \Tn
+}
+\ncarc[arcangle=15,nodesepA=8pt]{->}{acc1}{three1}
+\nccurve[angleA=-45,angleB=20,nodesepA=8pt]{->}{arg1}{sevenRoot1}
+
+\ncarc[arcangle=15,nodesepA=6pt]{->}{acc7}{three4}
+\nccurve[angleA=-45,angleB=20,nodesepA=6pt]{->}{arg7}{sevenRoot4}
+\nccurve[angleA=-45,angleB=-15,ncurv=1.5,nodesepA=8pt]{->}{arg8}{fiveRoot4}
+\nccurve[angleA=-135,angleB=-40,ncurvA=0.4,nodesepA=4pt]{->}{plusA1}{three4b}
+\nccurve[angleA=-45,angleB=-10,ncurvA=1,nodesepA=4pt]{->}{plusB1}{seven4}
+\endTeXtoEPS
+
+\end{document}

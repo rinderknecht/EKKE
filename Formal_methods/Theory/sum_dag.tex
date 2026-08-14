@@ -1,0 +1,45 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{sum}}}{
+  \pstree{\TR{\texttt{|}}}{
+    \TR{\rnode[rt]{n1}{\(n\)}}
+    \TR{\texttt{[]}}
+  }
+}
+\hspace*{-4pt}\raisebox{-3pt}{\(\xrightarrow{\alpha}\)}\hspace*{4pt}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]{\TR{\rnode[cb]{Nup}{\(\circ\)}}}{}
+\qquad\qquad
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{sum}}}{
+  \pstree{\TR{\texttt{|}}}{
+    \TR{\rnode[rt]{n2}{\(n\)}}
+    \TR{\rnode[r]{s}{\(s\)}}
+  }
+}
+\hspace*{0pt}\raisebox{-3pt}{\(\xrightarrow{\beta}\)}\hspace*{-4pt}
+\pstree[nodesep=2pt,levelsep=15pt,treesep=14pt]%
+  {\TR{\rnode[lb]{plus}{\(+\)}}}{
+  \Tn
+  \pstree{\TR{\rnode[bc]{sum}{\fun{sum}}}}{
+    \Tn
+  }
+}
+\nccurve[angleA=-90,angleB=30,nodesepB=2pt,nodesepA=-1pt]{->}{Nup}{n1}
+\ncarc[arcangle=12,nodesep=2pt]{->}{plus}{n2}
+\nccurve[angleA=-90,angleB=0,nodesep=2pt]{->}{sum}{s}
+\endTeXtoEPS
+
+\end{document}

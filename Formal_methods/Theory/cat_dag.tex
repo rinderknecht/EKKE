@@ -1,0 +1,42 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{cat}}}{
+  \TR{\texttt{[]}}
+  \TR{\rnode[r]{Qa}{\(t\)}}
+}
+\quad\raisebox{-3pt}{\(\xrightarrow{\alpha}\)}\quad
+\pstree[levelsep=17pt,treesep=14pt]{\TR{\rnode[cb]{Qup}{\(\circ\)}}}{}
+\qquad\qquad
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{cat}}}{
+  \pstree{\TR{\texttt{|}}}{
+    \TR{\rnode[br]{I}{\(x\)}}
+    \TR{\rnode[br]{P}{\(s\)}}
+  }
+  \TR{\rnode[br]{Qb}{\(t\)}}
+}
+\quad\raisebox{-3pt}{\(\xrightarrow{\beta}\)}\quad
+\pstree[nodesep=2pt,levelsep=15pt,treesep=14pt]%
+  {\TR{\rnode[bl]{cons}{\texttt{|}}}}{
+  \Tn
+  \Tn
+  \pstree{\TR{\rnode[bl]{joinP}{\rnode[br]{joinQ}{\TR{\fun{cat}}}}}}{
+    \Tn
+  }
+}
+\nccurve[angleA=-90,angleB=0,nodesepB=1pt,nodesepA=-1pt]{->}{Qup}{Qa}
+\nccurve[angleA=-130,angleB=-55,nodesepA=2pt,nodesepB=1pt,ncurvB=1]{->}{cons}{I}
+\nccurve[angleA=-120,angleB=-45,nodesepA=5pt]{->}{joinP}{P}
+\nccurve[angleA=-60,angleB=-50,nodesepA=5pt,nodesepB=1pt,ncurvA=1]{->}{joinQ}{Qb}
+\endTeXtoEPS
+
+\end{document}

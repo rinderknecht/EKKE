@@ -1,0 +1,29 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=20pt,treesep=7pt]{\TR{\fun{f}}}{
+  \pstree{\TR{\texttt{.}}}{
+    \pstree{\TR{\fun{g}}}{
+      \TR{\(0\)}
+    }
+    \pstree{\TR{\texttt{.}}}{
+      \TR{\(x\)}
+      \TR{\(1\)}
+    }
+  }
+  \Tn
+  \TR{\(()\)}
+  \pstree{\TR{\fun{g}}}{
+    \TR{\(y\)}
+  }
+}
+\endTeXtoEPS
+
+\end{document}

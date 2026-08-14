@@ -1,0 +1,134 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath,amssymb}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=20pt,treesep=14pt]{\TR{\fbox{\fun{sum}}}}{
+  \psset{nodesepB=2pt,levelsep=17pt}
+  \pstree[nodesepA=2pt]{\TR{\texttt{::}}}{
+    \TR{\(3\)}
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\texttt{::}}}{
+        \TR{\(5\)}
+        \TR{\texttt{[]}}
+      }
+    }
+  }
+}
+\hspace*{-21pt}
+\raisebox{-3pt}{\(\xrightarrow{\beta}\)}
+\hspace*{-4pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{sum}}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\rnode[rt]{three1}{\(3\)}}
+    \pstree{\TR{\rnode[r]{sevenRoot1}{\texttt{::}}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\texttt{::}}}{
+        \TR{\(5\)}
+        \TR{\texttt{[]}}
+      }
+    }
+  }
+}
+\hspace*{-34pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\rnode[lb]{plus1}{\(+\)}}}{
+  \Tn
+  \psset{nodesepB=0pt,levelsep=20pt}
+  \pstree{\TR{\rnode[bc]{sum1}{\fbox{\fun{sum}}}}}{
+    \Tn
+  }
+}
+\hspace*{-14pt}
+\raisebox{-3pt}{\(\xrightarrow{\beta}\)}
+\hspace*{-2pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{sum}}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\rnode[rt]{three2}{\(3\)}}
+    \pstree{\TR{\rnode[r]{sevenRoot2}{\texttt{::}}}}{
+      \TR{\rnode[rt]{seven}{\(7\)}}
+      \pstree{\TR{\rnode[r]{fiveRoot}{\texttt{::}}}}{
+        \TR{\(5\)}
+        \TR{\texttt{[]}}
+      }
+    }
+  }
+}
+\hspace*{-32pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\rnode[lb]{plus2}{\(+\)}}}{
+  \Tn
+  \pstree{\TR{\rnode[bc]{sum2}{\fun{sum}}}}{
+    \Tn
+  }
+}
+\hspace*{-2pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\rnode[lb]{plus3}{\(+\)}}}{
+  \Tn
+  \psset{nodesepB=0pt,levelsep=20pt}
+  \pstree{\TR{\rnode[bc]{sum3}{\fbox{\fun{sum}}}}}{
+    \Tn
+  }
+}
+\hspace*{-8pt}
+\raisebox{-3pt}{\(\xrightarrow{\alpha}\)}
+\hspace*{-2pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{sum}}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\rnode[rt]{three21}{\(3\)}}
+    \pstree{\TR{\rnode[r]{sevenRoot21}{\texttt{::}}}}{
+      \TR{\rnode[rt]{seven1}{\(7\)}}
+      \pstree{\TR{\rnode[r]{fiveRoot1}{\texttt{::}}}}{
+        \TR{\rnode[rt]{five}{\(5\)}}
+        \TR{\texttt{[]}}
+      }
+    }
+  }
+}
+\hspace*{-32pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\rnode[lb]{plus21}{\(+\)}}}{
+  \Tn
+  \pstree{\TR{\rnode[bc]{sum21}{\fun{sum}}}}{
+    \Tn
+  }
+}
+\hspace*{-2pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\TR{\rnode[lb]{plus31}{\(+\)}}}{
+  \Tn
+  \pstree{\TR{\rnode[bc]{sum31}{\fun{sum}}}}{
+    \Tn
+  }
+}
+\hspace*{-6pt}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]{\TR{\rnode[cb]{circ}{\(\circ\)}}}{}
+\ncarc[arcangle=30,nodesep=2pt]{->}{plus1}{three1}
+\nccurve[angleA=-90,angleB=10]{->}{sum1}{sevenRoot1}
+
+\ncarc[arcangle=30,nodesep=2pt]{->}{plus2}{three2}
+\nccurve[angleA=-90,angleB=10,nodesepA=2pt]{->}{sum2}{sevenRoot2}
+\nccurve[angleA=-90,angleB=25,ncurvA=0.5,nodesep=2pt]{->}{plus3}{seven}
+\nccurve[angleA=-90,angleB=10]{->}{sum3}{fiveRoot}
+
+\ncarc[arcangle=30,nodesep=2pt]{->}{plus21}{three21}
+\nccurve[angleA=-90,angleB=10,nodesepA=2pt]{->}{sum21}{sevenRoot21}
+\nccurve[angleA=-90,angleB=20,ncurvA=0.5,nodesep=2pt]{->}{plus31}{seven1}
+\nccurve[angleA=-90,angleB=10,nodesepA=2pt]{->}{sum31}{fiveRoot1}
+
+\nccurve[angleA=-90,angleB=20,ncurv=1,nodesepA=-1pt,nodesepB=2pt]{->}{circ}{five}
+\endTeXtoEPS
+
+\end{document}

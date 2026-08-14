@@ -1,0 +1,65 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath,amssymb}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{cat}}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\rnode[b]{a}{\(1\)}}
+    \pstree{\TR{\rnode[b]{b_root}{\texttt{::}}}}{
+      \TR{\rnode[b]{b}{\(2\)}}
+      \TR{\rnode[rb]{empty}{\texttt{[]}}}
+    }
+  }
+  \pstree{\TR{\rnode[rb]{c_root_rb}{\rnode[r]{c_root_r}{\rnode[rt]{c_root_rt}{\rnode[t]{c_root_t}{\texttt{::}}}}}}}{
+    \TR{\(3\)}
+    \TR{\texttt{[]}}
+  }
+}
+\hspace*{-16pt}
+\raisebox{-3pt}{\phantom{\(\xrightarrow{\beta}\)}}
+\hspace*{8pt}
+%\pstree[nodesepA=-1pt,nodesepB=2pt,levelsep=17pt,treesep=14pt,arrows=->]{\TR{\(\circ\)}}{
+\pstree[nodesepA=2pt,arrows=-,levelsep=17pt,treesep=14pt]%
+       {\TR{\rnode[bl]{cat_root1}{\hspace*{-2pt}\texttt{::}}}}{
+    \Tn
+    \pstree{\rnode[bl]{cat_l1}{\rnode[br]{cat_r1}{\TR{\fun{cat}}}}}{
+      \Tn
+      \Tn
+    }
+  }
+%}
+\hspace*{-9pt}
+\raisebox{-3pt}{\phantom{\(\xrightarrow{\beta}\)}}
+\hspace*{3pt}
+%\pstree[nodesepA=-1pt,nodesepB=2pt,levelsep=17pt,treesep=14pt,arrows=->]{\TR{\(\circ\)}}{
+\pstree[nodesepA=2pt,arrows=-,levelsep=17pt,treesep=14pt]%
+       {\TR{\rnode[bl]{cat_root_l2}{\rnode[br]{cat_root_r2}{\hspace*{-2pt}\texttt{::}}}}}{
+    \Tn
+    \Tn
+  }
+%}
+\hspace*{-11pt}
+\raisebox{-3pt}{\phantom{\(\xrightarrow{\alpha}\)}}
+\hspace*{11pt}
+\phantom{\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]{\rnode[cb]{circ}{\TR{\(\circ\)}}}{}}
+%
+\nccurve[angleA=-105,angleB=-90,ncurvB=2.2,nodesepA=2pt,nodesepB=1pt]{->}{cat_root1}{a}
+\nccurve[angleA=-130,angleB=-90,nodesepA=6pt,nodesepB=2pt,ncurvB=1.2]{->}{cat_l1}{b_root}
+\nccurve[angleA=-40,angleB=30,nodesepA=6pt,ncurvA=2,ncurvB=2.4]{->}{cat_r1}{c_root_rt}
+%
+\nccurve[angleA=-130,angleB=-80,ncurvB=0.8,nodesepA=2pt,nodesepB=1pt]{->}{cat_root_l2}{b}
+\nccurve[angleA=-40,angleB=-30,nodesepA=2pt,nodesepB=0pt,ncurv=2]{->}{cat_root_r2}{c_root_r}
+\endTeXtoEPS
+
+\end{document}

@@ -1,0 +1,99 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath,amssymb}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\raisebox{-3pt}{\(=\)}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{sum}\(_1\)}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\rnode[rt]{three3}{\(3\)}}
+    \pstree{\TR{\rnode[r]{sevenRoot3}{\texttt{::}}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\rnode[r]{fiveRoot3}{\texttt{::}}}}{
+        \TR{\(5\)}
+        \TR{\rnode[r]{empty3}{\texttt{[]}}}
+      }
+    }
+  }
+}
+\hspace*{-18pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[lb]{acc4}{\rnode[rb]{arg4}{\TR{\fun{sum}\(_0\)}}}}{
+  \Tn
+  \Tn
+}
+\hspace*{0pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[lb]{acc5}{\rnode[rb]{arg5}{\TR{\fun{sum}\(_0\)}}}}{
+  \TR{\(10\)}
+  \Tn
+}
+\hspace*{0pt}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[lb]{acc6}{\rnode[rb]{arg6}{\TR{\fbox{\fun{sum}\(_0\)}}}}}{
+  \psset{nodesepB=2pt}
+  \TR{\(15\)}
+  \Tn
+  }
+\hspace*{8pt}
+\raisebox{-3pt}{\(\xrightarrow{\delta}\)}
+\hspace*{0pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{sum}\(_1\)}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\rnode[rt]{three6}{\(3\)}}
+    \pstree{\TR{\rnode[r]{sevenRoot6}{\texttt{::}}}}{
+      \TR{\(7\)}
+      \pstree{\TR{\rnode[r]{fiveRoot6}{\texttt{::}}}}{
+        \TR{\(5\)}
+        \TR{\rnode[r]{empty6}{\texttt{[]}}}
+      }
+    }
+  }
+}
+\hspace*{-18pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[lb]{acc12}{\rnode[rb]{arg12}{\TR{\fun{sum}\(_0\)}}}}{
+  \Tn
+  \Tn
+}
+\hspace*{0pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[lb]{acc13}{\rnode[rb]{arg13}{\TR{\fun{sum}\(_0\)}}}}{
+  \TR{\(10\)}
+  \Tn
+}
+\hspace*{0pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]%
+  {\rnode[lb]{acc14}{\rnode[rb]{arg14}{\TR{\fun{sum}\(_0\)}}}}{
+  \TR{\rnode[r]{fifteen}{\(15\)}}
+  \Tn
+}
+\hspace*{4pt}
+\pstree[nodesep=0pt,levelsep=17pt,treesep=14pt]{\TR{\rnode[cb]{circ}{\(\circ\)}}}{}
+\ncarc[arcangle=15,nodesepA=6pt]{->}{acc12}{three6}
+\nccurve[angleA=-45,angleB=20,nodesepA=6pt]{->}{arg12}{sevenRoot6}
+\nccurve[angleA=-45,angleB=10,ncurvA=1,nodesepA=7pt]{->}{arg13}{fiveRoot6}
+
+\nccurve[angleA=-45,angleB=10,ncurvA=1,nodesepA=7pt]{->}{arg14}{empty6}
+\nccurve[angleA=-90,angleB=10,nodesepA=-1pt,nodesepB=2pt]{->}{circ}{fifteen}
+
+
+
+\ncarc[arcangle=15,nodesepA=6pt]{->}{acc4}{three3}
+\nccurve[angleA=-45,angleB=20,nodesepA=6pt]{->}{arg4}{sevenRoot3}
+\nccurve[angleA=-45,angleB=10,ncurvA=1,nodesepA=7pt]{->}{arg5}{fiveRoot3}
+
+\nccurve[angleA=-45,angleB=10,ncurvA=1,nodesepA=8pt]{->}{arg6}{empty3}
+\endTeXtoEPS
+
+\end{document}

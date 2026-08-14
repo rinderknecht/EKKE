@@ -1,0 +1,47 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath,amssymb}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{cat}}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\rnode[b]{Aa}{\(1\)}}
+    \pstree{\TR{\rnode[b]{Ab_root}{\texttt{::}}}}{
+      \TR{\rnode[b]{Ab}{\(2\)}}
+      \TR{\rnode[rb]{Aempty}{\texttt{[]}}}
+    }
+  }
+  \pstree{\TR{\rnode[rb]{Ac_root_rb}{\rnode[r]{Ac_root_r}{\rnode[rt]{Ac_root_rt}{\rnode[t]{Ac_root_t}{\texttt{::}}}}}}}{
+    \TR{\(3\)}
+    \TR{\texttt{[]}}
+  }
+}
+\hspace*{-14pt}
+\raisebox{-3pt}{\phantom{\(\xrightarrow{\beta}\)}}
+\hspace*{10pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt,arrows=-]%
+       {\TR{\rnode[bl]{Acat_root_l1}{\rnode[br]{Acat_root_r1}{\hspace*{-2pt}\texttt{::}}}}}{
+    \Tn
+\pstree[nodesepA=2pt,arrows=-]{\TR{\rnode[bl]{Acat_root_l2}{\rnode[br]{Acat_root_r2}{\rnode[b]{Acat_root_b2}{\texttt{::}}}}}}{
+    \Tn
+    \Tn
+  }
+}
+
+%
+\nccurve[angleA=-105,angleB=-90,ncurvB=2.2,nodesepA=2pt,nodesepB=1pt]{->}{Acat_root_l1}{Aa}
+\nccurve[angleA=-130,angleB=-80,ncurvB=0.8,nodesepA=2pt,nodesepB=1pt]{->}{Acat_root_l2}{Ab}
+\nccurve[angleA=-40,angleB=-30,nodesepA=2pt,nodesepB=0pt,ncurv=2]{->}{Acat_root_r2}{Ac_root_r}
+\endTeXtoEPS
+
+\end{document}

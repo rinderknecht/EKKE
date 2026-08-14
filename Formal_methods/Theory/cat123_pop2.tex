@@ -1,0 +1,49 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath,amssymb}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt,linestyle=none]{\TR{\rnode[br]{ref_result}{\(\circ\)}}}{
+  \pstree[linestyle=solid]{\TR{\texttt{::}}}{
+    \TR{\rnode[b]{Ba}{\(1\)}}
+    \pstree{\TR{\rnode[b]{Bb_root}{\texttt{::}}}}{
+      \TR{\rnode[b]{Bb}{\(2\)}}
+      \TR{\rnode[rb]{Bempty}{\texttt{[]}}}
+    }
+  }
+  \pstree[linestyle=solid]{\TR{\rnode[rb]{Bc_root_rb}{\rnode[r]{Bc_root_r}{\rnode[rt]{Bc_root_rt}{\rnode[t]{Bc_root_t}{\texttt{::}}}}}}}{
+    \TR{\(3\)}
+    \TR{\texttt{[]}}
+  }
+}
+\hspace*{-14pt}
+\raisebox{-3pt}{\phantom{\(\xrightarrow{\beta}\)}}
+\hspace*{10pt}
+\pstree[nodesepA=-1pt,nodesepB=2pt,levelsep=17pt,treesep=14pt]{\Tn}{
+\pstree[nodesepA=2pt]{\TR{\rnode[tl]{result}{\rnode[bl]{Bjoin_root_l1}{\rnode[br]{Bjoin_root_r1}{\texttt{::}}}}}}{
+    \Tn
+\pstree[nodesepA=2pt,arrows=-]{\TR{\rnode[bl]{Bjoin_root_l2}{\rnode[br]{Bjoin_root_r2}{\rnode[b]{Bjoin_root_b2}{\texttt{::}}}}}}{
+     \Tn
+     \Tn
+   }
+
+  }
+}
+%
+\nccurve[angleA=-105,angleB=-90,ncurvB=2.2,nodesepA=2pt,nodesepB=1pt]{->}{Bjoin_root_l1}{Ba}
+\nccurve[angleA=-130,angleB=-80,ncurvB=0.8,nodesepA=2pt,nodesepB=1pt]{->}{Bjoin_root_l2}{Bb}
+\nccurve[angleA=-40,angleB=-30,nodesepA=2pt,nodesepB=0pt,ncurv=2]{->}{Bjoin_root_r2}{Bc_root_r}
+\nccurve[angleA=-45,angleB=140,nodesepA=-1.5pt,nodesepB=1pt]{->}{ref_result}{result}
+\endTeXtoEPS
+
+\end{document}
