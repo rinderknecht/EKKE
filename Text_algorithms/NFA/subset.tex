@@ -2,8 +2,7 @@
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Equivalence of DFAs and NFAs}
+\begin{frame}{Equivalence of DFAs and NFAs}
 
 NFA are easier to build than DFA because one does not have to worry,
 for any state, of having out-going edges carrying a unique label.
@@ -24,8 +23,7 @@ construction}, which converts any NFA to a DFA.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction}
+\begin{frame}{Subset construction}
 
 Consider that, in a NFA, from a state \(q\) with several out-going
 edges with the same label \(a\), the transition function \(\delta_N\)
@@ -50,11 +48,9 @@ This is the first step to create a DFA from a NFA.
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction}
+\begin{frame}{Subset construction}
 
 Graphically, instead of the non-determinism
 \begin{center}
@@ -70,8 +66,7 @@ determinism
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction}
+\begin{frame}{Subset construction}
 
 Now, let us present the complete algorithm for the subset
 construction.
@@ -108,8 +103,7 @@ The other components of \({\cal D}\) are constructed as follows.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction}
+\begin{frame}{Subset construction}
 
 \label{state_explosion}
 
@@ -144,8 +138,7 @@ Hence the number of subsets of an \(n\)-element set is also \(2^n\).
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction}
+\begin{frame}{Subset construction}
 
 Resuming the definition of DFA \({\cal D}\), the other components are
 defined as follows.
@@ -173,8 +166,7 @@ defined as follows.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Example/Transition table}
+\begin{frame}{Subset construction / Example / Transitions}
 
 \begin{columns}
 
@@ -213,8 +205,7 @@ defined as follows.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Example/Transition table}
+\begin{frame}{Subset construction / Example / Transitions}
 
 \begin{columns}
 
@@ -244,8 +235,7 @@ defined as follows.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Example/Transition table}
+\begin{frame}{Subset construction / Example / Transitions}
 \[\footnotesize
 \begin{array}{r@{}l||c|c}
 \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
@@ -270,8 +260,7 @@ defined as follows.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Example/Transition table}
+\begin{frame}{Subset construction / Example / Transitions}
 \[
 \begin{array}{r@{}l||c|c}
 \multicolumn{2}{c||}{\text{DFA} \; {\cal D}} & 0 & 1\\
@@ -291,8 +280,7 @@ defined as follows.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Example/Transition diagram}
+\begin{frame}{Subset construction / Example / Diagram}
 
 The transition diagram of the DFA \({\cal D}\) is then
 \begin{center}
@@ -304,8 +292,7 @@ where states with out-going edges which have no end are final states.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Example/Transition diagram (cont.)}
+\begin{frame}{Subset construction / Example / Diagram}
 
 \begin{columns}
 
@@ -330,8 +317,7 @@ where states with out-going edges which have no end are final states.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Example/Transition diagram (cont.)}
+\begin{frame}{Subset construction / Example / Diagram}
 
 \begin{columns}
 
@@ -373,8 +359,7 @@ where states with out-going edges which have no end are final states.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Example/Transition diagram (cont.)}
+\begin{frame}{Subset construction / Example / Diagram}
 So, finally, the DFA is simply
 \begin{center}
 \includegraphics[bb=48 642 150 755]{dfa_from_nfa_simple}
@@ -384,8 +369,7 @@ So, finally, the DFA is simply
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Optimisation}
+\begin{frame}{Subset construction / Optimisation}
 
 Even if in the worst case the resulting DFA has an exponential number
 of states of the corresponding NFA, it is in practice often possible
@@ -408,8 +392,7 @@ to avoid the construction of inaccessible states.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Optimisation/Example}
+\begin{frame}{Subset construction / Optimisation / Example}
 
 \begin{columns}
 
@@ -449,8 +432,7 @@ to avoid the construction of inaccessible states.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Optimisation/Example}
+\begin{frame}{Subset construction / Optimisation / Example}
 
 \begin{columns}
 
@@ -489,8 +471,7 @@ to avoid the construction of inaccessible states.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Tries}
+\begin{frame}{Subset construction / Tries}
 
 Compilers try to recognise a prefix of the input character stream (i.e
 the first meaningful unit, called \textbf{lexeme}, of the given
@@ -512,8 +493,7 @@ It is possible to apply the subset construction to this NFA.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Tries}
+\begin{frame}{Subset construction / Tries}
 
 \label{trie_kwd}
 
@@ -535,8 +515,7 @@ like keywords.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Text searching}
+\begin{frame}{Subset construction / Text searching}
 
 This technique can easily be generalized for searching constant
 strings (like keywords) in a text, i.e. not only as a prefix of a
@@ -554,8 +533,7 @@ symbol. If we note \(\Sigma\) the language alphabet, we get the NFA
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Text searching}
+\begin{frame}{Subset construction / Text searching}
 
 It is possible to apply the subset construction to this NFA or to use
 it directly for searching \emph{all occurrences} of the two keywords
@@ -573,8 +551,7 @@ after discarding the recognised prefix (at the last final state).
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Text searching}
+\begin{frame}{Subset construction / Text searching}
 
 This works because of the loop on the initial state.
 
@@ -593,8 +570,7 @@ But we can continue because \(\hat{\delta}(q_0, \texttt{consta}) =
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Bad case}
+\begin{frame}{Subset construction / Bad case}
 
 The subset construction can lead, in the worst case, to a number of
 states which is the total number of state subsets of the NFA.
@@ -610,8 +586,7 @@ finite set).
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Bad case}
+\begin{frame}{Subset construction / Bad case}
 
 Consider the following NFA, which recognises all binary strings which
 have \(1\) at the \(n\)-th position from the end:
@@ -633,8 +608,7 @@ until the \textbf{end} of the word to accept or reject it.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Bad case}
+\begin{frame}{Subset construction / Bad case}
 
 If the states reached by these prefixes are all different, then there
 are at least \(2^n\) states in the DFA.
@@ -652,8 +626,7 @@ where words \(x1w\) and \(x'0w\) have length \(n\).
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Bad case}
+\begin{frame}{Subset construction / Bad case}
 
 Let us call the DFA \({\cal D} = (Q_D, \Sigma, \delta_D, q_D, F_D)\),
 where \(q_D=\{q_0\}\).
@@ -673,8 +646,7 @@ where \(\lvert{u}\lvert\) is the length of \(u\).
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Bad case}
+\begin{frame}{Subset construction / Bad case}
 
 Let \(y\) be a any string of 0 and 1 such that \(\lvert{wy}\lvert = n
 - 1\).
@@ -693,8 +665,7 @@ at the \(n\)-th position from the end.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Subset construction/Bad case}
+\begin{frame}{Subset construction / Bad case}
 
 On the other hand, equation~(\ref{ext:1}) implies
 \[
