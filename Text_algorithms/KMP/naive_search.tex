@@ -1,5 +1,6 @@
-\begin{frame}
-\frametitle{Na\"{\i}ve search}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Naïve search}
 
 Factor matching is common in text editing, although it is usually
 better known as \textbf{exact string matching} in the academic field
@@ -13,7 +14,7 @@ the \textbf{text}.
 
 \bigskip
 
-Assuming \(p\)~and~\(t\) are not empty, the na\"{\i}ve search simply
+Assuming \(p\)~and~\(t\) are not empty, the naïve search simply
 consists in checking whether \(p\)~is a prefix of~\(t\): if so, we are
 done, otherwise, the pattern is shifted by one letter to the right
 and, again, it is checked whether it is a prefix of that text suffix.
@@ -25,23 +26,23 @@ end of~\(t\), then it is not a factor: the search failed.
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Na\"{\i}ve search}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Naïve search}
 
 \begin{figure}
 \centering
 \includegraphics[bb=75 621 352 715]{naive}
 \end{figure}
-Na\"{\i}vely matching pattern~\(p\) against text~\(t\)
+Naïvely matching pattern~\(p\) against text~\(t\)
   (failure in grey), where \(\ind{p}{i} \neq \ind{t}{j}\) (the letters
 `\word{a}'~and~`\word{b}' are not relevant in themselves).
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Na\"{\i}ve search}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Naïve search}
 
   An imperative program:
 
@@ -70,8 +71,10 @@ slices?
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}
-\frametitle{Na\"{\i}ve search}
+\frametitle{Naïve search}
 
 The input is a pattern~\(p\) of length~\(m\) and a text~\(t\) of
 length~\(n\)

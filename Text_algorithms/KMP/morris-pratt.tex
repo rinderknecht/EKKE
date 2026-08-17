@@ -1,5 +1,6 @@
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 In case of mismatch, the na\"{\i}ve algorithm resumes comparing the
 first letters of~\(p\) without using the information of the partial
@@ -86,8 +87,9 @@ of itself!
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 The important point here is that these comparisons are
 \emph{independent} of the text~\(t\), since they apply to part of the
@@ -109,9 +111,9 @@ longest prefix of \(p\) that is also a suffix of \(p[\dots i-1]\).
 
 \end{frame}
 
-
-\begin{frame}
-\frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 The strategy devised here is to \textbf{compute the maximum borders of
   all prefixes of~\(p\) \emph{before} we start the search} in the
@@ -129,8 +131,9 @@ In other words, we need to understand borders.
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 But before that, let us consider an example where, in the end,
 \(p\)~is not found to be a factor of~\(t\). As usual, letters on a
@@ -145,8 +148,9 @@ grey background correspond to mismatches. It is clear that
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 The \textbf{border} of a non\hyp{}empty word~\(y\) is a proper prefix
 of~\(y\) which is also a suffix.
@@ -179,8 +183,9 @@ The border above must be a proper prefix, so it cannot equal
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 As often when working at the level of specifications, we seek an
 inductive definition for the function at hand, in this instance, the
@@ -213,9 +218,9 @@ The idea is to recursively consider \(\Border{}{y} \cdot a\):
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 Consider the following examples where \(y\)~and~\(\Border{}{y}\) are
 given:
@@ -250,8 +255,9 @@ For example,
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 Formally, for all words~\({y \neq \varepsilon}\) and any
 letter~\(a\),
@@ -290,7 +296,6 @@ the smallest \(q > p\) such that \(\Border{}{\Border{q-1}{y} \cdot a}
 = \Border{}{\Border{q}{y} \cdot a}\) with \(\Border{q}{y} \cdot a
 \prefeq \Border{q-1}{y}\).
 
-
 %we assume
 %\(\Border{q}{y} \cdot a \prefeq y\) and then
 %\(\Border{}{ya} = \smash{\Border{}{\Border{q-1}{y} \cdot a}} =
@@ -298,9 +303,9 @@ the smallest \(q > p\) such that \(\Border{}{\Border{q-1}{y} \cdot a}
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 Because a border is a proper prefix, that is to say, \(\Border{}{y}
 \pref y\), we have \(\Border{2}{y} = \Border{}{\Border{}{y}} \pref
@@ -334,9 +339,9 @@ does not contain an embedded call.
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 We do not actually need to compute the maximum borders of all the
 prefixes of the pattern. Let us have a look back at
@@ -350,9 +355,9 @@ What we need is the offset corresponding to the \textbf{length of the
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 Let us define a function \(\MPfailureName_{x}\) on all the prefixes of
 a word~\(x\) as follows:
@@ -388,9 +393,9 @@ lengths on both sides:
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 If~\({ya \prefeq x}\), then \(\len{\Border{}{ya}} =
 \MPfailure{x}{}{\len{ya}} = \MPfailure{x}{}{\len{y}+1}\). Let \(i :=
@@ -432,9 +437,9 @@ hypothesis because \(\Border{}{y} \pref y \prefeq x\). This proves
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
   So
   \begin{equation*}
@@ -472,9 +477,9 @@ Since \(\Border{q}{y} \pref y\), those are equivalent to the following:
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 Gathering everything:
 \begin{equation*}
@@ -506,9 +511,9 @@ and \(q>0\)~is the smallest natural such that
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 \begin{codebox}
 \(\proc{Next} (x, i)\)\RComment \(\MPfailure{x}{}{i}\) with \(0
@@ -533,9 +538,9 @@ The table of the maximum borders for the proper prefixes of the word
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 Static single-assignment form, assuming \(0 \leqslant i < \len{x}\):
 \begin{codebox}
@@ -546,7 +551,6 @@ Static single-assignment form, assuming \(0 \leqslant i < \len{x}\):
 \End
 \end{codebox}
 
-
 \begin{codebox}
 \(\proc{Fix}(x, i, j)\)\\
 \li \If \(j = -1\) \LogOr \(x[j] = x[i-1]\)
@@ -556,9 +560,9 @@ Static single-assignment form, assuming \(0 \leqslant i < \len{x}\):
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 The problem here is inefficiency:
 \begin{enumerate}
@@ -585,9 +589,9 @@ function:
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 The idea is to compute all the values of \(\MPfailure{x}{}{i}\) for \emph{increasing} values of \(i\):
 \begin{codebox}
@@ -607,8 +611,9 @@ The idea is to compute all the values of \(\MPfailure{x}{}{i}\) for \emph{increa
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 To find out the best configuration of a pattern~\(p\) of length~\(m\)
 that yields the minimum number of letter comparisons, let us assume
@@ -631,9 +636,9 @@ example of pattern is \(p=a^{m}\).
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
   To find the worst configuration of a pattern~\(p\) of length~\(m\)
   that yields the maximum number of letter comparisons, let us assume
@@ -666,8 +671,9 @@ example of pattern is \(p=a^{m}\).
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Morris-Pratt algorithm}
 
 Let us parameterise the search with the failure function:
 \begin{codebox}

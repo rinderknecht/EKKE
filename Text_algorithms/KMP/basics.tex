@@ -1,7 +1,8 @@
 %%-*-latex-*-
 
-\begin{frame}
-\frametitle{Basic definitions}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Basic definitions}
 
 An \textbf{alphabet} is a non\hyp{}empty, finite set of symbols, called
 \textbf{letters}, for example `\word{a}', `\word{b}' etc.
@@ -29,9 +30,9 @@ a non\hyp{}commutative product, so it has a neutral element
 
 \end{frame}
 
-
-\begin{frame}
-\frametitle{Basic definitions}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Basic definitions}
 
 We denote the \textbf{repetition} of a word with an exponent, e.g.
 \(\word{a}^3 = \word{aaa}\). The \textbf{length} of a string \(x\) is
@@ -72,8 +73,9 @@ prefix relation is easy to define inductively:
 
 \end{frame}
 
-\begin{frame}
-\frametitle{Basic definitions}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Basic definitions}
 
 A letter in a word can be uniquely characterised by a natural number,
 called \textbf{index}, assuming that the first letter has
@@ -108,9 +110,9 @@ of~\(y\).
 
 \end{frame}
 
-
-\begin{frame}
-\frametitle{The prefix predicate}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{The prefix predicate}
 
 An imperative definition:
 \begin{codebox}
@@ -121,7 +123,6 @@ An imperative definition:
 \kw{else} \(\len{x}\)
 \li \(\proc{Prefix} \gets i = \len{x}\)
 \end{codebox}
-
 
 %% \begin{codebox}
 %% \(\proc{Prefix} (x, t)\)\\
@@ -139,9 +140,9 @@ Is it optimal?
 
 \end{frame}
 
-
-\begin{frame}
-\frametitle{The prefix predicate}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{The prefix predicate}
 
 A single static assignment definition:
 

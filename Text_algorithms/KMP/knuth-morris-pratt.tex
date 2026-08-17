@@ -1,5 +1,6 @@
-\begin{frame}
-  \frametitle{Knuth-Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Knuth-Morris-Pratt algorithm}
 
 Knuth proposed an improvement: if sliding the pattern entails
 comparing the same letter from the pattern with the same letter in the
@@ -13,9 +14,9 @@ happen, and again until we find a new letter.
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Knuth-Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Knuth-Morris-Pratt algorithm}
 
 Let us see the need for this improvement in another way, by
 representing graphically \(\MPfailureName_x\), with \(x =
@@ -40,8 +41,9 @@ for the word \word{abacabac}. The table we gave earlier was:
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Knuth-Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Knuth-Morris-Pratt algorithm}
 
 We will here only describe informally such automata.
 
@@ -69,8 +71,9 @@ word and the latter corresponds to the special value
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Knuth-Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Knuth-Morris-Pratt algorithm}
 
 In terms of the automaton, the improvement consists in following the
 back edges
@@ -92,9 +95,9 @@ outgoing label is still~\(a\), it loses its destination.
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Knuth-Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Knuth-Morris-Pratt algorithm}
 
   In terms of a table, this DFA is equivalent to
 
@@ -115,8 +118,9 @@ outgoing label is still~\(a\), it loses its destination.
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Knuth-Morris-Pratt algorithm}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Knuth-Morris-Pratt algorithm}
 
 We can fuse the two loops into one. The idea is to maintain~\(j\) as
 the failure state of~\(i\) before optimisation (that is, original
@@ -134,6 +138,5 @@ edges \(i \dashrightarrow j\)).
 \li \> \(j \gets j + 1\)
 \li \(\proc{Next'} \gets \id{next}\)
 \end{codebox}
-
 
 \end{frame}
