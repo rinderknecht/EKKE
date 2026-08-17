@@ -42,8 +42,7 @@
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Deterministic Finite Automata}
+\begin{frame}{Deterministic Finite Automata}
 
 An \textbf{automaton} is a very useful and pervasive concept in
 software and telecommunication engineering.
@@ -68,8 +67,7 @@ the double-circle denotes another special state: the former is an
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Deterministic Finite Automata}
+\begin{frame}{Deterministic Finite Automata}
 
 \label{trie_then}
 
@@ -102,8 +100,7 @@ states.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Deterministic Finite Automata}
+\begin{frame}{Deterministic Finite Automata}
 
 The graphic representation of an automaton is called a
 \textbf{transition diagram}.
@@ -122,8 +119,7 @@ itself: these edges are called \textbf{loops}.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Deterministic Finite Automata}
+\begin{frame}{Deterministic Finite Automata}
 
 \label{dfa_01}
 
@@ -138,8 +134,7 @@ separated by commas:
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Trie}
+\begin{frame}{Trie}
 
 Before giving a formal definition of DFAs, we can explain on
 transition diagrams how they are used on an example.
@@ -166,8 +161,7 @@ But this is not efficient.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Trie}
+\begin{frame}{Trie}
 
 A better approach is to sort the words in the list in alphabetic order
 and compare the word we seek with the first in the list, then the
@@ -189,8 +183,7 @@ the word `\textsf{they}'.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Trie}
+\begin{frame}{Trie}
 
 First, `\textsf{they}' is compared to `\textsf{this}'. The failure
 happens at the third letter (i.e. after three letter comparisons) and
@@ -213,8 +206,7 @@ two-dimensional, like a DFA --- called in this context a
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Trie}
+\begin{frame}{Trie}
 
 The trie corresponding to our example dictionary is exactly the
 transition diagram given page~\pageref{trie_then}. Let us assume here
@@ -244,8 +236,7 @@ that the word is followed by a special marker \textsf{\$}.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{Trie}
+\begin{frame}{Trie}
 
 If the current letter is \textsf{\$}, i.e. all letters of the word
 have been successfully matched, and the current state is a final state
@@ -265,8 +256,7 @@ found in exactly \(n\) letter comparisons.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Formal definition}
+\begin{frame}{DFA / Formal definition}
 
 Formally, a DFA \({\cal D}\) is a 5-tuple \({\cal D} = (Q, \Sigma,
 \delta, q_0, F)\) where
@@ -294,8 +284,7 @@ Formally, a DFA \({\cal D}\) is a 5-tuple \({\cal D} = (Q, \Sigma,
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Recognised words}
+\begin{frame}{DFA / Recognised words}
 
 Independently of the interpretation of the states, we can define how a
 given word is accepted (or recognised) or rejected by a given DFA.
@@ -322,8 +311,7 @@ set of words recognised by \(\cal D\).
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Recognised words/Example}
+\begin{frame}{DFA / Recognised words / Example}
 
 \begin{columns}
 
@@ -350,8 +338,7 @@ set of words recognised by \(\cal D\).
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Recognised language}
+\begin{frame}{DFA / Recognised language}
 
 It is easy to define formally \(L({\cal D})\).
 
@@ -384,8 +371,7 @@ L({\cal D}) = \{w \in \Sigma^{*} \; \lvert \; \hat{\delta}(q_0, w) \in F\}
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Recognised language (cont)}
+\begin{frame}{DFA / Recognised language}
 
 For example, in our last example:
 \[
@@ -415,8 +401,7 @@ For example, in our last example:
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Recognised language (cont)}
+\begin{frame}{DFA / Recognised language}
 
 What is the language recognised by the previous DFA? The definition
 states that this language is composed of all the words that are
@@ -450,8 +435,7 @@ recognised.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Recognised language (cont)}
+\begin{frame}{DFA/Recognised language (cont)}
 
 What is the language recognised by the DFA page~\pageref{dfa_01}?
 \begin{center}
@@ -468,8 +452,7 @@ Note that this an \textbf{infinite language}.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Transition diagrams}
+\begin{frame}{DFA / Transition diagrams}
 
 We can redefine transition diagrams in terms of the concept of DFA.
 
@@ -501,8 +484,7 @@ F)\) is a graph defined as follows:
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Transition table}
+\begin{frame}{DFA / Transition table}
 
 There is a compact textual way to represent the transition function of
 a DFA: a \textbf{transition table}.
@@ -533,8 +515,7 @@ q & & \delta (q, a)\\
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Transition table/Example}
+\begin{frame}{DFA / Transition table / Example}
 
 The transition table of the function \(\delta\) in our last example is
 thus:
@@ -560,8 +541,7 @@ transition table here, but the whole DFA \(\cal D\).
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Example}
+\begin{frame}{DFA / Example}
 
 We want to define formally a DFA which recognises the language \(L\)
 whose words contain an even number of 0's and an even number of 1's
@@ -594,8 +574,7 @@ Therefore, there are four states because there are four cases:
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Example (cont)}
+\begin{frame}{DFA / Example}
 
 What about the initial and final states?
 \begin{itemize}
@@ -617,8 +596,7 @@ We almost know now how to specify the DFA for language \(L\). It is
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Example (cont)}
+\begin{frame}{DFA / Example}
 
 \begin{columns}
   \column{0.5\textwidth}
@@ -647,8 +625,7 @@ We almost know now how to specify the DFA for language \(L\). It is
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Example (cont)}
+\begin{frame}{DFA / Example}
 
 We can also represent this DFA by a transition table:
 \[
@@ -676,7 +653,7 @@ state.
 % ------------------------------------------------------------------------
 %
 \begin{frame}[containsverbatim]
-\frametitle{DFA/Example (cont)}
+  \frametitle{DFA / Example}
 
 We can check this by computing step by step
 \(\hat{\delta}(q_0,\verb+110101+)\), from the shortest prefix to the
@@ -716,8 +693,7 @@ longest (which is the word \verb+110101+ itself):
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-\frametitle{DFA/Dictionary}
+\begin{frame}{DFA / Dictionary}
 
 Let us use DFAs for implementing a dictionary, that is, a trie as
 presented at page~\pageref{trie_then}.
