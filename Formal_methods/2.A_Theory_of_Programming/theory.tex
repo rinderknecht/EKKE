@@ -2197,9 +2197,8 @@ bool and(bool e1, bool e2) {
   \begin{itemize}
 
     \item Consider for instance
-      \medskip
       \begin{center}
-        \includegraphics[bb=71 655 298 712]{cat_dag}
+        \includegraphics[bb=71 656 302 721]{cat_dag}
       \end{center}
       which is the same definition of `\fun{cat}' as given above:
       \begin{equation*}
@@ -2229,7 +2228,7 @@ bool and(bool e1, bool e2) {
   The evaluation of \(\fun{cat}([1;2],[3])\) is:
   \bigskip
   \begin{center}
-    \includegraphics[bb=71 621 276 732]{cat123_push}
+    \includegraphics[bb=71 621 276 733]{cat123_push}
   \end{center}
 
   Note that each right-hand side shows only the rewritten call, not
@@ -2244,10 +2243,8 @@ bool and(bool e1, bool e2) {
   Therefore, to reconstruct the value, we need to work leftwards and
   replace the rewritten call by the right-hand side:
   \begin{center}
-    \includegraphics[bb=71 624 248 715]{cat123_pop0}
+    \includegraphics[bb=71 623 248 717]{cat123_pop0}
   \end{center}
-
-  \bigskip
 
   We do not show the calls that have been replaced by their values.
 
@@ -2258,7 +2255,7 @@ bool and(bool e1, bool e2) {
   \frametitle{Data sharing and evaluation}
 
   \begin{center}
-    \includegraphics[bb=71 623 210 715]{cat123_pop1}
+    \includegraphics[bb=71 621 212 715]{cat123_pop1}
     \qquad\quad
     \includegraphics[bb=71 621 212 715]{cat123_pop2}
   \end{center}
@@ -2391,7 +2388,7 @@ bool and(bool e1, bool e2) {
 
   For \(\fun{sum}_1([3;7;5])\) we have the evaluation
   \begin{center}
-    \includegraphics[bb=71 643 340 722]{sum0_375_0}
+    \includegraphics[bb=71 641 342 722]{sum0_375_0}
   \end{center}
 
 \end{frame}
@@ -2426,7 +2423,7 @@ bool and(bool e1, bool e2) {
   and assume that the collector reclaims immediately the useless
   pending calls:
   \begin{center}
-    \includegraphics[bb=71 640 325 721]{sum0_375tco0}
+    \includegraphics[bb=71 640 326 721]{sum0_375tco0}
   \end{center}
 
 \end{frame}
