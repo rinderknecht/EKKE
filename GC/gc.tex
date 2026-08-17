@@ -43,6 +43,8 @@
 
 \frame{\maketitle}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   The runtime systems of many programming languages feature
@@ -63,6 +65,8 @@
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}[fragile]
   \frametitle{Garbage Collection}
 
@@ -88,6 +92,8 @@ perhaps more, depending on the data layout).
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}[fragile]
   \frametitle{Garbage Collection}
 
@@ -115,6 +121,8 @@ wish to. Every call to `\texttt{new}' returns the \textbf{address of a
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}[fragile]
   \frametitle{Garbage Collection}
 
@@ -137,6 +145,8 @@ allocation.
 \end{frame}
 
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}[fragile]
   \frametitle{Garbage Collection / Memory leak}
 
@@ -159,7 +169,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   In \Java, there is no equivalent to the `\texttt{free}' procedure of
@@ -187,6 +198,8 @@ allocation.
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   How does a GC determine what objects are useless, since it has no
@@ -210,6 +223,8 @@ allocation.
 \end{frame}
 
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Roots \& Liveness}
 
   When, at the current point in the execution of a program, the
@@ -235,9 +250,10 @@ allocation.
   (including `\texttt{this}') and the variables declared in the method
   being executed.
 
-  \end{frame}
+\end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   The heap can now be seen as a \textbf{graph}, where the
@@ -262,7 +278,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   \vspace*{-5mm}
@@ -278,7 +295,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   We started this introduction by referring to `useful objects', but
@@ -295,7 +313,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Mark \& Sweep}
 
   One of the simplest technique for garbage collection is known as
@@ -319,7 +338,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Marking}
 
   In the following pseudo\hyp{}code, we will assume that each
@@ -345,7 +365,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   We stated earlier that each object would contain a bit field for the
@@ -368,7 +389,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Recursive Marking}
 
   For the marking of objects, any graph traversal can do. For example,
@@ -393,7 +415,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   This program terminates because the bit marks are never set twice
@@ -465,7 +488,8 @@ allocation.
 
 %% \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Iterative Marking}
 
   The previous pseudo\hyp{}code uses function calls, but it is better
@@ -490,7 +514,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   We could have used a data structure other than a stack, because the
@@ -509,6 +534,8 @@ allocation.
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   We see that \(o\).left is pushed \emph{before} \(o\).right, so the
@@ -533,7 +560,8 @@ allocation.
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Efficient Marking}
 
   \begin{codebox}
@@ -549,7 +577,8 @@ allocation.
   \end{codebox}
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Traversal Stack}
 
   \label{Mark}
@@ -571,8 +600,9 @@ allocation.
 
 \end{frame}
 
-\begin{frame}
-\frametitle{Garbage Collection / Tree traversals/Depth-first}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Garbage Collection / Tree traversals/Depth-first}
 
 Depending on the data structure we use to hold \(\proc{Children}(o)\),
 we get different traversals.
@@ -600,8 +630,7 @@ In the case of traversing a \textbf{tree}, here are two examples of
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Garbage Collection / Tree traversals/Breadth-first}
+\begin{frame}{Garbage Collection / Tree traversals/Breadth-first}
 
 Here are two examples of \textbf{breadth-first traversals}:
 
@@ -624,7 +653,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   But how \proc{Children} knows what fields of an object are pointers
@@ -651,7 +681,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Traversal Stack}
 
   As we saw in the program page~\pageref{Mark}, the size of the
@@ -680,7 +711,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   One obvious solution is having \textbf{a bounded stack} that is not
@@ -707,7 +739,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Pointer Reversal}
 
   Another solution by Deutsch, Schorr and Waite (DSW), more complex,
@@ -728,7 +761,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   Initially:
@@ -759,9 +793,12 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Garbage Collection}
 
-\begin{frame}{Garbage Collection} We can mark~\(A\) (becomes \(A^*\))
-  and set \(A\).next to point backwards to~\(p\):
+  We can mark~\(A\) (becomes \(A^*\)) and set \(A\).next to point
+  backwards to~\(p\):
   \[
   \begin{array}{ccccccccc}
     \textbf{nil} & \longleftarrow & A^* & \hphantom{\longrightarrow} & B
@@ -782,6 +819,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   We can mark~\(B\) and set \(B\).next to point backwards to~\(A^*\):
@@ -805,7 +844,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   We can mark~\(C\) and set \(C\).next to point backwards to~\(B^*\):
@@ -833,7 +873,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Sweeping}
 
   Let us consider now the second phase: sweeping.
@@ -857,7 +898,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Allocation with Free Lists}
 
   Let us assume that the collector
@@ -893,7 +935,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   In all, free blocks require three-word headers, which is acceptable,
@@ -922,7 +965,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Sweeping}
 
   Assuming a free list and the previous primitive operations, we can
@@ -950,6 +994,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Allocation}
 
   We can now write the GC procedure \proc{New} that is called by the
@@ -971,7 +1017,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / First-fit Allocation}
 
   Several implementations of \proc{Allocate} are possible. Perhaps the
@@ -1002,7 +1049,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   Let us use the beginning of a free block to allocate an object:
@@ -1023,7 +1071,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / First-fit Allocation (variant)}
 
   We could instead use the end of the free block:
@@ -1050,7 +1099,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Next-fit Allocation}
 
   First-fit allocation tends to accummulate small free blocks at the
@@ -1071,7 +1121,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Best-fit Allocation}
 
   \textbf{Best-fit allocation} finds the first smallest free block
@@ -1099,7 +1150,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Drawbacks of Free Lists}
 
    When allocating objects of different sizes, the heap will contain
@@ -1125,7 +1177,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Improving Free Lists}
 
   In a first\hyp{}fit context, a special case of Cartesian trees
@@ -1153,7 +1206,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Improving Free Lists}
 
   The height invariant of AVL trees is tricky to get right, and
@@ -1177,7 +1231,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Sequential Allocation}
 
   A completely different way to address the locality and linearity
@@ -1194,7 +1249,8 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}[fragile]
   \frametitle{Garbage Collection / Pointer Alignment}
 
@@ -1227,7 +1283,8 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Sequential Allocation}
 
   We assume that the collector
@@ -1258,7 +1315,8 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Copying collectors}
 
   There is a class of collectors that \textbf{move/copy objects} after
@@ -1286,7 +1344,8 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \includegraphics{gc-0.png}
@@ -1303,7 +1362,8 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
   (Graphics by Vladimir Keleshev.)
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \includegraphics[scale=0.8]{gc-1.png}
@@ -1319,14 +1379,16 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \includegraphics[scale=0.8]{gc-2.png}
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   The original semispace is named \textbf{from-space} to distinguish
@@ -1358,21 +1420,24 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \includegraphics[scale=0.8]{gc-3.png}
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \includegraphics[scale=0.8]{gc-4.png}
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \bigskip
@@ -1391,14 +1456,16 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \includegraphics[scale=0.8]{gc-5.png}
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   We have scanned the whole stack (arrived at the special word
@@ -1422,14 +1489,16 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \includegraphics[scale=0.8]{gc-6.png}
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   The to-space grew by one block (the third one).
@@ -1458,14 +1527,16 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \includegraphics[scale=0.8]{gc-7.png}
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \includegraphics[scale=0.8]{gc-8.png}
@@ -1482,7 +1553,8 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \begin{codebox}
@@ -1504,7 +1576,8 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \begin{codebox}
@@ -1524,7 +1597,8 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Cheney's collector}
 
   \begin{codebox}
@@ -1540,6 +1614,8 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection / Generational collector}
 
   It was observed that new objects die young. Moreover, in functional
@@ -1568,7 +1644,8 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 
 \end{frame}
 
-
+% ------------------------------------------------------------------------
+%
 \begin{frame}{Garbage Collection}
 
   There are a lot more GC algorithms that we cannot cover, like
