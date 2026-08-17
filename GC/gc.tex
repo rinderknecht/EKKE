@@ -67,8 +67,7 @@
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}[fragile]
-  \frametitle{Garbage Collection}
+\begin{frame}[fragile]{Garbage Collection}
 
   For example, in \Java, we can declare a type for the cells
   in a linked list of integers as follows:
@@ -94,8 +93,7 @@ perhaps more, depending on the data layout).
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}[fragile]
-  \frametitle{Garbage Collection}
+\begin{frame}[fragile]{Garbage Collection}
 
   A cell can be allocated with the built-in function `\texttt{new}',
   like so:
@@ -123,8 +121,7 @@ wish to. Every call to `\texttt{new}' returns the \textbf{address of a
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}[fragile]
-  \frametitle{Garbage Collection}
+\begin{frame}[fragile]{Garbage Collection}
 
 Because each allocation removes from available, finite memory, it is
 necessary for the GC to \textbf{free the memory used by useless
@@ -147,8 +144,7 @@ allocation.
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}[fragile]
-  \frametitle{Garbage Collection / Memory leak}
+\begin{frame}[fragile]{Garbage Collection / Memory leak}
 
   \label{C_errors}
 
@@ -442,9 +438,9 @@ allocation.
 
 \end{frame}
 
-
-%% \begin{frame}
-%%   \frametitle{Garbage Collection}
+%% % ------------------------------------------------------------------------
+%% %
+%% \begin{frame}{Garbage Collection}
 
 %%   Let us prove something that might seem obvious: namely that,
 %%   \textbf{all reachable objects, and only them, are marked by a call
@@ -469,9 +465,9 @@ allocation.
 
 %% \end{frame}
 
-
-%% \begin{frame}
-%%   \frametitle{Garbage Collection}
+%% % ------------------------------------------------------------------------
+%% %
+%% \begin{frame}{Garbage Collection}
 
 %%   Let us consider the first of such calls: \(o'\)~was unmarked, thus,
 %%   according to \proc{DFS}, the test is true, implying a call to
@@ -1251,8 +1247,7 @@ Here are two examples of \textbf{breadth-first traversals}:
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}[fragile]
-  \frametitle{Garbage Collection / Pointer Alignment}
+\begin{frame}[fragile]{Garbage Collection / Pointer Alignment}
 
   To illustrate pointer alignment, consider a word size of~4 bytes in
   \C:

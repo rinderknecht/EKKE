@@ -40,8 +40,9 @@
 
 \frame{\maketitle}
 
-\begin{frame}
-  \frametitle{Introduction}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Introduction}
 
   This lecture proposes a stepwise introduction to a foundation of
   programming and the analyses to write reliable and efficient
@@ -62,9 +63,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Introduction}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Introduction}
 
   In a later lecture, we will learn a specific programming language
   called \textbf{\OCaml}, enabling you to put in practice what you
@@ -82,10 +83,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{String rewriting}
-
+% ------------------------------------------------------------------------
+%
+\begin{frame}{String rewriting}
   Let us consider a string of white and black beads, like \(\circ
   \bullet \bullet \bullet \circ \circ \bullet\), and a one-player game
   whose unique move consists in replacing two adjacent beads with only
@@ -125,9 +125,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Normal forms and termination}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Normal forms and termination}
 
   Other compositions of the rules lead to the same result~\(\circ\) as
   well. Some others bring all\hyp{}white or all\hyp{}black strings,
@@ -159,9 +159,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Invariants}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Invariants}
 
   Second, notice how the parity of the number of black beads is
   \textbf{invariant} through each rule and how there is no rewrite
@@ -187,9 +187,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Confluence}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Confluence}
 
   Consequently, normal forms are not unique. A simple example is
   \begin{equation*}
@@ -217,9 +217,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Completing a system}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Completing a system}
 
   We can obtain confluence by adding the rule~\(\delta\):
   \begin{equation*}
@@ -256,9 +256,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Critical pairs}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Critical pairs}
 
   In general, what matters is that all pairs of strings resulting from
   the application of overlapping rules, called \textbf{critical
@@ -277,9 +277,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Local confluence}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Local confluence}
 
   If all critical pairs are joinable after a divergence in one ore
   more rewrites, the system is \textbf{locally confluent}.
@@ -301,9 +301,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Ground and linear rewrite systems}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Ground and linear rewrite systems}
 
   The system we defined is \textbf{ground}, that is, it involves no
   variables.
@@ -337,9 +337,9 @@
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Ordered rewrite systems}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Ordered rewrite systems}
 
   Notice that there is now an implicit order over the rules: the rule
   \(\gamma+\delta\) must be examined first for a \textbf{match} with a
@@ -371,11 +371,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{A simple calculator}
+\begin{frame}{A simple calculator}
 
   Perhaps, after playing with beads, the simplest thing is an integer
   calculator, that is, integers and the four basic arithmetic
@@ -404,8 +402,7 @@
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Evaluation as rewriting expressions/Reductions}
+\begin{frame}{Evaluation as rewriting expressions / Reductions}
 
   The evaluation of arithmetic expressions can be defined as a series
   of transformations leading to a value (the result). These
@@ -432,11 +429,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Strategy of evaluation and rewrite systems}
+\begin{frame}{Strategy of evaluation and rewrite systems}
 
   Note that there are different ways to choose the sub-expression. For
   example:
@@ -463,11 +458,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Rewrite rules}
+\begin{frame}{Rewrite rules}
 
   A rewrite system is a set of \textbf{rewrite rules}.
 
@@ -489,11 +482,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Conditional rewrite rules and meta-variables}
+\begin{frame}{Conditional rewrite rules and meta-variables}
 
   This rewrite system is not enough for the kind of expressions we
   want to evaluate, where it is possible to combine operations, like
@@ -516,11 +507,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Instance of a rewrite rule}
+\begin{frame}{Instance of a rewrite rule}
 
   An \textbf{instance} of this rule is obtained when the
   meta-variables are replaced by expressions.
@@ -548,11 +537,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Instance of a rewrite rule}
+\begin{frame}{Instance of a rewrite rule}
 
   We need another instance of the same rule. This time, let \(e_1 =
   2+3\) and \(e_2 = 6\). We get
@@ -578,11 +565,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Instance of a rewrite rule}
+\begin{frame}{Instance of a rewrite rule}
 
   Our rule for multiplication, \(e_1 \times e_2 \rightarrow e'_1
   \times e_2\), actually depends on another, \(e_1 \rightarrow
@@ -609,11 +594,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Instance of a rewrite rule}
+\begin{frame}{Instance of a rewrite rule}
 
   Now we can make a clear definition of the notion of `instance of a
   rule':
@@ -635,11 +618,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Instance of a rewrite rule}
+\begin{frame}{Instance of a rewrite rule}
 
   Now how do we find (a mapping for) \(e'_1\)?
 
@@ -668,11 +649,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Instance of a rewrite rule}
+\begin{frame}{Instance of a rewrite rule}
 
   Therefore we can extend \(\sigma\) with \(e'_1 \mapsto 5 \times 6\)
   and we get
@@ -696,8 +675,7 @@
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Instance of a rewrite rule}
+\begin{frame}{Instance of a rewrite rule}
 
   But what about the rewrite of an expression like \(7 \times (4+5)\)?
 
@@ -720,11 +698,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Completing the multiplication rule}
+\begin{frame}{Completing the multiplication rule}
 
   This means that we need another rule for the evaluation of the
   \emph{right} argument of \((\times)\):
@@ -747,11 +723,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Strategy}
+\begin{frame}{Strategy}
 
   But now, something interesting happens.
 
@@ -772,11 +746,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Strategy}
+\begin{frame}{Strategy}
 
   This means that \emph{our system does not specify the order of
   evaluation of the arguments to \((\times)\).}
@@ -792,11 +764,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Finiteness and soundness of reductions}
+\begin{frame}{Finiteness and soundness of reductions}
 
   At this point, it is clear that these reductions satisfy the
   following properties:
@@ -823,11 +793,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Another model of run-time errors}
+\begin{frame}{Another model of run-time errors}
 
   We can modify the calculator so that, in case of error (here, the
   only one is the division by zero), the result of a rewrite is a
@@ -873,11 +841,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Another model of run-time errors}
+\begin{frame}{Another model of run-time errors}
 
   The rationale of this system is that once an error occurs, no other
   computations (leading to integer values) are required and the
@@ -896,11 +862,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Rephrasing soundness}
+\begin{frame}{Rephrasing soundness}
 
   The interesting phenomenon here is that, now, any reduction ends in
   a value (since errors are values). In the previous rewrite system,
@@ -924,11 +888,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Specifying the strategy}
+\begin{frame}{Specifying the strategy}
 
   It is possible to force an order of evaluation on the arguments of
   \((\times)\). Assume we want to reduce the left argument first.
@@ -948,11 +910,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Specifying the strategy}
+\begin{frame}{Specifying the strategy}
 
   The only possible reduction is:
   \begin{mathpar}
@@ -971,8 +931,7 @@
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Determinism}
+\begin{frame}{Determinism}
 
   We have specified the strategy \textbf{in} the rewrite system.
 
@@ -995,11 +954,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Pragmatics of programming languages}
+\begin{frame}{Pragmatics of programming languages}
 
   In many programming languages, the order of evaluation of operator
   arguments is not specified, which usually means that there is a
@@ -1026,11 +983,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Rewrite systems as models of languages}
+\begin{frame}{Rewrite systems as models of languages}
 
   By studying rewrite systems, we can learn the basic concepts
   involved in programming languages, because rewrite systems are
@@ -1049,11 +1004,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Rewrite systems as models of languages}
+\begin{frame}{Rewrite systems as models of languages}
 
   This is the case of \Java. This is why, in general, we need a
   \textbf{\Java virtual machine} (JVM) to run the program: this JVM
@@ -1066,11 +1019,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Sequentiality and parallelism}
+\begin{frame}{Sequentiality and parallelism}
 
   Some programming languages, like \Ada, allow the programmer to
   specify that different parts of its program can actually be executed
@@ -1086,11 +1037,9 @@
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Sequentiality and parallelism}
+\begin{frame}{Sequentiality and parallelism}
 
   For example, the first argument of \((\times)\) can be computed
   \emph{at the same time} as its second argument. In the case of
@@ -1101,11 +1050,9 @@
 
 \end{frame}
 
-
 %------------------------------------------------------------------------
 %
-\begin{frame}[fragile]
-  \frametitle{Order of evaluation in C}
+\begin{frame}[fragile]{Order of evaluation in C}
 
   In case of C, the order of evaluation arguments of arithmetic
   operators and functions is not specified, it actually depends on the
@@ -1128,11 +1075,9 @@ What is the result?
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Boolean expressions}
+\begin{frame}{Boolean expressions}
 
   Let~\(\wedge\) represent the conjunction (`and'), \(\vee\) the
   disjunction (`or'), \(\neg\) the negation (`not'), and let the
@@ -1160,11 +1105,9 @@ What is the result?
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Boolean expressions made simpler}
+\begin{frame}{Boolean expressions made simpler}
 
   This system can even be made simpler, by means of meta-variables:
   \begin{mathpar}
@@ -1182,11 +1125,9 @@ What is the result?
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Boolean expressions}
+\begin{frame}{Boolean expressions}
 
   So, if we define the rewrite of boolean expressions (not just the
   values \true and \false) as
@@ -1212,11 +1153,9 @@ What is the result?
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Boolean expressions}
+\begin{frame}{Boolean expressions}
 
   Then
   \begin{mathpar}
@@ -1242,11 +1181,9 @@ What is the result?
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Boolean expressions}
+\begin{frame}{Boolean expressions}
 
   But the inspection of the basic rules shows that if one of the
   arguments of \(\wedge\) reduces to \false, then there is no need to
@@ -1279,11 +1216,9 @@ What is the result?
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Boolean expressions}
+\begin{frame}{Boolean expressions}
 
   Try to reduce
   \begin{equation*}
@@ -1297,11 +1232,9 @@ What is the result?
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}[fragile]
-  \frametitle{Boolean expressions}
+\begin{frame}[fragile]{Boolean expressions}
 
   This is easy to specify:
   \begin{mathpar}
@@ -1326,11 +1259,9 @@ while (index < max && tab[index] > 0) ...
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Boolean expressions (cont)}
+\begin{frame}{Boolean expressions}
 
   Note that this strategy (left argument before the right one) is not
   optimal in general: the first argument may reduce to
@@ -1352,11 +1283,9 @@ while (index < max && tab[index] > 0) ...
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Determinism versus non-determinism}
+\begin{frame}{Determinism versus non-determinism}
 
   Let us summarise the concepts of determinism and
   non\hyp{}determinism.
@@ -1384,11 +1313,9 @@ while (index < max && tab[index] > 0) ...
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}[fragile]
-  \frametitle{Determinism versus non-determinism}
+\begin{frame}[fragile]{Determinism versus non-determinism}
 
   Some programming languages have features that may be both
   non\hyp{}deterministic and unsound.
@@ -1414,11 +1341,9 @@ int a;
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Commutativity and its consequences}
+\begin{frame}{Commutativity and its consequences}
 
   We may try another rewrite system for \(\wedge\):
   \begin{mathpar}
@@ -1459,11 +1384,9 @@ int a;
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}[fragile]
-  \frametitle{Non-termination}
+\begin{frame}[fragile]{Non-termination}
 
   Now some reductions may not be finite, which models
   \textbf{non\hyp{}termination}.
@@ -1493,11 +1416,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Non-termination}
+\begin{frame}{Non-termination}
 
   Let us define the negation:
   \begin{mathpar}
@@ -1529,11 +1450,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Summary}
+\begin{frame}{Summary}
 
   There are three kinds of reductions:
   \begin{enumerate}
@@ -1552,11 +1471,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Conditional expressions}
+\begin{frame}{Conditional expressions}
 
   At this point, boolean expressions can be
   \begin{itemize}
@@ -1584,8 +1501,7 @@ bool and(bool e1, bool e2) {
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}
-  \frametitle{Conditional expressions}
+\begin{frame}{Conditional expressions}
 
   It is easy to extend the rewrite system to cope with conditionals:
   \begin{mathpar}
@@ -1610,9 +1526,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Term rewriting}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Term rewriting}
 
   More general are the \textbf{term\hyp{}rewriting systems}, where a
   \textbf{term} is a mathematical object built on tuples, integers and
@@ -1642,9 +1558,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Transitive closures}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Transitive closures}
 
   We can easily see that all the compositions of rewrites starting
   with a natural number~\(n\) end with the factorial of~\(n\):
@@ -1681,9 +1597,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Functions}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Functions}
 
   \begin{itemize}
 
@@ -1713,9 +1629,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Trees}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Trees}
 
   The topological understanding of a function call or a tuple is the
   finite \textbf{tree}. A tree is a hierarchical layout of
@@ -1734,9 +1650,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Trees}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Trees}
 
   \textbf{Trees are pervasive} in informatics, especially in
   functional programming, but not only. Structured documents, like
@@ -1761,9 +1677,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Terms as trees}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Terms as trees}
 
   Trees can be used to depict terms as follows. A function call is a
   tree whose root is the function name and the children are the trees
@@ -1789,9 +1705,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Functional languages}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Functional languages}
 
   \begin{itemize}
 
@@ -1823,37 +1739,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Termination}
-
-  We do not require by construction that all functional programs
-  terminate, although that is a desirable property, but we
-  nevertheless speak of `functions' instead of `partial functions'
-  (which would be technically correct).
-
-  \bigskip
-
-  If we enforce termination, we loose
-  \textbf{Turing\hyp{}completeness}: we cannot program all computable
-  functions.
-
-  \bigskip
-
-  The termination of rewrite systems and, in particular, functional
-  programs, is an \textbf{undecidable problem} in general.
-
-  \bigskip
-
-  Nevertheless, there exists a set of well\hyp{}known \textbf{decision
-    criteria}, which we will use when programming recursive functions
-  in \OCaml.
-
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Call-by-value}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Call-by-value}
 
   If a function call contains at least one other function call, there
   is a choice as to which one to reduce first.
@@ -1885,9 +1773,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Call-by-value}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Call-by-value}
 
   Another reason to choose call-by-value is that it allows us to
   restrict the shape of the left\hyp{}hand sides, called
@@ -1909,9 +1797,37 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination}
 
-\begin{frame}
-  \frametitle{Higher-order programs, recursion, $\lambda$-calculus}
+  We do not require by construction that all functional programs
+  terminate, although that is a desirable property, but we
+  nevertheless speak of `functions' instead of `partial functions'
+  (which would be technically correct).
+
+  \bigskip
+
+  If we enforce termination, we loose
+  \textbf{Turing\hyp{}completeness}: we cannot program all computable
+  functions.
+
+  \bigskip
+
+  The termination of rewrite systems and, in particular, functional
+  programs, is an \textbf{undecidable problem} in general.
+
+  \bigskip
+
+  Nevertheless, there exists a set of well\hyp{}known \textbf{decision
+    criteria}, which we will use when programming recursive functions
+  in \OCaml.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Higher-order programs, recursion, $\lambda$-calculus}
 
   Most functional languages allow \textbf{higher\hyp{}order function}
   definitions, whereas standard term\hyp{}rewriting systems do
@@ -1942,9 +1858,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Stacks in a functional setting}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Stacks in a functional setting}
 
   We show how to express linear data structures in a purely functional
   language and how to compute with them. The simplest of those
@@ -1958,9 +1874,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Stacks in a functional setting}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Stacks in a functional setting}
 
   To define a stack in a functional language, one uses calls to
   undefined functions to model all the possible shapes a stack can
@@ -1988,9 +1904,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Inductive definition of stacks}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Inductive definition of stacks}
 
   \begin{itemize}
 
@@ -2020,8 +1936,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Appending a stack}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Appending a stack}
 
   \begin{itemize}
 
@@ -2053,8 +1970,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Appending a stack}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Appending a stack}
 
   This function appends the second stack at the bottom of a
   \textbf{copy} of the first. (The function name `\fun{cat}' stands
@@ -2083,9 +2001,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Appending a stack}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Appending a stack}
 
   Let us set the abbreviations
   \begin{itemize}
@@ -2121,9 +2039,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Pattern matching}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Pattern matching}
 
   \begin{itemize}
 
@@ -2162,9 +2080,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Abstract syntax trees}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Abstract Syntax Trees (ASTs)}
 
   \begin{itemize}
 
@@ -2190,9 +2108,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Data sharing}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Data sharing}
 
   \begin{itemize}
 
@@ -2221,9 +2139,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Data sharing and evaluation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Data sharing and evaluation}
 
   The evaluation of \(\fun{cat}([1;2],[3])\) is:
   \bigskip
@@ -2236,9 +2154,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Data sharing and evaluation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Data sharing and evaluation}
 
   Therefore, to reconstruct the value, we need to work leftwards and
   replace the rewritten call by the right-hand side:
@@ -2250,9 +2168,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Data sharing and evaluation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Data sharing and evaluation}
 
   \begin{center}
     \includegraphics[bb=71 621 212 715]{cat123_pop1}
@@ -2262,9 +2180,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Call stack}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Call stack}
 
   We can see that the value of the second argument, [3], is shared
   with the value of the call, as well as the integers~1 and~2.
@@ -2288,9 +2206,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Garbage collection}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Garbage collection}
 
   \begin{itemize}
 
@@ -2319,9 +2237,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Tail call optimisation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
 
   Let us define a function that sums integers in a non\hyp{}empty
   list:
@@ -2337,9 +2255,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Tail call optimisation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
 
   The first phase of the evaluation of \(\fun{sum}([3;7;5])\) is:
   \begin{center}
@@ -2348,9 +2266,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Tail call optimisation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
 
   The second phase (replacing the pending calls with their values) is
   \begin{center}
@@ -2359,9 +2277,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Tail call optimisation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
 
   The same, with a garbage collector that collects after each
   replacement:
@@ -2371,9 +2289,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Tail call optimisation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
 
   Let us consider an alternate version of \fun{sum}:
   \begin{equation*}
@@ -2393,9 +2311,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Tail call optimisation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
 
   \begin{center}
     \includegraphics[bb=71 641 346 721]{sum0_375_1}
@@ -2404,9 +2322,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Tail call optimisation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
 
   Notice that, in the case of \fun{sum}$_0$, we found the result (15)
   at the end of the first phase (of growing the call stack).
@@ -2428,9 +2346,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Tail call optimisation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
 
   \begin{center}
     \includegraphics[bb=71 628 350 721]{sum0_375tco1}
@@ -2439,9 +2357,9 @@ bool and(bool e1, bool e2) {
 
 \end{frame}
 
-
-\begin{frame}
-  \frametitle{Tail call optimisation}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
 
   As we see now, we can keep the size of the call stack constant, if
   we reclaim the top at each new rewrite.
@@ -2467,6 +2385,7 @@ bool and(bool e1, bool e2) {
   \textsf{GCC}.
 
 \end{frame}
+
 
 
 \end{document}
