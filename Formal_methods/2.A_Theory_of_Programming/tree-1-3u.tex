@@ -1,0 +1,32 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+
+\newcommand\mknode[1]{\TR{\texttt{#1}}}
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[levelsep=10mm,nodesep=2pt]
+  {\mknode{\fun{f}}}{
+  \pstree{\mknode{\fun{g}}}{
+    \pstree{\mknode{\fun{h}}}{
+      \TR{\(\alpha\)}
+      \mknode{\fun{a}()}
+    }
+    \pstree{\mknode{\fun{h}}}{
+      \TR{\(\alpha\)}
+      \mknode{\fun{a}()}
+    }
+  }
+  \pstree{\mknode{\fun{h}}}{
+    \mknode{\(\alpha\)}
+    \mknode{\fun{a}()}
+  }
+}
+\endTeXtoEPS
+
+\end{document}

@@ -1,0 +1,25 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\usepackage{pst-tree,pst-eps}
+
+\newcommand\mknode[1]{\TR{\texttt{#1}}}
+
+\begin{document}
+ 
+\TeXtoEPS 
+\pstree[levelsep=10mm,nodesep=2pt]
+  {\mknode{f}}{
+  \pstree{\mknode{x}}{
+    \TR{\(\alpha\)}
+    \TR{\(\alpha\)}
+  }
+  \pstree{\mknode{x}}{
+    \TR{\(\alpha\)}
+    \TR{\(\alpha\)}
+  }
+}
+\endTeXtoEPS
+
+\end{document}
