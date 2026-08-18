@@ -29,10 +29,20 @@
 \newcommand{\true}{\textsf{true}\xspace}
 \newcommand{\false}{\textsf{false}\xspace}
 \newcommand\fun[1]{\textsf{#1}}
+\newcommand\ufun[1]{\underline{\fun{#1}}}
 \newcommand\el{[\,]}
 \newcommand\cons[2]{{#1}\!::\!{#2}}
 \newcommand\ttcons[2]{{#1}\,$::$\,{#2}}
 \newcommand\FV[1]{\mathcal{F}({#1})}
+\newcommand\smashedrightarrow[1]{\xrightarrow{\smash{#1}}}
+
+\newcommand\measure[1]{\mathcal{M}\llbracket{#1}\rrbracket}
+
+% Induction
+%
+\newcommand\predName[1]{\textsf{#1}}
+\newcommand\pred[2]{\predName{#1}({#2})}
+\newcommand\IH[1]{#1}
 
 \title{A Theory of Programming}
 \author{Christian Rinderknecht}
@@ -1729,8 +1739,8 @@ bool and(bool e1, bool e2) {
     \item In other words, irreducible calls of defined functions are
       not allowed in values.
 
-    \item Systems with these constraints make up a \textbf{functional
-      language}.
+    \item Systems with these constraints are called \textbf{functional
+      rewrite systems}.
 
     \item A program here is a term, and evaluating it means to rewrite
       the term
@@ -2515,13 +2525,34 @@ B\), that is, there is no \(b \in B\) such that \(a \succ b\), if \(a
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}{Termination is undecidable}
+\begin{frame}{Termination}
 
-  On pages~\pageref{termination1} and~\pageref{termination2}, we
-  introducted the property of a rewrite system to terminate on all
-  inputs.
+  When defining our functional rewrite systems, we allowed programs to
+  not terminate (see pages~\pageref{termination1}
+  and~\pageref{termination2}).
 
   \bigskip
+
+  We could actually have imposed some syntactic restrictions on
+  recursive definitions in order to guarantee the termination of all
+  functions. A well\hyp{}known class of such terminating functions
+  makes exclusively use of a bridled form of recursion called
+  \textbf{primitive recursion}.
+
+  \bigskip
+
+  Unfortunately, many useful functions do not fit, easily or at all,
+  in this framework and, as a consequence, most functional languages
+  leave to the programmers the responsibility to check the termination
+  of their programs. For theoretical reasons, it is not possible to
+  provide a general criterion for termination, but some rules exist
+  that cover many usages.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination is undecidable}
 
   Here is an informal argument that shows that there is no predicate
   on functions that decides where their subject terminates on all
@@ -2555,8 +2586,8 @@ B\), that is, there is no \(b \in B\) such that \(a \succ b\), if \(a
 
     \item If \(f(h)\), then, by definition of~\(f\), \(h\)~terminates
       on all inputs, in particular \(h(h)\)~terminates. But, by
-      definition of~\(h\), since \(f(h)\) holds, \(h(h)\) does not
-      terminate, yielding a contradiction.
+      definition of~\(h\), since \(f(h)\) holds, \(h(h)\) loops on all
+      inputs, yielding a contradiction.
 
     \item If \(f(h)\) is false, then, by definition of~\(f\),
       \(h\)~does not terminate on all its inputs. But, by definition
@@ -2564,6 +2595,623 @@ B\), that is, there is no \(b \in B\) such that \(a \succ b\), if \(a
       all inputs, yielding another contradiction.
 
   \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Factorial}
+
+  Here is the definition of the factorial function as a functional
+  rewrite system:
+  \begin{align*}
+    \fun{fact}(0) & \rightarrow 1\\
+    \fun{fact}(n) & \rightarrow n \times \fun{fact}(n-1)
+  \end{align*}
+
+  \medskip
+
+  Given a call \(\fun{fact}(n)\), with \(n \geqslant 0\), the rewrites
+  yield a series of calls \(\fun{fact}(n-1)\), \(\fun{fact}(n-2)\),
+  etc. until \(\fun{fact}(0)\).
+
+  \bigskip
+
+  Termination here ensues from the \textbf{strictly decreasing
+    argument} \(n > n-1 > n-2 > \dots > 0\). (No infinite descent.)
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Ackermann's function}
+
+Consider the following example where \(m,n \in \mathbb{N}\):
+\begin{equation*}
+\begin{array}{@{}r@{\;}l@{\;}l@{}}
+\fun{ack}(0,n)     & \smashedrightarrow{\theta} & n+1;\\
+\fun{ack}(m+1,0)   & \smashedrightarrow{\iota} & \fun{ack}(m,1);\\
+\fun{ack}(m+1,n+1) & \smashedrightarrow{\kappa}
+                   & \fun{ack}(m,\fun{ack}(m+1,n)).
+\end{array}
+\end{equation*}
+This is a simplified form of Ackermann's function, an early example of
+a total computable function which is not primitive recursive. It makes
+use of double recursion and two parameters to grow values as towers of
+exponents, for example,
+\begin{equation*}
+  \fun{ack}(4,3) \twoheadrightarrow 2^{2^{65536}} - 3.
+\end{equation*}
+It is not obviously terminating, because if the first argument does
+decrease, the second largely increases.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Ackermann's function}
+
+Let us define a well\hyp{}founded ordering on pairs, called
+\textbf{lexicographic order}. Let \((\succ_A)\) and \((\succ_B)\) be
+well\hyp{}founded orders on the sets \(A\) and~\(B\). Then \((\succ_{A
+  \times B})\) defined as follows on \(A \times B\) is
+well\hyp{}founded:
+\begin{equation*}
+(a_0,b_0) \succ_{A \times B} (a_1,b_1) :\Leftrightarrow \text{\(a_0
+    \succ_A a_1\) or (\(a_0 = a_1\) and \(b_0 \succ_B b_1\)).}
+\end{equation*}
+If \(A=B=\mathbb{N}\) then \((\succ_A) = (\succ_B) = (>)\). \\ For
+example, \((\underline{1},7) \prec (\underline{2},3)\) and
+\((1,\underline{7}) \succ (1,\underline{3})\).
+
+\bigskip
+
+To prove that \(\fun{ack}(m,n)\) terminates for all \(m,n \in
+\mathbb{N}\), first, we must find a well\hyp{}founded order on the
+calls \(\fun{ack}(m,n)\), that is, the calls must be totally ordered
+without any infinite descending chain.
+
+\bigskip
+
+Here, a lexicographic order on \((m,n) \in \mathbb{N}^2\) extended to
+\(\fun{ack}(m,n)\) works:
+\begin{equation*}
+\fun{ack}(a_0,b_0) \succ \fun{ack}(a_1,b_1) :\Leftrightarrow
+\text{\(a_0 > a_1\) or (\(a_0 = a_1\) and \(b_0 > b_1\)).}
+\end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Ackermann's function}
+
+  Clearly, \(\fun{ack}(0,0)\) is the minimum element.
+
+  \bigskip
+
+  Second, we must prove that `\fun{ack}' rewrites to smaller calls. We
+  are only concerned with rules \(\iota\)~and~\(\kappa\). With the
+  former, we have the inequality
+  \begin{equation*}
+    \fun{ack}(m+1,0) \succ \fun{ack}(m,1).
+  \end{equation*}
+  With rule~\(\kappa\), we have the following inequalities:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}l@{}}
+      \fun{ack}(m+1,n+1) & \succ & \fun{ack}(m+1,n),\\
+      \fun{ack}(m+1,n+1) & \succ & \fun{ack}(m,p),
+    \end{array}
+  \end{equation*}
+  for all values~\(p\), in particular when \(\fun{ack}(m+1,n)
+  \twoheadrightarrow p\).\hfill\(\Box\)
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Dependency pairs and subterm order}
+
+  In general, the approach often taken to prove termination consists
+  in finding a well\hyp{}founded order \((\succ)\) on the rewritten
+  terms, which is entailed by the rewrite relation \((\rightarrow)\),
+  that is,
+  \begin{equation*}
+    x \; \rightarrow \; y \;\; \Rightarrow \;\; x \; \succ \; y.
+  \end{equation*}
+
+  \medskip
+
+  As we have seen, we do not always need to order the terms
+  \(x\)~and~\(y\): only the calls in them to a given function. These
+  are \textbf{dependency pairs}. Calls to other functions can be
+  assumed to be terminating.
+
+  \bigskip
+
+  With the factorial and Ackermann's function, we have seen how to
+  deal with one or more integer arguments to these calls.
+
+  \bigskip
+
+  What about other data types, like lists and trees?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Dependency pairs and subterm order}
+
+  One well\hyp{}founded order for lists (stacks) is the
+  \textbf{immediate subterm order}, satisfying
+  \begin{equation*}
+    \cons{x}{s} \; \succ \; s \quad \text{and} \quad \cons{x}{s} \;
+    \succ \; x.
+  \end{equation*}
+
+  The immediate subterm order simply means that a list is `greater'
+  than its first element and the rest of the list (called the
+  \textbf{tail}). It is a special case of the \textbf{proper subterm
+    order}, in which a structured value is `greater' than any of its
+  components, wherever they are located.
+
+  \bigskip
+
+  These orders are convenient to prove the termination of calls to
+  functions whose definitions are recursive in terms of substructures
+  of their arguments: this is quite a common case.
+
+  \bigskip
+
+  For example, let us recall the function catenating a list to
+  another:
+  \begin{align*}
+    \fun{cat}(        \el,t) &\xrightarrow{\alpha} t\\
+    \fun{cat}(\cons{x}{s},t) &\xrightarrow{\smash{\beta}}
+    \cons{x}{\fun{cat}(s,t)}
+  \end{align*}
+  We simply have: \(\cons{x}{s} \succ s \Rightarrow
+  \fun{cat}(\cons{x}{s},t) \succ \fun{cat}(s,t).\)
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / List flattening}
+
+   Let us try a more complicated example:
+   \begin{equation*}
+     \begin{array}{r@{\;}l@{\;}l}
+       \fun{flat}(\el)                   & \xrightarrow{\psi}
+       & \el\\
+       \fun{flat}(\cons{\el}{t})         & \xrightarrow{\smash{\omega}}
+       & \fun{flat}(t)\\
+       \fun{flat}(\cons{(\cons{x}{s})}{t}) & \xrightarrow{\smash{\gamma}}
+       & \fun{cat}(\fun{flat}(\cons{x}{s}),\fun{flat}(t))\\
+       \fun{flat}(\cons{y}{t})           & \xrightarrow{\smash{\delta}}
+       & \cons{y}{\fun{flat}(t)}
+     \end{array}
+   \end{equation*}
+
+   Some evaluations:
+   \begin{align*}
+     \fun{flat}(\el) & \twoheadrightarrow \el\\
+     \fun{flat}([\el;[\el]]) & \twoheadrightarrow \el\\
+     \fun{flat}([\el;[1;[2;\el];3];\el]) & \twoheadrightarrow [1;2;3]
+   \end{align*}
+
+   What '\fun{flat}' does is flatten a list of lists arbitrarily
+   deep.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / List flattening}
+
+  A detailed evaluation:
+    \begin{equation*}
+      \begin{array}{r@{\;}l@{\;}l}
+        \fun{flat}([\el;[[1];2];3])
+        & \xrightarrow{\omega}
+        & \fun{flat}([[[1];2];3])\\
+        & \xrightarrow{\smash{\gamma}}
+        & \fun{cat}(\underline{\fun{flat}([[1];2])},\fun{flat}([3]))\\
+        & \xrightarrow{\smash{\gamma}}
+        & \fun{cat}(\fun{cat}(\underline{\fun{flat}([1])},\fun{flat}([2])),
+        \fun{flat}([3]))\\
+        & \xrightarrow{\smash{\delta}}
+        & \fun{cat}(\fun{cat}(\cons{1}{\underline{\fun{flat}(\el)}},
+        \fun{flat}([2])), \fun{flat}([3]))\\
+        & \xrightarrow{\smash{\psi}}
+        & \fun{cat}(\fun{cat}([1],\underline{\fun{flat}([2])}),
+        \fun{flat}([3]))\\
+        & \xrightarrow{\smash{\delta}}
+        & \fun{cat}(\fun{cat}([1],\cons{2}{\underline{\fun{flat}(\el)}}),
+        \fun{flat}([3]))\\
+        & \xrightarrow{\smash{\psi}}
+        & \fun{cat}(\fun{cat}([1],[2]),\underline{\fun{flat}([3])})\\
+        & \xrightarrow{\smash{\delta}}
+        & \fun{cat}(\fun{cat}([1],[2]),\cons{3}{\underline{\fun{flat}(\el)}})\\
+        & \xrightarrow{\smash{\psi}}
+        & \fun{cat}(\fun{cat}([1],[2]),[3])\\
+        & \twoheadrightarrow & [1;2;3].
+      \end{array}
+    \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / List flattening}
+
+    The function `\fun{cat}' is independent of `\fun{flat}' and we
+    proved its termination in isolation by using the proper subterm
+    order on its first argument.
+
+    \bigskip
+
+    Assuming now that `\fun{cat}' terminates, let's prove the
+    termination of `\fun{flat}'.
+
+    \bigskip
+
+    Because the recursive calls to `\fun{flat}' contain only (list)
+    constructors, we can try to order their arguments.
+
+    \bigskip
+
+    The proper subterm order works:
+    \begin{tabular}{r@{\;\,}c@{\;}ll}
+      \(\cons{y}{t}\) & \(\succ\) & \(t\) & (rule~\(\delta\)
+      and rule~\(\omega\) when \(y=\el\))\\
+      \(\cons{(\cons{x}{s})}{t}\) & \(\succ\) & \(t\)
+      & (rule~\(\gamma\))\\
+      \(\cons{(\cons{x}{s})}{t}\) & \(\succ\) & \(\cons{x}{s}\)
+      & (rule~\(\gamma\))
+    \end{tabular}
+
+    \bigskip
+
+    Termination ensues.\hfill\(\Box\)
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / List flattening}
+
+  Let us consider now an alternative design for rule~\(\gamma\):
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}c@{\;}l@{}}
+      \fun{flat}(\el) & \xrightarrow{\psi}
+      & \el\\
+      \fun{flat}(\cons{\el}{t}) & \xrightarrow{\smash{\omega}}
+      & \fun{flat}(t)\\
+      \fun{flat}(\cons{(\cons{x}{s})}{t})
+      & \xrightarrow{\smash{\gamma}}
+      & \fbox{\(\fun{flat}(\cons{x}{\cons{s}{t}})\)}\\
+      \fun{flat}(\cons{y}{t})   & \xrightarrow{\smash{\delta}}
+      & \cons{y}{\fun{flat}(t)}
+    \end{array}
+  \end{equation*}
+
+  \bigskip
+
+  This amounts to perform a \textbf{right rotation} of the abstract
+  syntax tree of the term:
+  \begin{center}
+    \includegraphics{flat_rotr}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Measures}
+
+  Here, the proper subterm order fails:
+  \begin{equation*}
+    \cons{(\cons{x}{s})}{t} \nsucc
+    \cons{x}{(\cons{s}{t})} = \cons{x}{\cons{s}{t}}
+  \end{equation*}
+  because \(t \nsucc \cons{s}{t}\).
+
+  \bigskip
+
+  We need another method to prove termination: \textbf{measures}.
+
+  \bigskip
+
+  A measure \(\measure{\cdot}\) is a map from terms to a
+  well\hyp{}ordered set (\(A,\succ\)), which is \textbf{monotonically
+    increasing} with respect to the rewrite relation:
+  \begin{equation*}
+    x \rightarrow y
+    \Rightarrow
+    \measure{x} \succ  \measure{y}  \Rightarrow x \succ\ y.
+  \end{equation*}
+
+  \medskip
+
+  Actually, as earlier, we will only consider \textbf{dependency
+    pairs}, that is, pairs of calls whose first component is the
+  left\hyp{}hand side of a rule and the second components are the
+  calls in the righ\hyp{}hand side of the same rule.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Polynomial measures}
+
+  The pairs are
+  \begin{enumerate}
+
+    \item \((\fun{flat}(\cons{\el}{t}), \fun{flat}(t))_\omega\)
+
+    \item \((\fun{flat}(\cons{(\cons{x}{s})}{t}),
+      \fun{flat}(\cons{x}{\cons{s}{t}}))_\gamma\)
+
+    \item \((\fun{flat}(\cons{y}{t}), \fun{flat}(t))_\delta\)
+
+  \end{enumerate}
+  with \(y \not\in S\), that is, \(y\)~is not a list.
+
+  \bigskip
+
+  We can actually drop the function names, as all the pairs involve
+  `\fun{flat}'.
+
+  \bigskip
+
+  A common class of measures are monotonically increasing embeddings
+  into (\(\mathbb{N},>\)), so let us seek a measure satisfying:
+  \begin{center}
+    \begin{tabular}{r@{\;\,}c@{\;}ll}
+      \(\measure{\cons{(\cons{x}{s})}{t}}\) & > &
+      \(\measure{\cons{x}{\cons{s}{t}}}\)\\
+      \(\measure{\cons{y}{t}}\) & > & \(\measure{t}\),
+      & if \(y \not\in S\) or \(y=\el\).
+    \end{tabular}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Polynomial measures}
+
+  \begin{itemize}
+
+    \item For instance, let us set the following \textbf{polynomial
+      measure}:
+      \begin{center}
+        \begin{tabular}{r@{\;\,}c@{\;\;}ll}
+          \(\measure{\cons{x}{s}}\) & := & \(1 + 2\cdot\measure{x} +
+          \measure{s}\)\\
+          \(\measure{y}\) & := & \(0\), & if \(y \not\in S\) or
+          \(y=\el\).
+        \end{tabular}
+      \end{center}
+
+    \item We have
+      \begin{align*}
+        \measure{\cons{(\cons{x}{s})}{t}} & \;\; = \;\; 3 +
+        4\cdot\measure{x} + 2\cdot\measure{s} + \measure{t}\\
+        \measure{\cons{x}{\cons{s}{t}}} & \;\; = \;\; 2 +
+        2\cdot\measure{x} + 2\cdot\measure{s} + \measure{t}
+      \end{align*}
+
+    \item Then
+      \begin{center}
+        \begin{tabular}{r@{\;\;}c@{\;\;}l}
+          \(\measure{\cons{(\cons{x}{s})}{t}}\) & >
+          & \(\measure{\cons{x}{\cons{s}{t}}}\)\\
+          \(\measure{\cons{y}{t}} = 1 + \measure{t}\) & > &
+          \(\measure{t}\)
+        \end{tabular}
+      \end{center}
+
+    \item Since \(\measure{x} \in \mathbb{N}\), for all~\(x\), these
+      inequalities entail the termination of `\fun{flat}' (no infinite
+      descent).\hfill\(\Box\)
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+The definition of the concatenation of two stacks was:
+\begin{equation*}
+\fun{cat}(        \el,t) \xrightarrow{\smash{\alpha}} t;\qquad
+\fun{cat}(\cons{x}{s},t) \xrightarrow{\smash{\beta}}
+\cons{x}{\fun{cat}(s,t)}.
+\end{equation*}
+Let us prove the associativity of `\fun{cat}', which we express
+formally as
+\begin{equation*}
+  \pred{CatAssoc}{s,t,u} \colon
+\fun{cat}(s,\fun{cat}(t,u)) \equiv
+\fun{cat}(\fun{cat}(s,t),u)
+\end{equation*}
+for all stack values \(s\), \(t\) and~\(u\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+  We apply the well\hyp{}founded induction principle to the structure
+  of~\(s\), so we must establish
+  \begin{itemize}
+
+    \item the basis \(\forall t,u \in S.\pred{CatAssoc}{\el,t,u}\), and the
+
+    \item step \(\forall s,t,u \in S.\pred{CatAssoc}{s,t,u}
+      \Rightarrow \forall x \in T.\pred{CatAssoc}{\cons{x}{s},t,u}\).
+
+  \end{itemize}
+
+  \bigskip
+
+  Underlining the call being rewritten, the base case is:
+  \begin{equation*}
+    \ufun{cat}(\el,\fun{cat}(t,u))
+    \xrightarrow{\smash{\alpha}} \fun{cat}(t,u)
+    \xleftarrow{\smash{\alpha}} \fun{cat}(\ufun{cat}(\el,t),u).
+  \end{equation*}
+
+  Let us assume now \(\pred{CatAssoc}{s,t,u}\), called the
+  \textbf{induction hypothesis}, and let us prove
+  \(\pred{CatAssoc}{\cons{x}{s},t,u}\), for any term~\(x\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+  The goal here is to use the rewrite system as an abstract machine to
+  prove a property, with the timely help of the induction principle.
+
+  \bigskip
+
+  Precisely, we want to rewrite each side of the equivalence we wish
+  to prove until we either find the same term (equality), or we use
+  the induction hypothesis (equivalence).
+
+  \bigskip
+
+  Since we are going to work with equivalences, we should lift the
+  call\hyp{}by\hyp{}value reduction strategy here, as it does not
+  matter when arguments are evaluated, as long as their evaluation
+  terminates and is confluent: we always assume these properties on
+  the system hold when proving properties of the functions it defines.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+  We may start with the left\hyp{}hand side of
+  \(\pred{CatAssoc}{\cons{x}{s},t,u}\), that is
+  \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\).
+
+  \bigskip
+
+  We notice that this is \textbf{not} a value, as the call contains a
+  reducible call, \(\fun{cat}(t,u)\).
+
+  \bigskip
+
+  When using functions to compute, we match a call containing only
+  values against the patterns of the rules.
+
+  \bigskip
+
+  Here, we would like to match a pattern against a pattern. This is
+  more general than matching, because values are patterns, and is
+  called \textbf{unification}. Given two patterns, we want to find
+  whether we can find assignments to the variables of these so that,
+  when they are substituted by their denotation, the two patterns
+  become equal.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Unification}
+
+  \begin{itemize}
+
+    \item Here, we would like to unify
+      \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\) (called the
+      \textbf{goal}) and \(\fun{cat}(\cons{x}{s},t)\) (the pattern).
+
+    \item The problem is that we have variables that are the same in
+      the goal and the pattern (\(x\), \(s\)~and~\(t\)).
+
+    \item The case of \(\cons{x}{s}\) and \(\cons{x}{s}\) is harmless,
+      but the unification of \(\fun{cat}(t,u)\) and~\(t\) is not.
+
+    \item That is why it is best to rename the variables in the
+      pattern so they are not found in the goal (this is the
+      \textbf{\(\alpha\)\hyp{}renaming} of \(\lambda\)\hyp{}calculus),
+      and then try to unify them.
+
+    \item To simplify things even more, we are going to rename
+      \emph{all} the variables in the definition of `\fun{cat}'.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Unification}
+
+  \begin{itemize}
+
+    \item Let us try for example the following renaming:
+      \begin{align*}
+        \fun{cat}(        \el,b) &\xrightarrow{\alpha} b\\
+        \fun{cat}(\cons{i}{a},b) &\xrightarrow{\smash{\beta}}
+        \cons{i}{\fun{cat}(a,b)}
+      \end{align*}
+
+    \item We want to unify the goal
+      \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\) with the pattern
+      \(\fun{cat}(\cons{i}{a},b)\).
+
+    \item The unification yields the equations \(x = i\), \(s = a\)
+      and \(\fun{cat}(t,u) = b\).
+
+    \item Then we apply the set of equations from the unification, so
+      the right\hyp{}hand side of~\(\beta\),
+      \(\cons{i}{\fun{cat}(a,b)}\), becomes
+      \(\cons{x}{\fun{cat}(s,\fun{cat}(t,u))}\).
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+  We have:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{\qquad}r@{}}
+      \ufun{cat}(\cons{x}{s},\fun{cat}(t,u))
+      & \xrightarrow{\smash\beta}
+      & \cons{x}{\fun{cat}(s,\fun{cat}(t,u))}\\
+      & \equiv
+      & \cons{x}{\fun{cat}(\fun{cat}(s,t),u)}
+      & \IH{\pred{CatAssoc}{s,t,u}}\\
+      & \xleftarrow{\smash\beta}
+      & \ufun{cat}(\cons{x}{\fun{cat}(s,t)},u)\\
+      & \xleftarrow{\smash\beta}
+      & \fun{cat}(\ufun{cat}(\cons{x}{s},t),u).
+    \end{array}
+  \end{equation*}
+
+  Note the use of the inductive hypothesis \(\pred{CatAssoc}{s,t,u}\).
+
+  \bigskip
+
+  This derivation above establishes that
+  \(\pred{CatAssoc}{\cons{x}{s},t,u}\) holds.
+
+  \bigskip
+
+  The induction principle entails that \(\forall s,t,u \in
+  S.\pred{CatAssoc}{s,t,u}\).\hfill\(\Box\)
 
 \end{frame}
 
@@ -2625,7 +3273,7 @@ B\), that is, there is no \(b \in B\) such that \(a \succ b\), if \(a
 
     \item Here are different ways to express the same list in \OCaml:
       \begin{equation*}
-        1::(2::3::(4::\el)) \;\; = \;\; 1::2::3::4::\el \;\; = \;\; [1;2;3;4].
+        1::(2::3::(4::\el)) = 1::2::3::4::\el = [1;2;3;4].
       \end{equation*}
 
     \item Before starting, let us see how a familiar function defined
@@ -2807,8 +3455,8 @@ B\), that is, there is no \(b \in B\) such that \(a \succ b\), if \(a
 
   \begin{itemize}
 
-    \item Note that what we print nicely as ``\(\rightarrow\)'' is
-      actually written ``\texttt{->}'' in the source code.
+    \item Note that what we print nicely as `\(\rightarrow\)' is
+      actually written `\texttt{->}' in the source code.
 
     \item Here are examples of \OCaml sentences making up a program,
       step by step.
@@ -3104,7 +3752,7 @@ B\), that is, there is no \(b \in B\) such that \(a \succ b\), if \(a
     \item We say that the \textbf{scope} of the definition is made of
       the subtrees of the abstract syntax tree corresponding
       to~\(e_2\) where the binding of that definition is usable
-      (``visible'').
+      (`visible').
 
     \item A mapping from variables to values is called an
       \textbf{environment}.

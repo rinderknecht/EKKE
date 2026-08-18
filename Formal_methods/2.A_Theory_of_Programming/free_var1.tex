@@ -1,0 +1,28 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\pagestyle{empty}
+\usepackage{pst-tree}
+\usepackage{xspace}
+
+\input{ocaml_syntax}
+
+\begin{document}
+
+  \pstree[nodesep=2pt,levelsep=18pt]{\TR[name=outer-let]{\Xlet}}{
+  \TR{\ident{x}}
+  \TR{\num{1}}
+  \pstree{\TR{\texttt{+}}}{
+    \pstree{\TR[name=inner-let]{\Xlet}}{
+      \TR{\ident{x}}
+      \TR{\num{2}}
+      \TR[name=inner-var]{\ident{x}}
+    }
+    \TR[name=outer-var]{\ident{x}}
+  }
+}
+\ncarc[linestyle=dotted,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{inner-var}{inner-let}
+\ncarc[linestyle=dotted,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{outer-var}{outer-let}
+
+\end{document}

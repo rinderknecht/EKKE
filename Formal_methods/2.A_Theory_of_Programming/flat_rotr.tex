@@ -1,0 +1,36 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{flat}}}{
+  \pstree{\TR{\texttt{::}}}{
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(x\)}
+      \TR{\(s\)}
+    }
+    \TR{\(t\)}
+  }
+}
+\raisebox{-3pt}{\(\xrightarrow{\smash\gamma}\)}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{flat}}}{
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\(x\)}
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(s\)}
+      \TR{\(t\)}
+    }
+  }
+}
+\endTeXtoEPS
+
+\end{document}

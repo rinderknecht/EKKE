@@ -1,0 +1,26 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\pagestyle{empty}
+\usepackage{pst-tree}
+\usepackage{xspace}
+
+\input{ocaml_syntax}
+
+\begin{document}
+
+\pstree[nodesep=2pt,levelsep=18pt]{\TR{\Xlet}}{
+  \TR{\ident{x}}
+  \TR{\num{1}}
+  \pstree{\TR{\texttt{+}}}{
+    \pstree{\TR{\Xlet}}{
+      \TR{\ident{x}}
+      \TR{\num{2}}
+      \TR{\ident{x}}
+    }
+    \TR{\ident{x}}
+  }
+}
+
+\end{document}

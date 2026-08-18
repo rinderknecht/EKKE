@@ -1,0 +1,29 @@
+%%-*-latex-*-
+
+\documentclass{article}
+
+\pagestyle{empty}
+\usepackage{pst-tree}
+\usepackage{xspace}
+
+\input{ocaml_syntax}
+
+\begin{document}
+
+\pstree[nodesep=2pt,levelsep=18pt]{\TR[name=outer-fun]{\Xfun}}{
+  \TR{\ident{y}}
+  \pstree{\TR{\texttt{+}}}{
+    \TR{\psframebox{\ident{x}}}
+    \pstree{\TR{\$}}{
+      \pstree{\TR[name=inner-fun]{\Xfun}}{
+        \TR{\ident{x}}
+        \TR[name=inner-var]{\ident{x}}
+      }
+      \TR[name=outer-var]{\ident{y}}
+    }
+  }
+}
+\nccurve[linestyle=dotted,nodesepA=1pt,nodesepB=1pt,angleA=45]{->}{inner-var}{inner-fun}
+\ncarc[linestyle=dotted,nodesepA=1pt,nodesepB=1pt,arcangle=-40]{->}{outer-var}{outer-fun}
+
+\end{document}
