@@ -1,0 +1,148 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
+
+  Let us define a function that sums integers in a non\hyp{}empty
+  list:
+  \begin{equation*}
+    \fun{sum}([n]) \xrightarrow{\alpha} n\qquad
+    \fun{sum}(\cons{n}{s}) \xrightarrow{\beta} n + \fun{sum}(s)
+  \end{equation*}
+
+  The view of the system with maximum sharing is:
+  \begin{center}
+    \includegraphics{sum_dag}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
+
+  The first phase of the evaluation of \(\fun{sum}([3;7;5])\) is:
+  \begin{center}
+    \includegraphics[bb=72 635 404 721,scale=0.99]{sum375_push}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
+
+  The second phase (replacing the pending calls with their values) is
+  \begin{center}
+    \includegraphics[bb=72 644 380 721]{sum375_pop}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
+
+  The same, with a garbage collector that collects after each
+  replacement:
+  \begin{center}
+    \includegraphics[bb=149 585 448 662]{sum375_pop1}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
+
+  Let us consider an alternate version of \fun{sum}:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}l@{}}
+      \fun{sum}_1(\cons{n}{t}) & \xrightarrow{\gamma}
+      & \fun{sum}_0(n,t).\\
+      \fun{sum}_0(n,\el) & \xrightarrow{\delta} & n\\
+      \fun{sum}_0(n,\cons{m}{s}) & \xrightarrow{\epsilon}
+      & \fun{sum}_0(n+m,s).
+    \end{array}
+  \end{equation*}
+
+  For \(\fun{sum}_1([3;7;5])\) we have the evaluation
+  \begin{center}
+    \includegraphics[bb=71 641 342 722]{sum0_375_0}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
+
+  \begin{center}
+    \includegraphics[bb=71 641 346 721]{sum0_375_1}
+    \includegraphics[bb=71 639 384 721]{sum0_375_2}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
+
+  Notice that, in the case of \fun{sum}$_0$, we found the result (15)
+  at the end of the first phase (of growing the call stack).
+
+  \bigskip
+
+  Therefore, there is no need for a second phase, which replaces the
+  pending calls by their values: we can discard all those calls at
+  once after the first phase.
+
+  \bigskip
+
+  Or, to see it even more clearly, let us rewrite the same first phase
+  and assume that the collector reclaims immediately the useless
+  pending calls:
+  \begin{center}
+    \includegraphics[bb=71 640 326 721]{sum0_375tco0}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
+
+  \begin{center}
+    \includegraphics[bb=71 628 350 721]{sum0_375tco1}
+    \includegraphics[bb=71 639 366 721]{sum0_375tco2}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tail call optimisation}
+
+  As we see now, we can keep the size of the call stack constant, if
+  we reclaim the top at each new rewrite.
+
+  \bigskip
+
+  This optimisation is called \textbf{tail call optimisation}.
+
+  \bigskip
+
+  Intuitively, a call in \textbf{tail position} is a call whose value
+  is the value of the previously rewritten call.
+
+  \bigskip
+
+  For example, the call \(f(x)\) in \(1 + f(x)\) is not in tail
+  position, because its value needs to be incremented.
+
+  \bigskip
+
+  Most compilers of functional languages detect and implement that
+  optimisation that saves memory, including the \Clang compiler of
+  \textsf{GCC}.
+
+\end{frame}

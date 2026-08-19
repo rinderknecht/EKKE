@@ -1,0 +1,156 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Abstract Syntax Trees (ASTs)}
+
+  \begin{itemize}
+
+    \item Depending on the context, we may use the arborescent
+      depiction of terms to bring to the fore certain aspects of a
+      computation.
+
+    \item For example, it may be interesting to show how parts of the
+      output (the right\hyp{}hand side) are actually \textbf{shared}
+      with the input (the left\hyp{}hand side).
+
+    \item In other words, how much (new) data is created by a given
+      rule.
+
+    \item This concept supposes that terms reside in some sort of
+      space and that they can be referred to from different other
+      terms.
+
+    \item This abstract space serves as a model of an interpreter's
+      memory, called the \textbf{heap}.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Data sharing}
+
+  \begin{itemize}
+
+    \item Consider for instance
+      \begin{center}
+        \includegraphics[bb=71 656 302 721]{cat_dag}
+      \end{center}
+      which is the same definition of `\fun{cat}' as given above:
+      \begin{equation*}
+        \fun{cat}(\el,t) \xrightarrow{\alpha} t
+        \qquad\qquad\qquad
+        \fun{cat}(\cons{x}{s},t) \xrightarrow{\beta}
+        \cons{x}{\fun{cat}(s,t)}
+      \end{equation*}
+
+    \item The arrows on certain edges denote data sharing.
+
+    \item When trees are used to visualise terms, they are called
+      \textbf{abstract syntax trees} (AST).
+
+    \item When some trees share subtrees, the whole \textbf{forest}
+      (set of trees) is called a \textbf{directed acyclic graph}
+      (DAG).
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Data sharing and evaluation}
+
+  The evaluation of \(\fun{cat}([1;2],[3])\) is:
+  \bigskip
+  \begin{center}
+    \includegraphics[bb=71 621 276 733]{cat123_push}
+  \end{center}
+
+  Note that each right-hand side shows only the rewritten call, not
+  the whole term.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Data sharing and evaluation}
+
+  Therefore, to reconstruct the value, we need to work leftwards and
+  replace the rewritten call by the right-hand side:
+  \begin{center}
+    \includegraphics[bb=71 623 248 717]{cat123_pop0}
+  \end{center}
+
+  We do not show the calls that have been replaced by their values.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Data sharing and evaluation}
+
+  \begin{center}
+    \includegraphics[bb=71 621 212 715]{cat123_pop1}
+    \qquad\quad
+    \includegraphics[bb=71 621 212 715]{cat123_pop2}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Call stack}
+
+  We can see that the value of the second argument, [3], is shared
+  with the value of the call, as well as the integers~1 and~2.
+
+  \bigskip
+
+  We saw how rewrites accumulated rightwards until the result had to
+  be reconstructed by replacing leftwards the right-hand sides.
+
+  \bigskip
+
+  This dynamic is that of a stack, but a stack holding suspended
+  function calls (that is, awaiting their values) and references to
+  ASTs in the heap. This is the \textbf{call stack}.
+
+  \bigskip
+
+  The top of the stack (here, the rightmost abstract syntax tree) is
+  the next term to be rewritten, unless the call on the left\hyp{}hand
+  side is the original call, in which case the top is its value.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Garbage collection}
+
+  \begin{itemize}
+
+    \item In the abstract syntax trees (AST), the nodes with the calls
+      that are replaced by their values have been immediately
+      removed. In fact, they could have been removed later, in any
+      order.
+
+    \item The process which identifies and discards useless ASTs is
+      called the \textbf{garbage collector} (GC).
+
+    \item A term is useless if it cannot be accessed from anywhere in
+      the call stack.
+
+    \item Contrary to the heap, which can be thought of as an
+      unordered set of trees (a forest of DAGs), the call stack is an
+      ordered set that can be efficiently extended or reduced.
+
+    \item The garbage collector can be conceived as a process
+      interleaved with the process of evaluation.
+
+    \item Like evaluators of functional programs, garbage collectors
+      may also have different strategies (as to when dispose of
+      useless data).
+  \end{itemize}
+
+\end{frame}

@@ -1,0 +1,450 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Boolean expressions}
+
+  Let~\(\wedge\) represent the conjunction (`and'), \(\vee\) the
+  disjunction (`or'), \(\neg\) the negation (`not'), and let the
+  two values \true and \false.
+
+  \bigskip
+
+  The definition of the conjunction of values is very simple:
+  \begin{mathpar}
+    \inferrule
+       {}
+       {\true \wedge \true \rightarrow \true}
+    \and
+    \inferrule
+       {}
+       {\true \wedge \false \rightarrow \false}\\
+    \inferrule
+       {}
+       {\false \wedge \true \rightarrow \false}
+    \and
+    \inferrule
+       {}
+       {\false \wedge \false \rightarrow \false}
+\end{mathpar}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Boolean expressions made simpler}
+
+  This system can even be made simpler, by means of meta-variables:
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\TirName{True}\)]
+       {}
+       {\true \wedge \true \rightarrow \true}\\
+    \inferrule*[right=\(\quad\TirName{False}_1\)]
+       {}
+       {\false \wedge v \rightarrow \false}\\
+    \inferrule*[right=\(\quad\TirName{False}_2\)]
+       {}
+       {v \wedge \false \rightarrow \false}
+  \end{mathpar}
+  where \(v\) denotes any value, i.e., either \true or \false.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Boolean expressions}
+
+  So, if we define the rewrite of boolean expressions (not just the
+  values \true and \false) as
+  \begin{mathpar}
+    \inferrule*[right=\(\TirName{\(\wedge_1\)}\)]
+       {e_1 \rightarrow e'_1}
+       {e_1 \wedge\, e_2 \rightarrow e'_1 \wedge\, e_2}
+    \and
+    \inferrule*[right=\(\TirName{\(\wedge_2\)}\)]
+       {e_2 \rightarrow e'_2}
+       {e_1 \wedge\, e_2 \rightarrow e_1 \wedge\, e'_2}
+  \end{mathpar}
+  then, for example,
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma_1(\wedge_1)\)]
+       {\false \wedge\; \true \rightarrow \false
+        \quad \TirName{False}_1}
+       {(\false \wedge\; \true) \wedge\, (\true \wedge\, \true)
+         \rightarrow \false \wedge\, (\true \wedge\, \true)}
+  \end{mathpar}
+  where \(\sigma_1=\{e_1 \mapsto \false \wedge \true; e_2 \mapsto
+  \true \wedge \true; e'_1 \mapsto \false\}\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Boolean expressions}
+
+  Then
+  \begin{mathpar}
+    \inferrule*[right=\(\sigma_2(\wedge_2)\)]
+       {\true \wedge\, \true \rightarrow \true \quad \TirName{True}}
+       {\false \wedge\, (\true \wedge\, \true) \rightarrow \false \wedge\,
+  \true}
+  \end{mathpar}
+  where \(\sigma_2 = \{e_1 \mapsto \false; e_2 \mapsto \true \wedge
+  \true; e'_1 \mapsto \true\}\).
+
+  \bigskip
+
+  and, finally, we can instantiate \(\TirName{False}_1\) with
+  \(\sigma_3 = \{v \mapsto \true\}\):
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\sigma_3(\TirName{False}_1)\)]
+       {}
+       {\false \wedge\, \true \rightarrow \false}
+  \end{mathpar}
+  In this example, we computed both arguments of \(\wedge\) to reach
+  the value.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Boolean expressions}
+
+  But the inspection of the basic rules shows that if one of the
+  arguments of \(\wedge\) reduces to \false, then there is no need to
+  reduce the other argument: the rewrite will always be
+  \false. Therefore, it is more efficient to extend the rules on
+  values to the expressions:
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\TirName{False}_1\)]
+       {}
+       {\false \wedge e \rightarrow \false}
+    \and
+    \inferrule*[right=\(\quad\TirName{False}_2\)]
+       {}
+       {e \wedge \false \rightarrow \false}\\
+    \inferrule*[right=\(\quad\TirName{True}_1\)]
+       {}
+       {\true \wedge e \rightarrow e}
+    \and
+    \inferrule*[right=\(\quad\TirName{True}_2\)]
+       {}
+       {e \wedge \true \rightarrow e}
+  \end{mathpar}
+  where \(e\) represents any boolean expression. Then, now
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\sigma_3(\TirName{False}_1)\)]
+       {}
+       {\false \wedge\, (\true \wedge\, \true) \rightarrow \false}
+  \end{mathpar}
+  where \(\sigma_3 = \{e \mapsto \true \wedge \true\}\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Boolean expressions}
+
+  Try to reduce
+  \begin{equation*}
+    (\true \wedge (\false \wedge \true)) \wedge (\true \wedge (\true
+    \wedge \true))
+  \end{equation*}
+  Note that this rewrite system is not deterministic. If we enforce
+  that the left argument of \(\wedge\) is completely reduced first,
+  then we can check if it is \true or \false: in the latter case, we
+  do not need to reduce the right argument.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Boolean expressions}
+
+  This is easy to specify:
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\wedge_{\TirName{True}}\)]
+       {}
+       {\true \wedge e \rightarrow e}
+    \and
+    \inferrule*[right=\(\quad\wedge_{\TirName{False}}\)]
+       {}
+       {\false \wedge e \rightarrow \false}\\
+    \inferrule*[right=\(\wedge\)]
+       {e_1 \rightarrow e'_1}
+       {e_1 \wedge\, e_2 \rightarrow e'_1 \wedge\, e_2}
+  \end{mathpar}
+  Many programming languages, as C, use this strategy. It allows the
+  programmers to write handy code like
+{\small
+\begin{verbatim}
+while (index < max && tab[index] > 0) ...
+\end{verbatim}
+}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Boolean expressions}
+
+  Note that this strategy (left argument before the right one) is not
+  optimal in general: the first argument may reduce to
+  \true. \emph{Finding an optimal strategy is not always possible.}
+  For example, we could add another rule that shortens sometimes the
+  reductions:
+  \begin{mathpar}
+    \inferrule*[right=\(\wedge_{\TirName{Refl}}\)]
+       {}
+       {e \wedge e \rightarrow e}
+  \end{mathpar}
+  This rule explicitly specifies the \textbf{reflexivity} of the
+  conjunction.
+
+  But the system becomes non-deterministic because there is now an
+  overlap between rule \(\wedge_{\TirName{Refl}}\) and both
+  \(\wedge_{\proc{True}}\) and \(\wedge_{\proc{False}}\) (consider for
+  example \(\true \wedge \false\)).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Determinism versus non-determinism}
+
+  Let us summarise the concepts of determinism and
+  non\hyp{}determinism.
+  \begin{itemize}
+
+    \item Determinism means that, for any expression, there is only
+      one rule to rewrite it. This implies that, every time a program
+      is run with the same input, the output will be the same. This is
+      a useful property, called soundness, in particular for
+      debugging.
+
+    \item Non-determinism means that, for any expression, there may be
+      several rules to rewrite it. Moreover,
+      \begin{itemize}
+
+         \item if the rewrite system is sound, the output will always
+           be the same for any run on the same input, even if the
+           trace may be different each time, which makes the debugging
+           more difficult, but enable parallel reductions.
+
+         \item the rewrite system may be unsound.
+
+      \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Determinism versus non-determinism}
+
+  Some programming languages have features that may be both
+  non\hyp{}deterministic and unsound.
+
+  \bigskip
+
+  Perhaps the most infamous case is in C, where variables do not need
+  to be initialised at their declaration:
+{\small
+\begin{verbatim}
+int a;
+\end{verbatim}
+}
+  If the programmer forgets to give a value to the variable, any access
+  to it is unspecified.
+
+  \bigskip
+
+  Practically, this means that whatever is located in the memory at
+  the location of the variable will be used at each read access. Of
+  course, this value may change from one run of the program to
+  another, even on the same input.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Commutativity and its consequences}
+
+  We may try another rewrite system for \(\wedge\):
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\TirName{True}\)]
+       {\true \wedge e \rightarrow e}
+       {}
+    \and
+    \inferrule*[right=\(\quad\TirName{False}\)]
+       {}
+       {\false \wedge e \rightarrow e}\\
+    \inferrule*[right=\(\wedge\)]
+       {e_1 \rightarrow e'_1}
+       {e_1 \wedge e_2 \rightarrow e'_1 \wedge e_2}
+    \and
+    \inferrule*[right=\(\TirName{Comm}\)]
+       {}
+       {e_1 \wedge e_2 \rightarrow e_2 \wedge e_1}
+  \end{mathpar}
+  While this system is in theory fine, there are two practical
+  problems:
+  \begin{enumerate}
+
+    \item it is \textbf{not deterministic} due to \(\TirName{Comm}\)
+      that overlaps with all the other rules;
+
+    \item it may \textbf{not terminate} due to rule
+      \(\TirName{Comm}\):
+      \begin{align*}
+        \true \wedge \false
+        & \;\xrightarrow{\TirName{Comm}}\;
+        \false \wedge \true \;\xrightarrow{\TirName{Comm}}\; \true
+        \wedge \false\\
+        & \;\xrightarrow{\TirName{Comm}}\; \false
+        \wedge \true \rightarrow \cdots
+      \end{align*}
+
+  \end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Non-termination}
+
+  Now some reductions may not be finite, which models
+  \textbf{non\hyp{}termination}.
+
+  \bigskip
+
+  This particular kind of non-termination, due to commutativity, is
+  the model in programming languages of so-called `\textbf{infinite
+    loops}' that do not allocate memory, i.e., that do not require
+  additional memory at each loop step. Equivalently, it corresponds to
+  a \emph{recursive call} like
+{\small
+\begin{verbatim}
+bool and(bool e1, bool e2) {
+  ... return and(e2, e1); ... }
+\end{verbatim}
+}
+  Anyway, in the presence of infinite reductions, the soundness
+  property must be weakened as follows:
+
+  \bigskip
+
+  \begin{quote}
+    \textbf{Weak soundness.} \emph{All finite reductions of an
+    expression end with the same value, if any.}
+  \end{quote}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Non-termination}
+
+  Let us define the negation:
+  \begin{mathpar}
+    \inferrule
+       {}
+       {\neg \true \rightarrow \false}
+    \and
+    \inferrule
+       {}
+       {\neg \false \rightarrow \true}
+  \end{mathpar}
+  It is also well known that the negation satisfies \(e = \neg\neg
+  e\). So we could imagine another rewrite rule
+  \begin{equation*}
+    \neg\neg e \rightarrow e
+  \end{equation*}
+  This is fine, this rule simplifies double negations. But what if we
+  had the converse rule?
+  \begin{equation*}
+    e \rightarrow \neg\neg e \qquad \text{where} \; e \; \text{is not a
+  value.}
+  \end{equation*}
+  This allows infinite reductions: \(e \rightarrow \neg\neg e
+  \rightarrow e \rightarrow \neg\neg e \rightarrow \dots\)
+
+% excluded middle: e or ~e
+% non-contradiction: ~(e and ~e)
+% de Morgan applied to non-contradiction: ~(e and ~e) = ~e or ~~e
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Summary}
+
+  There are three kinds of reductions:
+  \begin{enumerate}
+
+    \item Finite and ending in a value
+  \[e_1 \rightarrow e_2 \rightarrow \dots \rightarrow v\]
+
+    \item Finite but ending in a stuck expression
+  \[e_1 \rightarrow e_2 \rightarrow \dots \rightarrow e_n
+    \nrightarrow\]
+
+    \item Infinite
+  \[e_1 \rightarrow e_2 \rightarrow \cdots\]
+
+  \end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Conditional expressions}
+
+  At this point, boolean expressions can be
+  \begin{itemize}
+
+    \item \Xtrue (a value)
+
+    \item \Xfalse (a value)
+
+    \item \(e_1 \wedge e_2\)
+
+    \item \(e_1 \vee e_2\)
+
+    \item \(\neg e_1\)
+
+  \end{itemize}
+  where \(e_1\) and \(e_2\) are boolean expressions. Let us extend our
+  boolean expressions with a \textbf{conditional expression}:
+  \begin{itemize}
+
+     \item \Xif \(e_1\) \Xthen \(e_2\) \Xelse \(e_3\)
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Conditional expressions}
+
+  It is easy to extend the rewrite system to cope with conditionals:
+  \begin{mathpar}
+    \inferrule*[right=\(\quad\TirName{If-True}\)]
+       {}
+       {\Xif \; \Xtrue \; \Xthen \; e_2 \; \Xelse \; e_3 \rightarrow e_2}
+    \and
+    \inferrule*[right=\(\quad\TirName{If-False}\)]
+       {}
+       {\Xif \; \Xfalse \; \Xthen \; e_2 \; \Xelse \; e_3 \rightarrow e_3}
+    \and
+    \inferrule*[right=\(\TirName{If}\)]
+       {e_1 \rightarrow e'_1}
+       {\Xif \; e_1 \; \Xthen \; e_2 \; \Xelse \; e_3
+        \rightarrow \Xif \;
+        e'_1 \; \Xthen \; e_2 \; \Xelse \; e_3}
+  \end{mathpar}
+  This means that the boolean expression \(e_1\) must be completely
+  reduced \emph{before} the others. This is the usual way in
+  programming languages, the rationale being to avoid unnecessary
+  computations (evaluating \(e_2\) and~\(e_3\) is not necessary).
+
+\end{frame}

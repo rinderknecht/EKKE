@@ -1,0 +1,221 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Stacks in a functional setting}
+
+  We show how to express linear data structures in a purely functional
+  language and how to compute with them. The simplest of those
+  structures is the \textbf{stack}.
+
+  \bigskip
+
+  A stack can be thought of as a finite series of items that can only
+  be accessed sequentially from one end, called the \textbf{top},
+  following the analogy with a stack of material objects.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Stacks in a functional setting}
+
+  To define a stack in a functional language, one uses calls to
+  undefined functions to model all the possible shapes a stack can
+  take.
+
+  \bigskip
+
+  Here, a stack can be either empty or not.
+
+  \bigskip
+
+  Let \(\fun{nil}()\) be the irreducible call that denotes an empty
+  stack (that is, the function `\fun{nil}' is undefined).
+
+  \bigskip
+
+  If not empty, the stack then must contain a topmost (first) item,
+  and a \textbf{substack}, that is, the stack made of all the items
+  but the first.
+
+  \bigskip
+
+  Let \(\fun{cons}(x,s)\) denote the non\hyp{}empty stack with the
+  item~\(x\) on top and the \textbf{immediate substack}~\(s\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Inductive definition of stacks}
+
+  \begin{itemize}
+
+    \item The previous definition is intuitive, but not formal yet.
+
+    \item Data structures are usually defined \textbf{inductively}.
+
+    \item Let~\(\mathcal{T}\) be the set of all possible terms and
+      \(\mathcal{S} \subset \mathcal{T}\) be the set of all stacks.
+
+    \item Formally, \(\mathcal{S}\)~can by defined by
+      \textbf{induction} as the smallest set such that
+      \begin{enumerate}
+
+        \item \(\fun{nil}() \in \mathcal{S}\);
+
+        \item if \(x \in \mathcal{T}\) and \(s \in \mathcal{S}\), then
+          \(\fun{cons}(x,s) \in \mathcal{S}\).
+      \end{enumerate}
+
+    \item We take the smallest set because we do not want
+      in~\(\mathcal{S}\) terms that were not constructed by the
+      inductive rules (this is called the \textbf{smallest fixed
+        point} of the inductive relation).
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Appending a stack}
+
+  \begin{itemize}
+
+    \item For all \(s, t \in \mathcal{S}\), let us consider the
+      functional program
+      \begin{align*}
+        \fun{cat}(\fun{nil}(),t) &\xrightarrow{\alpha} t\\
+        \fun{cat}(\fun{cons}(x,s),t) &\xrightarrow{\smash\beta}
+        \fun{cons}(x,\fun{cat}(s,t))
+      \end{align*}
+
+    \item This is a functional program suitable for
+      call\hyp{}by\hyp{}value reduction strategy, because the function
+      calls in the patterns (that is, left\hyp{}hand sides) are
+      irreducible.
+
+    \item The right\hyp{}hand sides are stacks, so a call to
+      `\fun{cat}' is a stack.
+
+    \item Rule~\(\alpha\) says that, if the first stack is empty, the
+      value is the second.
+
+    \item In rule~\(\beta\), the first stack is not empty, and its top
+      item is the top of the final stack~(\(x\)), the immediate
+      substack~(\(s\)) being used in a call to `\fun{cat}' with the
+      second stack~(\(t\)) unchanged.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Appending a stack}
+
+  This function appends the second stack at the bottom of a
+  \textbf{copy} of the first. (The function name `\fun{cat}' stands
+  for `catenation', and is slightly better than `\fun{app}').
+
+  \bigskip
+
+  We could also say that this function appends a copy of the first
+  stack on top of the other. But this is not the same as pushing the
+  first stack on top of the other, like
+  \begin{equation*}
+    \fun{cat}(s,t) \rightarrow \fun{cons}(s,t) \qquad
+    \text{Wrong!}
+  \end{equation*}
+
+  This is \textbf{not} appending: here, the stack~\(s\) becomes an
+  item of the resulting stack, but we want only the \textbf{contents}
+  of~\(s\) to be pushed on top of~\(t\), not their container.
+
+  \bigskip
+
+  Analogy: You may think of an empty stack as a empty cardboard box,
+  open topside, and every item pushed in it is like a book that you
+  put on the topmost book, or at the bottom of the box if this is the
+  first book.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Appending a stack}
+
+  Let us set the abbreviations
+  \begin{itemize}
+
+    \item \(\el := \fun{nil}()\),
+
+    \item \(\cons{x}{s} := \fun{cons}(x,s)\),
+
+  \end{itemize}
+  after the convention of the programming language \OCaml.
+
+  \bigskip
+
+  We can further abbreviate
+  \begin{itemize}
+
+    \item \(\cons{x_1}{\cons{x_2}{\cons{\dots}{\cons{x_n}{s}}}} :=
+      \fun{cons}(x_1, \fun{cons}(x_2, \dots \fun{cons}(x_n,s)))\)
+
+    \item \([x] := \cons{x}{\el}\)
+
+    \item \([x_1; x_2, \dots; x_n] :=
+          \cons{x_1}{\cons{x_2}{\cons{x_3}{\cons{\ldots}{\cons{x_n}{\el}}}}}\).
+
+  \end{itemize}
+
+  Our system now becomes a bit more legible:
+  \begin{align*}
+    \fun{cat}(        \el,t) &\xrightarrow{\alpha} t\\
+    \fun{cat}(\cons{x}{s},t) &\xrightarrow{\smash{\beta}}
+    \cons{x}{\fun{cat}(s,t)}
+  \end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Pattern matching}
+
+  \begin{itemize}
+
+    \item Let us compute \(\fun{cat}([1;2],[3])\).
+
+    \item We need to find the first rule that is matched by this call.
+
+    \item Remember that the arguments must be values before you do
+      that.
+
+    \item Intuitively, this means that we compare the call with the
+      patterns, that is, the left\hyp{}hand sides of the rules, in
+      order.
+
+    \item Here, rule~\(\alpha\) is not matched because \([1;2] \neq
+      []\).
+
+    \item Rule~\(\beta\) is matched because \([1;2] = 1::[2]\) and
+      equals the sub\hyp{}pattern \(x::s\) if we assign \(x := 1\) and
+      \(s := [2]\). Also, trivially, \(t := [3]\) works.
+
+    \item After the rule~\(\beta\) is selected, the assignments are
+      used to replace the variables in the right\hyp{}hand sides.
+
+    \item The whole evaluation is
+    \begin{equation*}
+      \fun{cat}([1;2],[3])
+      \xrightarrow{\beta}
+      \cons{1}{\fun{cat}([2],[3])}
+      \xrightarrow{\beta}
+      \cons{1}{\cons{2}{\fun{cat}(\el,[3])}}
+      \xrightarrow{\alpha}
+                    [1;2;3].
+    \end{equation*}
+  \end{itemize}
+
+\end{frame}

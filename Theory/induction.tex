@@ -1,0 +1,119 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Inductive proofs}
+
+Let us remark that \(\fun{cat}([1], [2,3,4]) \twoheadrightarrow
+[1,2,3,4] \twoheadleftarrow \fun{cat}([1,2],
+[3,4])\).
+
+\bigskip
+
+It is enlightening to create \emph{equivalence classes} of terms that
+are joinable. These classes then define an equivalence
+relationship~\((\equiv)\) as follows:
+\begin{center}
+  \(a \equiv b\) if there exists a unique value~\(v\) such that \(a
+  \xrightarrow{\smash[t]{*}} v\) and \(b \xrightarrow{\smash{*}} v\).
+\end{center}
+For instance, \(\fun{cat}([1,2], [3,4]) \equiv \fun{cat}([1],
+[2,3,4])\).
+
+\bigskip
+
+The relation (\(\equiv\)) is indeed an equivalence because it is
+\begin{itemize}
+
+  \item \emph{reflexive}: \(a \equiv a\);
+
+  \item \emph{symmetric}: if \(a \equiv b\), then \(b \equiv a\);
+
+  \item \emph{transitive}: if \(a \equiv b\) and \(b \equiv c\), then
+    \(a \equiv c\).
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Inductive proofs}
+
+  Of some interest are the following facts.
+  \begin{itemize}
+
+    \item If \(f(x)\) and~\(f(y)\) have a value, then \(x \equiv y\)
+      implies \(f(x) \equiv f(y)\).
+
+    \item If \(x_1 \leftarrow x_2 \twoheadrightarrow x_3 \equiv x_4
+      \rightarrow x_5 \twoheadleftarrow x_6\), then \(x_1 \equiv x_2
+      \equiv x_3 \equiv x_4 \equiv x_5 \equiv x_6\).
+
+  \end{itemize}
+
+  If we want to prove equivalences with variables ranging over
+  infinite sets, like \(\fun{cat}(s,\fun{cat}(t,u)) \equiv
+  \fun{cat}(\fun{cat}(s,t),u)\), we need some \textbf{induction
+  principle}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Well-founded induction}
+
+We define a \textbf{well\hyp{}founded order} on a set~\(A\) as being a
+binary relation \((\succ)\) such that it is
+\begin{itemize}
+
+  \item irreflexive: \(\forall x \in A. \neg(x \succ x)\),
+
+  \item transitive: \(\forall x, y, z \in A. x \succ y \,\wedge\, y
+    \succ z \Rightarrow x \succ z\),
+
+  \item and does not have any \textbf{infinite descending chains}, to
+    wit, there is no \(a_0 \succ a_1 \succ a_2 \succ \dots\)
+
+\end{itemize}
+The \textbf{well\hyp{}founded induction principle} then states that, for
+any predicate~\(\aleph\) on a set~\(A\),
+\begin{center}
+  \(\forall a \in A.\aleph(a)\) is implied by \(\forall a.(\forall b.a
+  \succ b \Rightarrow \aleph(b)) \Rightarrow \aleph(a)\).
+\end{center}
+When \(A=\mathbb{N}\), this principle is called \textbf{mathematical
+(complete) induction}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Well-founded induction}
+
+\textbf{Structural induction} is another particular case where \(t \succ
+s\) holds if, and only if, \(s\)~is a proper \textbf{subterm} of~\(t\),
+namely, the abstract syntax tree of~\(s\) is included in the tree
+of~\(t\) and \(s \neq t\).
+
+\bigskip
+
+Sometimes, a restricted form of structural induction is enough. For
+instance, we can define \(\cons{x}{s} \succ s\), for any term~\(x\)
+and any stack~\(s \in S\). Both \(x\)~and~\(s\) are \textbf{immediate
+subterms} of \(\cons{x}{s}\). (In other words, we dispensed with the
+transitivity axiom.) Because there are no infinite descending chains,
+any subset \(B \subseteq A\) contains minimal elements \(M \subseteq
+B\), that is, there is no \(b \in B\) such that \(a \succ b\), if \(a
+\in M\). So
+\begin{enumerate}
+
+  \item we have to prove \(\aleph(a)\) for all \(a \in M\), the
+    so\hyp{}called \textbf{basis}: here, only \(\aleph(\el)\), as
+    \(\el\)~is by construction the unique, minimal stacks, and,
+
+  \item assuming the so\hyp{}called \textbf{induction hypothesis}
+    \(\aleph(s)\), we must prove \(\aleph(\cons{x}{s})\) for
+    all~\(x\).
+
+\end{enumerate}
+
+\end{frame}

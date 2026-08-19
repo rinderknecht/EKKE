@@ -1,0 +1,286 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{String rewriting}
+  Let us consider a string of white and black beads, like \(\circ
+  \bullet \bullet \bullet \circ \circ \bullet\), and a one-player game
+  whose unique move consists in replacing two adjacent beads with only
+  one according to the rules
+  \begin{equation*}
+    \bullet \; \circ   \xrightarrow{\alpha} \bullet\qquad\qquad
+    \circ   \; \bullet \xrightarrow{\beta} \bullet\qquad\qquad
+    \bullet \; \bullet \xrightarrow{\gamma} \circ
+  \end{equation*}
+
+  The rules~\(\alpha\), \(\beta\)~and~\(\gamma\) make up a simple
+  \textbf{string\hyp{}rewriting system}.
+
+  \bigskip
+
+  Rules \(\alpha\)~and~\(\beta\) can be conceived as:\\ \emph{`A black
+  bead absorbs the white bead next to it.'}
+
+  \bigskip
+
+  The goal of this game is to end up with as few beads as possible, so
+  our example may lead to the \textbf{rewrites}
+  \begin{equation*}
+    \circ \bullet \bullet \, \fbox{\(\bullet \, \circ\)} \circ \bullet
+    \xrightarrow{\alpha} \circ \bullet \bullet \, \fbox{\(\bullet \,
+      \circ\)} \, \bullet \xrightarrow{\alpha} \fbox{\(\circ \,
+      \bullet\)} \bullet \bullet \bullet \xrightarrow{\beta} \bullet
+    \bullet \fbox{\(\bullet \, \bullet\)} \xrightarrow{\gamma} \bullet \,
+    \fbox{\(\bullet \, \circ\)} \xrightarrow{\alpha} \fbox{\(\bullet
+      \, \bullet\)} \xrightarrow{\gamma} \circ
+  \end{equation*}
+
+  \medskip
+
+  \noindent where the part of the string to be rewritten next is
+  framed.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Normal forms and termination}
+
+  \label{termination1}
+
+  Other compositions of the rules lead to the same result~\(\circ\) as
+  well. Some others bring all\hyp{}white or all\hyp{}black strings,
+  like \(\circ \, \circ\) and~\(\bullet\).
+
+  \bigskip
+
+  Strings that can not be further rewritten, or \textbf{reduced}, are
+  called \textbf{normal forms}. We may wonder whether all strings have
+  a normal form, and, if so, if it is unique and, furthermore, if it
+  is either all\hyp{}white or all\hyp{}black.
+
+  \bigskip
+
+  First, let us note that the system is \textbf{terminating}, that is,
+  there is no infinite chain of rewrites, because the number of beads
+  strictly decreases in all the rules.
+
+  \bigskip
+
+  This is not a necessary condition in general, for instance, \(\circ
+  \; \bullet \xrightarrow{\beta} \bullet \circ \circ\) would preserve
+  termination because the composition \(\beta\alpha\alpha\) would be
+  equivalent to the original rule~\(\beta\).
+
+  \bigskip
+
+  In particular, this means that any string has a normal form.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Invariants}
+
+  Second, notice how the parity of the number of black beads is
+  \textbf{invariant} through each rule and how there is no rewrite
+  rule for two adjacent white beads.
+
+  \bigskip
+
+  Therefore, if there are \(2p\) initial black beads, then composing
+  rules \(\alpha\)~and~\(\beta\) lead to an all\hyp{}black string,
+  which can be reduced by applying rule~\(\gamma\) to contiguous pairs
+  of beads into an all\hyp{}white string made of \(p\)~beads.
+
+  \bigskip
+
+  Otherwise, the same all\hyp{}black string can be reduced by applying
+  alternatively \(\gamma\)~and~\(\beta\) on the left end or
+  \(\gamma\)~and~\(\alpha\) on the right end, yielding~\(\circ\).
+
+  \bigskip
+
+  Similarly, if there is an initial odd number of black beads, we
+  always end up with one black bead.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Confluence}
+
+  Consequently, normal forms are not unique. A simple example is
+  \begin{equation*}
+    \circ \circ \xleftarrow{\gamma} \bullet \bullet \circ
+    \xrightarrow{\alpha} \bullet \bullet \xrightarrow{\gamma}
+    \circ
+  \end{equation*}
+
+  \medskip
+
+  Systems where normal forms are unique are \textbf{confluent}.
+
+  \bigskip
+
+  If we think of a rewrite step as an elementary computation, it
+  becomes clear that confluence is a desirable property for carrying
+  out computations, as we would expect, for instance, an arithmetic
+  expression to have the same value no matter the order of the small
+  steps.
+
+  \bigskip
+
+  A systemic order of rule application is called a \textbf{reduction
+    strategy}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Completing a system}
+
+  We can obtain confluence by adding the rule~\(\delta\):
+  \begin{equation*}
+    \bullet \; \circ   \xrightarrow{\alpha} \bullet\qquad\qquad
+    \circ   \; \bullet \xrightarrow{\beta} \bullet\qquad\qquad
+    \bullet \; \bullet \xrightarrow{\gamma}
+    \circ\qquad\qquad
+    \circ\; \circ \xrightarrow{\delta} \circ
+  \end{equation*}
+  The result of the game is now always one bead whose colour depends
+  on the original parity of the black beads as before.
+
+  \bigskip
+
+  To see why, let us consider first that two non\hyp{}overlapping
+  parts of a string can be rewritten in parallel, so they are not a
+  concern.
+
+  \bigskip
+
+  The interesting cases occur when two applications of rules (maybe of
+  the same rule) lead to different strings because they do
+  overlap. For instance,
+  \begin{equation*}
+    \circ \, \circ \xleftarrow{\gamma} \bullet \bullet
+    \circ \xrightarrow{\alpha} \bullet \, \bullet
+  \end{equation*}
+
+  \medskip
+
+  The important point is that \(\circ \, \circ\) and \(\bullet \,
+  \bullet\) can be rewritten into~\(\circ\) at the next step by
+  \(\delta\)~and~\(\gamma\), respectively.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Critical pairs}
+
+  In general, what matters is that all pairs of strings resulting from
+  the application of overlapping rules, called \textbf{critical
+    pairs}, can be rewritten to the same string: they are
+  \textbf{joinable}.
+
+  \bigskip
+
+  In our example, all interactions occur on substrings made of three
+  beads, so we must examine eight cases:
+  \begin{center}
+    \includegraphics[]{bullets}
+  \end{center}
+
+  In all the cases, the divergences are joinable in one step at most.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Local confluence}
+
+  If all critical pairs are joinable after a divergence in one ore
+  more rewrites, the system is \textbf{locally confluent}.
+
+  \bigskip
+
+  Moreover, if the system is also terminating, then \textbf{every
+    string has exactly one normal form}.
+
+  \bigskip
+
+  Sometimes, as seen previously, a non\hyp{}confluent system can be
+  completed to become confluent, via a \textbf{completion procedure},
+  for example, in the case of terminating systems, the
+  \textbf{Knuth\hyp{}Bendix semi\hyp{}algorithm}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Ground and linear rewrite systems}
+
+  The system we defined is \textbf{ground}, that is, it involves no
+  variables.
+
+  \bigskip
+
+  These allow a finite system to denote an infinite number of ground
+  rules if variables range over infinite sets, or simply, they reduce
+  the size of rewrite systems.
+
+  \bigskip
+
+  For instance, our continued example is equivalent to
+  \begin{equation*}
+    \bullet \; \circ \xrightarrow{\alpha} \bullet
+    \qquad\qquad
+    \circ \; x \xrightarrow{\beta+\delta} x
+    \qquad\qquad
+    \bullet \; \bullet \xrightarrow{\gamma} \circ
+  \end{equation*}
+
+  \medskip
+
+  If we accept multiple occurrences of a variable on the
+  left\hyp{}hand side of a rule (that is, not left\hyp{}linear), we
+  can further decrease the size of the system:
+  \begin{equation*}
+    x  \; x \xrightarrow{\gamma+\delta} \circ\qquad\qquad
+    x  \; y \xrightarrow{\alpha+\beta} \bullet
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Ordered rewrite systems}
+
+  Notice that there is now an implicit order over the rules: the rule
+  \(\gamma+\delta\) must be examined first for a \textbf{match} with a
+  part of the current string, because it is included in the second
+  (set \(x=y\) in \(\alpha+\beta\)).
+
+  \bigskip
+
+  Non\hyp{}linear systems are equational theories due the implicit
+  equality on substructures, which is complex: we will limit ourselves
+  to \textbf{linear systems}.
+
+  \bigskip
+
+  In general, the order in which the rules are written on the page is
+  their \textbf{logical order}.
+
+  \bigskip
+
+  Moreover, let us remark that the system does not specify that
+  \(x\)~must either be~\((\circ)\) or~\((\bullet)\): this should be
+  stated nevertheless somewhere else.
+
+  \bigskip
+
+  Generally speaking, this means that the \textbf{type} of the
+  variables has to be defined elsewhere or inferred from the variable
+  uses.
+
+\end{frame}
