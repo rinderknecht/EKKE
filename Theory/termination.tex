@@ -80,8 +80,8 @@
   Here is the definition of the factorial function as a functional
   rewrite system:
   \begin{align*}
-    \fun{fact}(0) & \rightarrow 1\\
-    \fun{fact}(n) & \rightarrow n \times \fun{fact}(n-1)
+    \fun{fact} \, 0 & \rightarrow 1\\
+    \fun{fact} \, n & \rightarrow n \times \fun{fact}(n-1)
   \end{align*}
 
   \medskip
@@ -104,9 +104,9 @@
 Consider the following example where \(m,n \in \mathbb{N}\):
 \begin{equation*}
 \begin{array}{@{}r@{\;}l@{\;}l@{}}
-\fun{ack}(0,n)     & \smashedrightarrow{\theta} & n+1;\\
-\fun{ack}(m+1,0)   & \smashedrightarrow{\iota} & \fun{ack}(m,1);\\
-\fun{ack}(m+1,n+1) & \smashedrightarrow{\kappa}
+\fun{ack}(0,n)     & \smashedrightarrow{\alpha} & n+1;\\
+\fun{ack}(m+1,0)   & \smashedrightarrow{\beta} & \fun{ack}(m,1);\\
+\fun{ack}(m+1,n+1) & \smashedrightarrow{\gamma}
                    & \fun{ack}(m,\fun{ack}(m+1,n)).
 \end{array}
 \end{equation*}
@@ -166,12 +166,12 @@ Here, a lexicographic order on \((m,n) \in \mathbb{N}^2\) extended to
   \bigskip
 
   Second, we must prove that `\fun{ack}' rewrites to smaller calls. We
-  are only concerned with rules \(\iota\)~and~\(\kappa\). With the
+  are only concerned with rules \(\beta\)~and~\(\gamma\). With the
   former, we have the inequality
   \begin{equation*}
     \fun{ack}(m+1,0) \succ \fun{ack}(m,1).
   \end{equation*}
-  With rule~\(\kappa\), we have the following inequalities:
+  With rule~\(\gamma\), we have the following inequalities:
   \begin{equation*}
     \begin{array}{@{}r@{\;}l@{\;}l@{}}
       \fun{ack}(m+1,n+1) & \succ & \fun{ack}(m+1,n),\\
@@ -180,6 +180,11 @@ Here, a lexicographic order on \((m,n) \in \mathbb{N}^2\) extended to
   \end{equation*}
   for all values~\(p\), in particular when \(\fun{ack}(m+1,n)
   \twoheadrightarrow p\).\hfill\(\Box\)
+
+  \bigskip
+
+  Implicitly, we used \[x \succ y \Rightarrow f(x) \succ f(y),\]
+  that is, \textbf{evaluation is (strictly) order\hyp{}preserving}.
 
 \end{frame}
 
@@ -197,10 +202,10 @@ Here, a lexicographic order on \((m,n) \in \mathbb{N}^2\) extended to
 
   \medskip
 
-  As we have seen, we do not always need to order the terms
-  \(x\)~and~\(y\): only the calls in them to a given function. These
-  are \textbf{dependency pairs}. Calls to other functions can be
-  assumed to be terminating.
+  As we have seen, we do not always can order the whole terms
+  \(x\)~and~\(y\): only the calls in them to a given function are
+  enough. These are called the \textbf{dependency pairs}. Calls to
+  other functions can be assumed to be terminating.
 
   \bigskip
 
@@ -256,48 +261,42 @@ Here, a lexicographic order on \((m,n) \in \mathbb{N}^2\) extended to
   Let us consider \textbf{insertion sort}:
 \begin{equation*}
 \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
-  \fun{ins}(\cons{y}{s},x)
-& \smashedrightarrow{\kappa}
-& \cons{y}{\fun{ins}(s,x)}, \,\text{if \(x \succ y\)};
-& \fun{isrt}(\el)
-& \smashedrightarrow{\mu}
-& \el;\\
-  \fun{ins}(s,x)
-& \smashedrightarrow{\lambda}
+  \fun{isort}\,\el
+& \smashedrightarrow{\alpha}
+& \el;
+& \fun{ins}(x, \cons{y}{s})
+& \smashedrightarrow{\gamma}
+& \cons{y}{\fun{ins}(x,s)}, \,\text{if \(x \succ y\)};\\
+  \fun{isort}(\cons{x}{s})
+& \smashedrightarrow{\beta}
+& \fun{ins}(x,\fun{isort}\,s).
+&  \fun{ins}(x,s)
+& \smashedrightarrow{\delta}
 & \cons{x}{s}.
-& \fun{isrt}(\cons{x}{s})
-& \smashedrightarrow{\nu}
-& \fun{ins}(\fun{isrt}(s),x).
 \end{array}
 \end{equation*}
-
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}{Termination / Insertion sort}
-
 Let us consider a short example:
 \begin{equation*}
 \begin{array}{r@{\;}l@{\;}l}
-\fun{isrt}([3,1,2])
-& \xrightarrow{\smash{\nu}} & \fun{ins}(\fun{isrt}([1,2]),3)\\
-& \xrightarrow{\smash{\nu}}
-& \fun{ins}(\fun{ins}(\fun{isrt}([2]),1),3)\\
-& \xrightarrow{\smash{\nu}}
-& \fun{ins}(\fun{ins}(\fun{ins}(\fun{isrt}(\el),2),1),3)\\
-& \xrightarrow{\smash{\mu}}
-& \fun{ins}(\fun{ins}(\fun{ins}(\el,2),1),3)\\
-& \xrightarrow{\smash{\lambda}}
-& \fun{ins}(\fun{ins}([2],1),3)\\
-& \xrightarrow{\smash{\lambda}}
-& \fun{ins}([1,2],3)\\
-& \xrightarrow{\smash{\kappa}}
-& \cons{1}{\fun{ins}([2],3)}\\
-& \xrightarrow{\smash{\kappa}}
-& \cons{1,2}{\fun{ins}(\el,3)}\\
-& \xrightarrow{\smash{\lambda}}
-& [1,2,3].
+\fun{isort}\,[3,1,2]
+& \smashedrightarrow{\beta} & \fun{ins}(3,\fun{isort}\,[1,2])\\
+& \smashedrightarrow{\beta}
+& \fun{ins}(3,\fun{ins}(1,\fun{isort}\,[2]))\\
+& \smashedrightarrow{\beta}
+& \fun{ins}(3,\fun{ins}(1,\fun{ins}(2,\fun{isort}\,\el)))\\
+& \smashedrightarrow{\alpha}
+& \fun{ins}(3,\fun{ins}(1,\fun{ins}(2,\el)))\\
+& \smashedrightarrow{\delta}
+& \fun{ins}(3,\fun{ins}(1,[2]))\\
+& \smashedrightarrow{\delta}
+& \fun{ins}(3,[1,2])\\
+& \smashedrightarrow{\gamma}
+& \cons{1}{\fun{ins}(3,[2])}\\
+& \smashedrightarrow{\gamma}
+& \cons{1}{\cons{2}{\fun{ins}(3,\el)}}\\
+& \smashedrightarrow{\delta}
+& \cons{1}{\cons{2}{\cons{3}{\el}}}\\
+& = & [1,2,3].
 \end{array}
 \end{equation*}
 
@@ -315,13 +314,13 @@ Let us consider a short example:
 
   \bigskip
 
-  Let us prove the termination of `\fun{isrt}' by the method of
+  Let us prove the termination of `\fun{isort}' by the method of
   dependency pairs. The pairs to order are the following:
   \begin{itemize}
 
-    \item \((\fun{ins}(\cons{y}{s},x), \fun{ins}(s,x))_\kappa\),
-    \item \((\fun{isrt}(\cons{x}{s}), \fun{isrt}(s))_\nu\) and
-    \item \((\fun{isrt}(\cons{x}{s}), \fun{ins}(\fun{isrt}(s), x))_\nu\).
+    \item \((\fun{ins}(x, \cons{y}{s}), \fun{ins}(x,s))_\gamma\),
+    \item \((\fun{isort}(\cons{x}{s}), \fun{isort}\,s)_\beta\) and
+    \item \((\fun{isort}(\cons{x}{s}), \fun{ins}(x, \fun{isort}\,s))_\beta\).
 
   \end{itemize}
 
@@ -331,17 +330,17 @@ Let us consider a short example:
 %
 \begin{frame}{Termination / Insertion sort}
 
-  By using the proper subterm relation on the first parameter of
+  By using the proper subterm relation on the second parameter of
   `\fun{ins}', we order the first pair:
   \begin{equation*}
-    \fun{ins}(\cons{y}{s},x) \succ \fun{ins}(s,x) \Leftrightarrow
-    \cons{y}{s} \succ s.
+    \cons{y}{s} \succ s \Rightarrow \fun{ins}(x, \cons{y}{s}) \succ
+    \fun{ins}(x,s).
   \end{equation*}
   This is enough to prove that `\fun{ins}' terminates. The second pair
   is similarly oriented:
   \begin{equation*}
-    \fun{isrt}(\cons{x}{s}) \succ \fun{isrt}(s) \Leftrightarrow
-    \cons{x}{s} \succ s.
+    \cons{x}{s} \succ s \Rightarrow \fun{isort}(\cons{x}{s}) \succ
+    \fun{isort}\,s.
   \end{equation*}
 
 \end{frame}
@@ -352,21 +351,22 @@ Let us consider a short example:
 
   The third pair is not worth considering after all, because we
   already know that `\fun{ins}' terminates, so the second pair is
-  enough to entail the termination of `\fun{isrt}'.
+  enough to entail the termination of `\fun{isort}'.
 
   \bigskip
 
   In other words, since `\fun{ins}' terminates, it can be considered,
   as far as termination analysis is concerned, as a data constructor,
-  so the third pair becomes useless:
+  so the third pair becomes:
   \begin{equation*}
-    \fun{isrt}(\cons{x}{s}) \succ \underline{\fun{ins}}(\fun{isrt}(s), x)
-    \Leftrightarrow \fun{isrt}(\cons{x}{s}) \succ \fun{isrt}(s)
-    \Leftrightarrow \cons{x}{s} \succ s,
+    \cons{x}{s} \succ s
+    \Rightarrow
+    \fun{isort}(\cons{x}{s}) \succ \fun{isort}\,s
+    \Rightarrow
+    \fun{isort}(\cons{x}{s}) \succ \underline{\fun{ins}}(x, \fun{isort}\,s).
   \end{equation*}
-  where \(\fun{\ufun{ins}}\) stands for \fun{ins} considered as a
-  \textbf{constructor}, that is, a function without a
-  definition. \hfill\(\Box\)
+  where \(\fun{\ufun{ins}}\) stands for `\fun{ins}' considered as a
+  \textbf{constructor}, that is, an undefined function.\hfill\(\Box\)
 
 \end{frame}
 
@@ -377,22 +377,22 @@ Let us consider a short example:
    Let us try a more complicated example:
    \begin{equation*}
      \begin{array}{r@{\;}l@{\;}l}
-       \fun{flat}(\el)                   & \xrightarrow{\psi}
+       \fun{flat}\,\el                   & \smashedrightarrow{\alpha}
        & \el\\
-       \fun{flat}(\cons{\el}{t})         & \xrightarrow{\smash{\omega}}
-       & \fun{flat}(t)\\
-       \fun{flat}(\cons{(\cons{x}{s})}{t}) & \xrightarrow{\smash{\gamma}}
-       & \fun{cat}(\fun{flat}(\cons{x}{s}),\fun{flat}(t))\\
-       \fun{flat}(\cons{y}{t})           & \xrightarrow{\smash{\delta}}
-       & \cons{y}{\fun{flat}(t)}
+       \fun{flat}(\cons{\el}{t})         & \smashedrightarrow{\beta}
+       & \fun{flat}\,t\\
+       \fun{flat}(\cons{(\cons{x}{s})}{t}) & \smashedrightarrow{\gamma}
+       & \fun{cat}(\fun{flat}(\cons{x}{s}),\fun{flat}\,t)\\
+       \fun{flat}(\cons{y}{t})           & \smashedrightarrow{\delta}
+       & \cons{y}{\fun{flat}\,t}
      \end{array}
    \end{equation*}
 
    Some evaluations:
    \begin{align*}
-     \fun{flat}(\el) & \twoheadrightarrow \el\\
-     \fun{flat}([\el;[\el]]) & \twoheadrightarrow \el\\
-     \fun{flat}([\el;[1;[2;\el];3];\el]) & \twoheadrightarrow [1;2;3]
+     \fun{flat}\,\el & \twoheadrightarrow \el\\
+     \fun{flat}\,[\el;[\el]] & \twoheadrightarrow \el\\
+     \fun{flat}\,[\el;[1;[2;\el];3];\el] & \twoheadrightarrow [1;2;3]
    \end{align*}
 
    What '\fun{flat}' does is flatten a list of lists arbitrarily
@@ -407,28 +407,28 @@ Let us consider a short example:
   A detailed evaluation:
     \begin{equation*}
       \begin{array}{r@{\;}l@{\;}l}
-        \fun{flat}([\el;[[1];2];3])
-        & \xrightarrow{\omega}
-        & \fun{flat}([[[1];2];3])\\
-        & \xrightarrow{\smash{\gamma}}
-        & \fun{cat}(\underline{\fun{flat}([[1];2])},\fun{flat}([3]))\\
-        & \xrightarrow{\smash{\gamma}}
-        & \fun{cat}(\fun{cat}(\underline{\fun{flat}([1])},\fun{flat}([2])),
-        \fun{flat}([3]))\\
-        & \xrightarrow{\smash{\delta}}
-        & \fun{cat}(\fun{cat}(\cons{1}{\underline{\fun{flat}(\el)}},
-        \fun{flat}([2])), \fun{flat}([3]))\\
-        & \xrightarrow{\smash{\psi}}
-        & \fun{cat}(\fun{cat}([1],\underline{\fun{flat}([2])}),
-        \fun{flat}([3]))\\
-        & \xrightarrow{\smash{\delta}}
-        & \fun{cat}(\fun{cat}([1],\cons{2}{\underline{\fun{flat}(\el)}}),
-        \fun{flat}([3]))\\
-        & \xrightarrow{\smash{\psi}}
-        & \fun{cat}(\fun{cat}([1],[2]),\underline{\fun{flat}([3])})\\
-        & \xrightarrow{\smash{\delta}}
-        & \fun{cat}(\fun{cat}([1],[2]),\cons{3}{\underline{\fun{flat}(\el)}})\\
-        & \xrightarrow{\smash{\psi}}
+        \fun{flat}\,[\el;[[1];2];3]
+        & \xrightarrow{\beta}
+        & \fun{flat}\,[[[1];2];3]\\
+        & \smashedrightarrow{\gamma}
+        & \fun{cat}(\underline{\fun{flat}\,[[1];2]},\fun{flat}\,[3])\\
+        & \smashedrightarrow{\gamma}
+        & \fun{cat}(\fun{cat}(\underline{\fun{flat}\,[1]},\fun{flat}\,[2]),
+        \fun{flat}\,[3])\\
+        & \smashedrightarrow{\delta}
+        & \fun{cat}(\fun{cat}(\cons{1}{\underline{\fun{flat}\,\el}},
+        \fun{flat}\,[2]), \fun{flat}\,[3])\\
+        & \smashedrightarrow{\alpha}
+        & \fun{cat}(\fun{cat}([1],\underline{\fun{flat}\,[2]}),
+        \fun{flat}\,[3])\\
+        & \smashedrightarrow{\delta}
+        & \fun{cat}(\fun{cat}([1],\cons{2}{\underline{\fun{flat}\,\el}}),
+        \fun{flat}\,[3])\\
+        & \smashedrightarrow{\alpha}
+        & \fun{cat}(\fun{cat}([1],[2]),\underline{\fun{flat}\,[3]})\\
+        & \smashedrightarrow{\delta}
+        & \fun{cat}(\fun{cat}([1],[2]),\cons{3}{\underline{\fun{flat}\,\el}})\\
+        & \smashedrightarrow{\alpha}
         & \fun{cat}(\fun{cat}([1],[2]),[3])\\
         & \twoheadrightarrow & [1;2;3].
       \end{array}
@@ -459,7 +459,7 @@ Let us consider a short example:
     The proper subterm order works:
     \begin{tabular}{r@{\;\,}c@{\;}ll}
       \(\cons{y}{t}\) & \(\succ\) & \(t\) & (rule~\(\delta\)
-      and rule~\(\omega\) when \(y=\el\))\\
+      and rule~\(\beta\) when \(y=\el\))\\
       \(\cons{(\cons{x}{s})}{t}\) & \(\succ\) & \(t\)
       & (rule~\(\gamma\))\\
       \(\cons{(\cons{x}{s})}{t}\) & \(\succ\) & \(\cons{x}{s}\)
@@ -479,15 +479,15 @@ Let us consider a short example:
   Let us consider now an alternative design for rule~\(\gamma\):
   \begin{equation*}
     \begin{array}{@{}r@{\;}c@{\;}l@{}}
-      \fun{flat}(\el) & \xrightarrow{\psi}
+      \fun{flat}\,\el & \xrightarrow{\alpha}
       & \el\\
-      \fun{flat}(\cons{\el}{t}) & \xrightarrow{\smash{\omega}}
-      & \fun{flat}(t)\\
+      \fun{flat}(\cons{\el}{t}) & \smashedrightarrow{\beta}
+      & \fun{flat}\,t\\
       \fun{flat}(\cons{(\cons{x}{s})}{t})
-      & \xrightarrow{\smash{\gamma}}
+      & \smashedrightarrow{\gamma}
       & \fbox{\(\fun{flat}(\cons{x}{\cons{s}{t}})\)}\\
-      \fun{flat}(\cons{y}{t})   & \xrightarrow{\smash{\delta}}
-      & \cons{y}{\fun{flat}(t)}
+      \fun{flat}(\cons{y}{t})   & \smashedrightarrow{\delta}
+      & \cons{y}{\fun{flat}\,t}
     \end{array}
   \end{equation*}
 
@@ -541,12 +541,12 @@ Let us consider a short example:
   The pairs are
   \begin{enumerate}
 
-    \item \((\fun{flat}(\cons{\el}{t}), \fun{flat}(t))_\omega\)
+    \item \((\fun{flat}(\cons{\el}{t}), \fun{flat}\,t)_\beta\)
 
     \item \((\fun{flat}(\cons{(\cons{x}{s})}{t}),
       \fun{flat}(\cons{x}{\cons{s}{t}}))_\gamma\)
 
-    \item \((\fun{flat}(\cons{y}{t}), \fun{flat}(t))_\delta\)
+    \item \((\fun{flat}(\cons{y}{t}), \fun{flat}\,t)_\delta\)
 
   \end{enumerate}
   with \(y \not\in S\), that is, \(y\)~is not a list.
@@ -611,5 +611,212 @@ Let us consider a short example:
       descent).\hfill\(\Box\)
 
   \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Dependency pairs in more details}
+
+  Let's try to be a little bit more rigorous with dependency pair
+  analysis.
+
+  \bigskip
+
+  Perhaps the first thing we have noticed is the use of conditions
+  (guards) on rewrite rules. They are actually simple ways to make the
+  systems more readable and more efficiently implemented in functional
+  languages. In a way, they are akin to macros.
+
+  \bigskip
+
+  For example, consider the definitions of functions calculating the
+  maximum and the minimum of two numbers:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
+      \fun{max}(0,y) & \rightarrow & y; & \fun{min}(0,y) & \rightarrow & 0;\\
+      \fun{max}(x,0) & \rightarrow & x; & \fun{min}(x,0) & \rightarrow & 0;\\
+      \fun{max}(x,y) & \rightarrow & 1 + \fun{max}(x\!-\!1,y\!-\!1).
+      & \fun{min}(x,y) & \rightarrow & 1 + \fun{min}(x\!-\!1,y\!-\!1).
+    \end{array}
+  \end{equation*}
+  Then insertion sort can be written (very inefficiently) as:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}l@{}}
+      \fun{ins}(x,\el) & \rightarrow & [x];\\
+      \fun{ins}(x,\cons{y}{s}) & \rightarrow &
+      \cons{\fun{min}(x,y)}{\fun{ins}(\fun{max}(x,y),s)}.
+    \end{array}
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Dependency pairs in more details}
+
+  An equivalent but more compact definition would determine maximum
+  and the minimum at the same time, like so:
+\begin{equation*}
+\begin{array}{r@{\;}c@{\;}l}
+  \fun{isort}\,\el
+& \smashedrightarrow{\alpha}
+& \el;\\
+  \fun{isort}(\cons{x}{s})
+& \smashedrightarrow{\beta}
+& \fun{ins}(x,\fun{isort}\,s).\\
+  \fun{ins}(x, \el)
+& \smashedrightarrow{\gamma}
+& [x];\\
+   \fun{ins}(x,\cons{y}{s})
+& \smashedrightarrow{\delta}
+& \fun{choose}(x, \cons{y}{s}, x, y).\\
+  \fun{choose}(x, \cons{y}{s}, \fun{succ}\,a, \fun{succ}\,b)
+& \smashedrightarrow{\epsilon}
+& \fun{choose}(x, \cons{y}{s}, a, b);\\
+  \fun{choose}(x, \cons{y}{s}, a, 0)
+& \smashedrightarrow{\phi}
+& \cons{y}{\fun{ins}(x,s)};\\
+  \fun{choose}(x, \cons{y}{s}, 0, \fun{succ}\,b)
+& \smashedrightarrow{\psi}
+& \cons{x}{\cons{y}{s}}.
+\end{array}
+\end{equation*}
+Here, we use Peano's unary encoding of integers:
+\begin{itemize}
+
+  \item the successor function `\fun{succ}', so that \(\fun{succ}(x)\)
+    denotes canonically the value of \(x+1\); (We do not have to assume
+    `-'.)
+
+  \item Also, `0' here actually stands for \fun{zero}().
+
+\end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Dependency pairs in more details}
+
+  Instead of denoting the function symbols that are considered
+  undefined in a dependency pair, as we did before, we are going to
+  mark the defined ones (that is equivalent), with a sharp symbol
+  (\#). This enables to write \textbf{the pairs as rewrite rules},
+  which is more readable.
+
+  \bigskip
+
+  We have five of them:
+  \begin{equation*}
+    \begin{array}{r@{\;}c@{\;}ll}
+        \fun{isort}^\#(\cons{x}{s})
+      & \smashedrightarrow{a}
+      & \fun{ins}^\#(x, \fun{isort}\, s), & \text{from \(\beta\)};\\
+        \fun{isort}^\#(\cons{x}{s})
+      & \smashedrightarrow{b}
+      & \fun{isort}^\#\, s, & \text{from \(\beta\)};\\
+        \fun{ins}^\#(x,\cons{y}{s})
+      & \smashedrightarrow{c}
+      & \fun{choose}^\#(x, \cons{y}{s}, x, y), & \text{from \(\delta\)};\\
+        \fun{choose}^\#(x, \cons{y}{s}, \fun{succ}\,a, \fun{succ}\,b)
+      & \smashedrightarrow{d}
+      & \fun{choose}^\#(x, \cons{y}{s}, a, b), & \text{from \(\epsilon\)};\\
+        \fun{choose}^\#(x, \cons{y}{s}, a, 0)
+      & \smashedrightarrow{e}
+      & \fun{ins}^\#(x,s), & \text{from \(\phi\)}.
+    \end{array}
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Dependency pairs in more details}
+
+  We can visualise better the pairs by drawing the dependency graph:
+  each vertex is labelled by a pair (\(a\), \(b\), \(c\) etc.), and
+  there is an arc \(i \rightarrow j\) if the right\hyp{}hand side of
+  pair~\(i\) matches the left\hyp{}hand side of pair~\(j\):
+  \begin{center}
+    \begin{figure}
+      \includegraphics[bb=80 675 268 705]{dp1}
+    \end{figure}
+  \end{center}
+  That graph contains two \textbf{strongly\hyp{}connected components
+    (SCCs)}: \(\{b\}\) and \(\{c, d, e\}\). We must show that
+  \textbf{all cycles in each SCC map to a strictly decreasing
+    measure.}
+
+  \bigskip
+
+  The first one is easy (it is a loop):
+  \begin{equation*}
+    \cons{x}{s} \succ s
+    \Rightarrow
+    \fun{isort}^\#(\cons{x}{s}) \smashedrightarrow{b} \fun{isort}^\#\,s
+  \end{equation*}
+  Another way to put it is that the projection of the pair~\(b\) on
+  the parameter of \(\fun{isort}^\#\), that is \(\cons{x}{s}
+  \rightarrow s\), if ordered, implies that the original pair is
+  ordered too.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Dependency pairs in more details}
+
+  We can annotate the graph with the ordering relation we found:
+  \begin{center}
+    \begin{figure}
+      \includegraphics[bb=80 675 268 705]{dp2}
+    \end{figure}
+  \end{center}
+  For the second and last SCC \(\{c, d, e\}\), if we project
+  \(\fun{ins}^\#\) and \(\fun{choose}^\#\) on their second parameter,
+  we get:
+  \begin{equation*}
+    \begin{array}{r@{\;}c@{\;}ll}
+      \cons{y}{s} & \smashedrightarrow{c} & \cons{y}{s},\\
+      \cons{y}{s} & \smashedrightarrow{d} & \cons{y}{s},\\
+      \cons{y}{s} & \smashedrightarrow{e} & s.\\
+    \end{array}
+  \end{equation*}
+  So all paths through~\(e\) strictly decreases the second parameter:
+  \begin{center}
+    \begin{figure}
+      \includegraphics[bb=80 675 268 705]{dp3}
+    \end{figure}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Termination / Dependency pairs in more details}
+
+  Now the SCC \(\{c, d, e\}\) reduces to the loop SCC \(\{d\}\).
+
+  \bigskip
+
+  Pair~\(d\) is easy to order: for example, we can project the
+  components of the pair along the third parameter of
+  \(\fun{choose}^\#\):
+  \begin{equation*}
+    \fun{succ} \, a \xrightarrow{d} a.
+  \end{equation*}
+  So
+  \begin{center}
+    \begin{figure}
+      \includegraphics[bb=80 675 268 705]{dp4}
+    \end{figure}
+  \end{center}
+  Remember that \((\succ)\) denotes three different orderings, based
+  on different projections.
+
+  \bigskip
+
+  This entails that the system is terminating.\hfill$\Box$
 
 \end{frame}

@@ -5,9 +5,14 @@
   Let us define a function that sums integers in a non\hyp{}empty
   list:
   \begin{equation*}
-    \fun{sum}([n]) \xrightarrow{\alpha} n\qquad
+    \fun{sum} \, [n] \xrightarrow{\alpha} n\qquad
     \fun{sum}(\cons{n}{s}) \xrightarrow{\beta} n + \fun{sum}(s)
   \end{equation*}
+  where we introduced a notation `\(\fun{sum}[n]\)' instead of
+  `\(\fun{sum}([n])\)'. We will omit the parentheses when there is
+  exactly one argument and it is clear when it starts and ends.
+
+  \bigskip
 
   The view of the system with maximum sharing is:
   \begin{center}
@@ -45,7 +50,7 @@
   The same, with a garbage collector that collects after each
   replacement:
   \begin{center}
-    \includegraphics[bb=149 585 448 662]{sum375_pop1}
+    \includegraphics[bb=71 644 378 721]{sum375_pop1}
   \end{center}
 
 \end{frame}

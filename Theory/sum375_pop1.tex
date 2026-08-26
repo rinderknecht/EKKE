@@ -2,15 +2,17 @@
 
 \documentclass{article}
 
-\pagestyle{empty}
 \usepackage[T1]{fontenc}
-\usepackage{pst-tree}
+\usepackage{pst-tree, pst-eps}
 \usepackage{amsmath,amssymb}
 
-\input{commands}
+\newcommand\fun[1]{\textsf{#1}}
+
+\pagestyle{empty}
 
 \begin{document}
 
+\TeXtoEPS
 \pstree[levelsep=17pt,treesep=14pt,nodesep=2pt,linestyle=none]%
   {\TR{\(15\)}}{
   \pstree[linestyle=solid]{\TR{\texttt{::}}}{
@@ -118,5 +120,6 @@
 \nccurve[angleA=-90,angleB=20,ncurvA=1,nodesep=2pt]{->}{plus31}{seven1}
 \nccurve[angleA=-35,angleB=10,nodesep=2pt]{->}{plus31r}{five}
 %%
+\endTeXtoEPS
 
 \end{document}

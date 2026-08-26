@@ -41,19 +41,21 @@ The relation (\(\equiv\)) is indeed an equivalence because it is
   Of some interest are the following facts.
   \begin{itemize}
 
-    \item If \(f(x)\) and~\(f(y)\) have a value, then \(x \equiv y\)
-      implies \(f(x) \equiv f(y)\).
-
     \item If \(x_1 \leftarrow x_2 \twoheadrightarrow x_3 \equiv x_4
       \rightarrow x_5 \twoheadleftarrow x_6\), then \(x_1 \equiv x_2
       \equiv x_3 \equiv x_4 \equiv x_5 \equiv x_6\).
 
+    \item If \(f(x)\) and~\(f(y)\) have a value, then
+      \[x \equiv y \Rightarrow f(x) \equiv f(y),\]
+      that is, \((\equiv)\) is a \textbf{congruence relation}, as a
+      consequence of confluence and termination.
+
   \end{itemize}
 
   If we want to prove equivalences with variables ranging over
-  infinite sets, like \(\fun{cat}(s,\fun{cat}(t,u)) \equiv
-  \fun{cat}(\fun{cat}(s,t),u)\), we need some \textbf{induction
-  principle}.
+  \textbf{infinite sets}, like \(\fun{cat}(s,\fun{cat}(t,u)) \equiv
+  \fun{cat}(\fun{cat}(s,t),u)\), we need the \textbf{induction
+    principle}.
 
 \end{frame}
 
