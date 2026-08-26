@@ -1432,16 +1432,17 @@ when given as input a positive integer.
 %
 \begin{frame}{Model checking}
 
-  \textbf{Temporal logic} is used to express properties of states
+  \textbf{Temporal logic} is used to express properties of states,
+  like
   \begin{itemize}
 
-    \item \textbf{Safety}: a given (`bad') state can never be
-      reached
+    \item \textbf{safety}: a given (`bad') state can never be
+      reached;
 
-    \item \textbf{Liveness}: a given (`good') state will eventually
-      be reached
+    \item \textbf{liveness}: a given (`good') state will eventually
+      be reached;
 
-    \item \textbf{Reachability}: a given (`good') state can be
+    \item \textbf{reachability}: a given (`good') state can be
       reached.
 
   \end{itemize}
@@ -1531,6 +1532,135 @@ when given as input a positive integer.
   is infinitely often requested, then access will be granted
   infinitely often.' Fairness is most useful when dealing with the
   scheduling of processes.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Temporal Logic / Promela \& SPIN}
+
+\SPIN is a system supporting the design, simulation and model checking
+of asynchronous systems.
+
+\bigskip
+
+Accordingly, sequential computations tend to be abstracted so the
+state of the system reflects mainly process interactions.
+
+\bigskip
+
+These can be classified into several kinds: rendezvous primitives,
+asynchronous message passing through buffered channels, shared
+variables, and any combination of these.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Temporal Logic / Promela \& SPIN}
+
+The language for defining the models is \Promela (\textbf{Pro}cess
+\textbf{me}ta\hyp{}\textbf{la}nguage), from which the name \SPIN is
+actually derived: `\textbf{S}imple \textbf{P}romela
+\textbf{In}terpreter.'
+
+\bigskip
+
+It is an imperative specification language with a \Clang look and
+feel, except for the lack of pointers, dynamic memory allocation and
+functions returning values.
+
+\bigskip
+
+The purpose of those restrictions, and
+others, is mainly to constrain the number of states in the model to be
+finite.
+
+\bigskip
+
+In theory, this enables all correctness properties to become
+decidable, although, in practice, some engineering methods and
+techniques are needed to overcome resource limitations in the presence
+of very large state spaces.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Temporal Logic / Promela \& SPIN}
+
+  The language used in \SPIN to express temporal formulas is based
+  upon the standard \textbf{Linear Temporal Logic} (LTL), where the
+  future is denoted by the set of all possible paths that the system
+  can take, and quantification in formulas is always universal, that
+  is, it is not possible to isolate a strict subset of paths with
+  respect to a property.
+
+  \bigskip
+
+  The typical temporal operators used are
+  \begin{itemize}
+
+    \item $\bigcirc \varphi$, meaning that $\varphi$ is true in the
+      \emph{next} moment in time;
+
+    \item $\Box \varphi$, meaning that $\varphi$ is true in \emph{all}
+      future moments;
+
+    \item $\lozenge \varphi$, meaning that $\varphi$ is true in
+      \emph{some} future moment;
+
+    \item $\varphi \mathrel{\textsf{U}} \psi$, meaning that $\varphi$
+      is true \emph{until} $\psi$ is true.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Temporal Logic / Promela \& SPIN}
+
+  The usual connectors of classical logics are present as well in the
+  LTL, like conjunction, negation etc. but \textbf{time is not
+    explicitly present}, for example in the guise of clocks. As a
+  consequence, time constraints, like timeouts, can not be modelled,
+  but partial orderings of process interactions can.
+
+  \bigskip
+
+  Once a \Promela model and temporal formulas in LTL have been
+  written, \SPIN generates a dedicated \Clang~program, whose run
+  checks the claims against the specification. In case the formulas
+  are found to be satisfied, there is no automatic generation of a
+  skeleton of the implementation, which leaves a gap where errors can
+  be introduced. In case the state space is too large, \Promela allows
+  for the embedding of \Clang code as atomic sections whose scope is
+  local and invisible to other processes (note: there is no hierarchy
+  of processes).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Temporal Logic / Promela \& SPIN}
+
+Of course, this is only feasible if the code in question does not deal
+directly with the control aspect of the protocol, otherwise its
+effects have to be observable in the global state space. Purely
+computational tasks can be abstracted this way, though.
+
+\bigskip
+
+By contrast, note that in the control system industry (e.g.,
+automotive industry, aerospace, robotics, logic circuit design etc.)
+\textbf{synchronous languages} like \Esterel, \Lustre, \Simulink
+etc. are used to express the models, and these allow automatic
+generation of the implementation. By contrast, the application domain
+of \SPIN is that of dynamic \textbf{asynchronous software systems},
+which allow the instanciation and scheduling of new processes at
+run\hyp{}time, and where processes may perform complex computational
+tasks in addition to protocol related operations.
 
 \end{frame}
 
