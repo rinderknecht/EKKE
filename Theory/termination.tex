@@ -575,42 +575,37 @@ Let us consider a short example:
 %
 \begin{frame}{Termination / Polynomial measures}
 
-  \begin{itemize}
+  For instance, let us set the following \textbf{polynomial measure}:
+  \begin{center}
+    \begin{tabular}{r@{\;\,}c@{\;\;}ll}
+      \(\measure{\cons{x}{s}}\) & := & \(1 + 2\cdot\measure{x} +
+      \measure{s}\)\\
+      \(\measure{y}\) & := & \(0\), & if \(y \not\in S\) or
+      \(y=\el\).
+    \end{tabular}
+  \end{center}
 
-    \item For instance, let us set the following \textbf{polynomial
-      measure}:
-      \begin{center}
-        \begin{tabular}{r@{\;\,}c@{\;\;}ll}
-          \(\measure{\cons{x}{s}}\) & := & \(1 + 2\cdot\measure{x} +
-          \measure{s}\)\\
-          \(\measure{y}\) & := & \(0\), & if \(y \not\in S\) or
-          \(y=\el\).
-        \end{tabular}
-      \end{center}
+  We have
+  \begin{align*}
+    \measure{\cons{(\cons{x}{s})}{t}} &  =  3 +
+    4\cdot\measure{x} + 2\cdot\measure{s} + \measure{t}\\
+    \measure{\cons{x}{\cons{s}{t}}} &  =  2 +
+    2\cdot\measure{x} + 2\cdot\measure{s} + \measure{t}
+  \end{align*}
 
-    \item We have
-      \begin{align*}
-        \measure{\cons{(\cons{x}{s})}{t}} &  =  3 +
-        4\cdot\measure{x} + 2\cdot\measure{s} + \measure{t}\\
-        \measure{\cons{x}{\cons{s}{t}}} &  =  2 +
-        2\cdot\measure{x} + 2\cdot\measure{s} + \measure{t}
-      \end{align*}
+  Then
+  \begin{center}
+    \begin{tabular}{r@{\;\;}c@{\;\;}l}
+      \(\measure{\cons{(\cons{x}{s})}{t}}\) & >
+      & \(\measure{\cons{x}{\cons{s}{t}}}\)\\
+      \(\measure{\cons{y}{t}} = 1 + \measure{t}\) & > &
+      \(\measure{t}\)
+    \end{tabular}
+  \end{center}
 
-    \item Then
-      \begin{center}
-        \begin{tabular}{r@{\;\;}c@{\;\;}l}
-          \(\measure{\cons{(\cons{x}{s})}{t}}\) & >
-          & \(\measure{\cons{x}{\cons{s}{t}}}\)\\
-          \(\measure{\cons{y}{t}} = 1 + \measure{t}\) & > &
-          \(\measure{t}\)
-        \end{tabular}
-      \end{center}
-
-    \item Since \(\measure{x} \in \mathbb{N}\), for all~\(x\), these
-      inequalities entail the termination of `\fun{flat}' (no infinite
-      descent).\hfill\(\Box\)
-
-  \end{itemize}
+  Since \(\measure{x} \in \mathbb{N}\), for all~\(x\), these
+  inequalities entail the termination of `\fun{flat}' (no infinite
+  descent).\hfill\(\Box\)
 
 \end{frame}
 
@@ -812,8 +807,8 @@ Here, we use Peano's unary encoding of integers:
       \includegraphics[bb=80 675 268 705]{dp4}
     \end{figure}
   \end{center}
-  Remember that \((\succ)\) denotes three different orderings, based
-  on different projections.
+  (Remember that the immediate subterm ordering \((\succ)\) applies to
+  the result of different projections.)
 
   \bigskip
 

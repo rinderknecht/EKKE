@@ -105,27 +105,31 @@ for all stack values \(s\), \(t\) and~\(u\).
 %
 \begin{frame}{Proving associativity of stack concatenation}
 
-  \begin{itemize}
+ Here, we would like to unify
+ \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\) (called the \textbf{goal})
+ and \(\fun{cat}(\cons{x}{s},t)\) (the pattern).
 
-    \item Here, we would like to unify
-      \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\) (called the
-      \textbf{goal}) and \(\fun{cat}(\cons{x}{s},t)\) (the pattern).
+ \bigskip
 
-    \item The problem is that we have variables that are the same in
-      the goal and the pattern (\(x\), \(s\)~and~\(t\)).
+The problem is that we have variables that are the same in the goal
+and the pattern (\(x\), \(s\)~and~\(t\)).
 
-    \item The case of \(\cons{x}{s}\) and \(\cons{x}{s}\) is harmless,
-      but the unification of \(\fun{cat}(t,u)\) and~\(t\) is not.
+\bigskip
 
-    \item That is why it is best to rename the variables in the
-      pattern so they are not found in the goal (this is the
-      \textbf{\(\alpha\)\hyp{}renaming} of \(\lambda\)\hyp{}calculus),
-      and then try to unify them.
+The case of \(\cons{x}{s}\) and \(\cons{x}{s}\) is harmless, but the
+unification of \(\fun{cat}(t,u)\) and~\(t\) is not.
 
-    \item To simplify things even more, we are going to rename
-      \emph{all} the variables in the definition of `\fun{cat}'.
+\bigskip
 
-  \end{itemize}
+That is why it is best to rename the variables in the pattern so they
+are not found in the goal (this is the
+\textbf{\(\alpha\)\hyp{}renaming} of \(\lambda\)\hyp{}calculus), and
+then try to unify them.
+
+\bigskip
+
+To simplify things even more, we are going to rename \emph{all} the
+variables in the definition of `\fun{cat}'.
 
 \end{frame}
 
@@ -133,28 +137,26 @@ for all stack values \(s\), \(t\) and~\(u\).
 %
 \begin{frame}{Proving associativity of stack concatenation}
 
-  \begin{itemize}
+  Let us try for example the following renaming:
+  \begin{align*}
+    \fun{cat}(        \el,b) &\xrightarrow{\alpha} b\\
+    \fun{cat}(\cons{i}{a},b) &\xrightarrow{\smash{\beta}}
+    \cons{i}{\fun{cat}(a,b)}
+  \end{align*}
 
-    \item Let us try for example the following renaming:
-      \begin{align*}
-        \fun{cat}(        \el,b) &\xrightarrow{\alpha} b\\
-        \fun{cat}(\cons{i}{a},b) &\xrightarrow{\smash{\beta}}
-        \cons{i}{\fun{cat}(a,b)}
-      \end{align*}
+  We want to unify the goal \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\)
+  with the pattern \(\fun{cat}(\cons{i}{a},b)\).
 
-    \item We want to unify the goal
-      \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\) with the pattern
-      \(\fun{cat}(\cons{i}{a},b)\).
+  \bigskip
 
-    \item The unification yields the equations \(x = i\), \(s = a\)
-      and \(\fun{cat}(t,u) = b\).
+  The unification yields the equations \(x = i\), \(s = a\) and
+  \(\fun{cat}(t,u) = b\).
 
-    \item Then we apply the set of equations from the unification, so
-      the right\hyp{}hand side of~\(\beta\),
-      \(\cons{i}{\fun{cat}(a,b)}\), becomes
-      \(\cons{x}{\fun{cat}(s,\fun{cat}(t,u))}\).
+  \bigskip
 
-  \end{itemize}
+  Then we apply the set of equations from the unification, so the
+  right\hyp{}hand side of~\(\beta\), \(\cons{i}{\fun{cat}(a,b)}\),
+  becomes \(\cons{x}{\fun{cat}(s,\fun{cat}(t,u))}\).
 
 \end{frame}
 
