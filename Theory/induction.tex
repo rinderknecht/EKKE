@@ -2,32 +2,31 @@
 %
 \begin{frame}{Inductive proofs}
 
-Let us remark that \(\fun{cat}([1], [2,3,4]) \twoheadrightarrow
-[1,2,3,4] \twoheadleftarrow \fun{cat}([1,2],
-[3,4])\).
+Let us remark that \[\fun{cat}([1], [2;3;4]) \twoheadrightarrow
+[1;2;3;4] \twoheadleftarrow \fun{cat}([1;2], [3;4]).\]
 
 \bigskip
 
-It is enlightening to create \emph{equivalence classes} of terms that
+It is enlightening to create \textbf{equivalence classes} of terms that
 are joinable. These classes then define an equivalence
 relationship~\((\equiv)\) as follows:
 \begin{center}
   \(a \equiv b\) if there exists a unique value~\(v\) such that \(a
   \xrightarrow{\smash[t]{*}} v\) and \(b \xrightarrow{\smash{*}} v\).
 \end{center}
-For instance, \(\fun{cat}([1,2], [3,4]) \equiv \fun{cat}([1],
-[2,3,4])\).
+For instance, \(\fun{cat}([1;2], [3;4]) \equiv \fun{cat}([1],
+[2;3;4])\).
 
 \bigskip
 
 The relation (\(\equiv\)) is indeed an equivalence because it is
 \begin{itemize}
 
-  \item \emph{reflexive}: \(a \equiv a\);
+  \item \textbf{reflexive}: \(a \equiv a\);
 
-  \item \emph{symmetric}: if \(a \equiv b\), then \(b \equiv a\);
+  \item \textbf{symmetric}: if \(a \equiv b\), then \(b \equiv a\);
 
-  \item \emph{transitive}: if \(a \equiv b\) and \(b \equiv c\), then
+  \item \textbf{transitive}: if \(a \equiv b\) and \(b \equiv c\), then
     \(a \equiv c\).
 
 \end{itemize}

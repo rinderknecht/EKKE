@@ -1,0 +1,636 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Analysis of algorithms}
+
+  The mathematical study of the efficiency of algorithms has been
+  pioneered by Knuth, who called it \textbf{analysis of algorithms}.
+
+  \bigskip
+
+  Given a function definition,
+  \begin{enumerate}
+
+    \item we define a measure on the arguments, which represents their
+      size;
+
+    \item we define a measure on time, which abstracts the wall clock
+      time;
+
+    \item we express the abstract time needed to compute calls to that
+      function in terms of the size of its arguments: this is the
+      \textbf{cost function}.
+
+  \end{enumerate}
+
+  The lower the cost, the higher the efficiency.
+
+  For example, for sorting objects, called \textbf{keys}, by comparing
+  them,
+  \begin{enumerate}
+
+    \item the input size is the number of keys,
+
+    \item the abstract unit of time is one comparison,
+
+    \item and the cost maps the number of keys to the number of
+      comparisons to sort the keys.
+
+  \end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost}
+
+  Rewrite systems enable a rather natural notion of cost for
+  functional programs: it is the number of rewrites to reach the value
+  of a function call, assuming that the arguments are values.
+
+  \bigskip
+
+  In other words, the \textbf{exact cost} is the number of calls
+  needed to compute the value of a given call.
+
+  \bigskip
+
+  For stacks, the measure of the size of the input is the number of
+  items it contains, or \textbf{length} of the stack.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Appending a stack}
+
+  For instance, let us recall the appending of a stack:
+  \begin{align*}
+    \fun{cat}(        \el,t) &\xrightarrow{\alpha} t;\\
+    \fun{cat}(\cons{x}{s},t) &\xrightarrow{\smash{\beta}}
+    \cons{x}{\fun{cat}(s,t)}.
+  \end{align*}
+
+  We observe that~\(t\) is invariant, so the cost depends only on the
+  size of the first argument.
+
+  \bigskip
+
+  Let \(\C{\fun{cat}}{n}\) be the cost of the call \(\fun{cat}(s,t)\),
+  for any~\(t\), where \(n\)~is the size of~\(s\). Each rule yields an
+  equation on their cost:
+  \begin{align*}
+    \C{\fun{cat}}{0} & \eqn{\alpha} 1,\\
+    \C{\fun{cat}}{n+1} & \eqn{\smash{\beta}} 1 + \C{\fun{cat}}{n}.
+  \end{align*}
+
+  Together, they yield \(\C{\fun{cat}}{n} = n + 1.\) Why?
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Why?}
+
+  The trick consists in making the difference of two successive terms
+  in the series and then summing up these differences:
+  \begin{align*}
+    \C{\fun{cat}}{n+1} - \C{\fun{cat}}{n} &= 1 & \text{where} \;\, n
+    \geqslant 0\\
+    \sum_{n=0}^{p}{(\C{\fun{cat}}{n+1} - \C{\fun{cat}}{n})} &=
+    \sum_{n=0}^{p}{1} & \text{where} \;\, p \geqslant 0\\
+    \C{\fun{cat}}{p+1} - \C{\fun{cat}}{0} &= p + 1\\
+    \intertext{Replacing \(p+1\) by \(n\) we finally get}
+    \C{\fun{cat}}{n} - \C{\fun{cat}}{0} &= n & \text{where}\;\, n > 0\\
+    \C{\fun{cat}}{n}  &= n + 1
+  \end{align*}
+  Since that replacing \(n\) by \(0\) in the latter formula gives
+  \(\C{\fun{cat}}{0} = 0 + 1 = 1\), we can have only one formula for
+  the cost: \(\C{\fun{cat}}{n} = n + 1,\) where \(n \geqslant
+  0.\)\hfill\(\Box\)
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Reversal of a list}
+
+  Let us consider the definition of a function \fun{rev\(_0\)}
+  reversing a stack:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
+      \fun{cat}(\el,t)
+      & \xrightarrow{\alpha} & t;
+      & \fun{rev}_0\,\el
+      & \xrightarrow{\smash{\gamma}} & \el;\\
+      \fun{cat}(\cons{x}{s},t)
+      & \xrightarrow{\smash{\beta}} & \cons{x}{\fun{cat}(s,t)}.
+      & \fun{rev}_0(\cons{x}{s})
+      & \xrightarrow{\smash{\delta}} & \fun{cat}(\fun{rev}_0\,s, [x]).
+    \end{array}
+  \end{equation*}
+
+  The evaluation of \(\fun{rev}_0\,[3;2;1]\) is shown with abstract
+  syntax trees:
+  \begin{center}
+    \includegraphics[bb=71 637 350 720]{rev0_321_0}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Reversal of a list}
+
+  Here are the definitions again:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
+      \fun{cat}(\el,t)
+      & \xrightarrow{\alpha} & t;
+      & \fun{rev}_0\,\el
+      & \xrightarrow{\smash{\gamma}} & \el;\\
+      \fun{cat}(\cons{x}{s},t)
+      & \xrightarrow{\smash{\beta}} & \cons{x}{\fun{cat}(s,t)}.
+      & \fun{rev}_0(\cons{x}{s})
+      & \xrightarrow{\smash{\delta}} & \fun{cat}(\fun{rev}_0\,s, [x]).
+    \end{array}
+  \end{equation*}
+
+  Let us resume the evaluation of \(\fun{rev}_0\,[3;2;1]\) from where
+  we left:
+  \begin{center}
+    \includegraphics[bb=71 637 358 721]{rev0_321_1}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Reversal of a list}
+
+  Here are the definitions again:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
+      \fun{cat}(\el,t)
+      & \xrightarrow{\alpha} & t;
+      & \fun{rev}_0\,\el
+      & \xrightarrow{\smash{\gamma}} & \el;\\
+      \fun{cat}(\cons{x}{s},t)
+      & \xrightarrow{\smash{\beta}} & \cons{x}{\fun{cat}(s,t)}.
+      & \fun{rev}_0(\cons{x}{s})
+      & \xrightarrow{\smash{\delta}} & \fun{cat}(\fun{rev}_0\,s, [x]).
+    \end{array}
+  \end{equation*}
+
+  Let us resume the evaluation of \(\fun{rev}_0\,[3;2;1]\) from where
+  we left:
+  \begin{center}
+    \includegraphics[bb=71 639 360 721]{rev0_321_1_1}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Reversal of a list}
+
+  Here are the definitions again:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
+      \fun{cat}(\el,t)
+      & \xrightarrow{\alpha} & t;
+      & \fun{rev}_0\,\el
+      & \xrightarrow{\smash{\gamma}} & \el;\\
+      \fun{cat}(\cons{x}{s},t)
+      & \xrightarrow{\smash{\beta}} & \cons{x}{\fun{cat}(s,t)}.
+      & \fun{rev}_0(\cons{x}{s})
+      & \xrightarrow{\smash{\delta}} & \fun{cat}(\fun{rev}_0\,s, [x]).
+    \end{array}
+  \end{equation*}
+
+  Let us resume the evaluation of \(\fun{rev}_0\,[3;2;1]\) from where
+  we left:
+  \begin{center}
+    \includegraphics[bb=71 639 334 721]{rev0_321_2}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Reversal of a list}
+
+  Here are the definitions again:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
+      \fun{cat}(\el,t)
+      & \xrightarrow{\alpha} & t;
+      & \fun{rev}_0\,\el
+      & \xrightarrow{\smash{\gamma}} & \el;\\
+      \fun{cat}(\cons{x}{s},t)
+      & \xrightarrow{\smash{\beta}} & \cons{x}{\fun{cat}(s,t)}.
+      & \fun{rev}_0(\cons{x}{s})
+      & \xrightarrow{\smash{\delta}} & \fun{cat}(\fun{rev}_0\,s, [x]).
+    \end{array}
+  \end{equation*}
+
+  Let us resume the evaluation of \(\fun{rev}_0\,[3;2;1]\) from where
+  we left:
+  \begin{center}
+    \includegraphics[bb=71 637 372 721]{rev0_321_2_1}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Reversal of a list}
+
+  Here are the definitions again:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
+      \fun{cat}(\el,t)
+      & \xrightarrow{\alpha} & t;
+      & \fun{rev}_0\,\el
+      & \xrightarrow{\smash{\gamma}} & \el;\\
+      \fun{cat}(\cons{x}{s},t)
+      & \xrightarrow{\smash{\beta}} & \cons{x}{\fun{cat}(s,t)}.
+      & \fun{rev}_0(\cons{x}{s})
+      & \xrightarrow{\smash{\delta}} & \fun{cat}(\fun{rev}_0\,s, [x]).
+    \end{array}
+  \end{equation*}
+
+  Let us resume the evaluation of \(\fun{rev}_0\,[3;2;1]\) from where
+  we left:
+  \begin{center}
+    \includegraphics[bb=71 637 390 721]{rev0_321_3}
+  \end{center}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Reversal of a list}
+
+  \begin{itemize}
+
+    \item Here are the definitions again:
+      \begin{equation*}
+        \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
+          \fun{cat}(\el,t)
+          & \xrightarrow{\alpha} & t;
+          & \fun{rev}_0\,\el
+          & \xrightarrow{\smash{\gamma}} & \el;\\
+          \fun{cat}(\cons{x}{s},t)
+          & \xrightarrow{\smash{\beta}} & \cons{x}{\fun{cat}(s,t)}.
+          & \fun{rev}_0(\cons{x}{s})
+          & \xrightarrow{\smash{\delta}} & \fun{cat}(\fun{rev}_0\,s, [x]).
+        \end{array}
+      \end{equation*}
+
+    \item Let \(\C{\fun{rev}_0}{k}\) be the cost of evaluating a call
+      \(\fun{rev}_0(l)\), where the list~\(l\) has length~\(k\).
+
+    \item Let \(\C{\fun{cat}}{k}\) be the cost of evaluating a call
+      \(\fun{cat}(l)\), where the list~\(l\) has length~\(k\).
+
+    \item The definition of \fun{rev\(_0\)} directly leads to the
+      recurrence equations
+      \begin{align*}
+        \C{\fun{rev}_0}{0}   & \eqn{\gamma} 1,\\
+        \C{\fun{rev}_0}{k+1} & \eqn{\smash{\delta}} 1 +
+        \C{\fun{rev}_0}{k} + \C{\fun{cat}}{k} = \C{\fun{rev}_0}{k} + k
+        + 2.
+      \end{align*}
+      because the length of \(\fun{rev}_0(s)\) is~\(k\) if the length
+      of~\(s\) is~\(k\), and we already know \(\C{\fun{cat}}{k} = k +
+      1\).
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Reversal of a list}
+
+  We have
+  \begin{equation*}
+    \sum_{k=0}^{n-1}(\C{\fun{rev}_0}{k+1} - \C{\fun{rev}_0}{k})
+    = \C{\fun{rev}_0}{n} - \C{\fun{rev}_0}{0}
+    = \sum_{k=0}^{n-1}(k+2)
+    = 2n + \sum_{k=0}^{n-1}{k}.
+  \end{equation*}
+
+  The remaining sum is a classic of algebra:
+  \begin{equation*}
+    2 \cdot \sum_{k=0}^{n-1}{k}
+    = \sum_{k=0}^{n-1}{k} + \sum_{k=0}^{n-1}{k}
+    = \sum_{k=0}^{n-1}{k} + \sum_{k=0}^{n-1}(n-k-1)
+    = n(n-1).
+  \end{equation*}
+
+  Consequently,
+  \begin{equation*}
+    \sum_{k=0}^{n-1}{k} = \frac{1}{2} n(n-1).
+  \end{equation*}
+
+  We can finally conclude
+  \begin{equation*}
+    \C{\fun{rev}_0}{n}
+    = \C{\fun{rev}_0}{0} + 2n + \frac{1}{2} n(n-1)
+    = \frac{1}{2}n^2 + \frac{3}{2}n + 1
+    \sim \frac{1}{2}n^2.
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Evaluation traces}
+
+  Another way to reach the result is to induce an \textbf{evaluation
+    trace}. A trace is a composition of rewrite rules, noted using the
+  mathematical convention for multiplication.
+
+  \bigskip
+
+  From the evaluation of \(\fun{rev}_0\,[3;3;1]\), we infer the trace
+  \(\T{\fun{rev}_0}{n}\) of the evaluation of \(\fun{rev}_0(s)\),
+  where \(n\)~is the length of~\(s\):
+  \begin{equation*}
+    \T{\fun{rev}_0}{n} \; \text{:=} \;
+    \delta^n\gamma\alpha(\beta\alpha)\dots(\beta^{n-1}\alpha)
+    = \delta^n\gamma \prod_{k=0}^{n-1}{\beta^k\alpha}.
+  \end{equation*}
+
+  This reads: `Apply \(\delta\) \(n\)~times, then \(\gamma\), then
+  \(\alpha\) etc.'
+
+  \bigskip
+
+  If we note \(\len{\T{\fun{rev}_0}{n}}\) the length
+  of~\(\T{\fun{rev}_0}{n}\), that is, the number of rule applications
+  it contains, we expect to have the equations \(\len{x} = 1\), for a
+  rule~\(x\), and \(\len{x \cdot y} = \len{x} + \len{y}\), for rules
+  \(x\)~and~\(y\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Evaluation traces}
+
+  By definition of the cost:
+  \begin{align*}
+    \C{\fun{rev}_0}{n}
+    & \; \text{:=} \; \len{\T{\fun{rev}_0}{n}}
+    = \left\lvert\delta^n\gamma \prod_{k=0}^{n-1}{\beta^k\alpha}\right\lvert
+    = \len{\delta^n\gamma} + \sum_{k=0}^{n-1}\len{\beta^k\alpha}\\
+    & = (n+1) + \!\sum_{k=0}^{n-1}(k+1)
+      = (n+1) + \!\sum_{k=1}^{n}k
+      =  \frac{1}{2}n^2 + \frac{3}{2}n + 1
+      \sim  \frac{1}{2}n^2.
+  \end{align*}
+  Since we inferred our trace from an example, the cost function we
+  derived may be wrong: we need to prove it by \textbf{induction}.
+
+  \medskip
+
+  Let \(\pred{Quad}{n}\) be the property \(\C{\fun{rev}_0}{n} = (n^2 +
+  3n + 2)/2\). We already know that \(\pred{Quad}{0}\) is true. Let us
+  suppose \(\pred{Quad}{n}\) is true for some value of~\(n\)
+  (induction hypothesis) and let us prove \(\pred{Quad}{n+1}\).
+
+  \medskip
+
+  We know \(\C{\fun{rev}_0}{n+1} = \C{\fun{rev}_0}{n} + n + 2\). The
+  induction hypothesis implies
+  \begin{equation*}
+    \C{\fun{rev}_0}{n+1}
+    = (n^2 + 3n + 2)/2 + n + 2
+    = ((n+1)^2 + 3(n+1) + 2)/2,
+  \end{equation*}
+  which is \(\pred{Quad}{n+1}\). Therefore, the induction principle
+  says that the cost we found is always correct.\hfill\(\Box\)
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Empirical approach}
+
+  Yet another way to determine the cost of \fun{rev\(_0\)} consists in
+  first \textbf{guessing} that it is quadratic, that is,
+  \(\C{\fun{rev}_0}{n} = an^2 + bn + c\), where \(a\), \(b\) and~\(c\)
+  are unknowns.
+
+  \bigskip
+
+  Since there are three coefficients, we only need three values
+  of~\(\C{\fun{rev}_0}{n}\) to determine them, for instance \(n = 0,
+  1, 2\).
+
+  \bigskip
+
+  Making some traces, we find \(\C{\fun{rev}_0}{0} = 1\),
+  \(\C{\fun{rev}_0}{1} = 3\) and \(\C{\fun{rev}_0}{2} = 6\), so we
+  solve the linear system
+  \begin{equation*}
+    \C{\fun{rev}_0}{0} = c = 1,\;
+    \C{\fun{rev}_0}{1} = a + b + c = 3,\;
+    \C{\fun{rev}_0}{2} = a \cdot 2^2 + b \cdot 2 + c = 6.
+  \end{equation*}
+
+  Hence \(a = \myfrac1/2\), \(b = \myfrac3/2\) and~\(c = 1\), that is,
+  \(\C{\fun{rev}_0}{n} = (n^2 + 3n + 2)/2\).
+
+  We may have been wrong with our guess of a quadratic cost: we need
+  also here to prove it by \textbf{induction} exactly as before.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Efficient reversal}
+
+  We would be remiss not to consider a more efficient (that is, less
+  costly) definition of a reversal function. Here it is:
+  \begin{align*}
+    \fun{rev}\,s &\smashedrightarrow{\epsilon} \fun{rcat}(s,\el).\\
+    \fun{rcat}(\el,t) & \smashedrightarrow{\zeta} t;\\
+    \fun{rcat}(\cons{x}{s},t) &\smashedrightarrow{\eta}
+    \fun{rcat}(s,\cons{x}{t}).
+  \end{align*}
+  (The name `\fun{rcat}' stands for \emph{reverse and catenate}.)
+
+  \bigskip
+
+  The additional parameter introduced by `\fun{rcat}' accumulates
+  partial results, thus is called an \textbf{accumulator}:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l}
+      \fun{rev}\,[3;2;1]
+      & \smashedrightarrow{\epsilon} & \fun{rcat}([3;2;1],\el)\\
+      & \smashedrightarrow{\eta}     & \fun{rcat}([2;1],[3])\\
+      & \smashedrightarrow{\eta}     & \fun{rcat}([1],[2;3])\\
+      & \smashedrightarrow{\eta}     & \fun{rcat}(\el,[1;2;3])\\
+      & \smashedrightarrow{\zeta}    & [1;2;3].
+    \end{array}
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Exact cost / Efficient reversal}
+
+  To draw the cost of `\fun{rev}', it is sufficient to notice that the
+  first argument of `\fun{rcat}' strictly decreases at each rewrite,
+  so all evaluation traces have the shape \(\epsilon\eta^n\zeta\), so
+  \(\C{\fun{rev}}{n} = n + 2\). The cost is \textbf{linear}, so
+  \fun{rev} must always be used instead of \fun{rev\(_0\)}.
+
+  \bigskip
+
+  The reason for the inefficiency of \fun{rev\(_0\)} can be seen in
+  the fact that rule~\(\delta\) produces a series of calls to
+  `\fun{cat}' following the pattern
+  \begin{equation*}
+    \fun{rev}_0\,s \twoheadrightarrow \fun{cat}(\fun{cat}(\dots
+    \fun{cat}(\el, [x_n]), \dots, [x_2]), [x_1]),
+  \end{equation*}
+  where \(s = [x_1, x_2, \dots, x_n]\). The cost of all these calls to
+  `\fun{cat}' is thus
+  \begin{equation*}
+    1 + 2 + \dots + (n-1) = \tfrac{1}{2}n(n-1).
+  \end{equation*}
+  because the cost of \(\fun{cat}(s,t)\) is \(n+1\). The problem is
+  not calling `\fun{cat}', but the fact that the calls are embedded in
+  the most unfavourable configuration.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Extremal costs}
+
+  When considering sorting programs based on comparisons, the cost
+  varies depending on the algorithm and it also often depends on the
+  original partial ordering of the keys.
+
+  \bigskip
+
+  Therefore, size does not capture all aspects needed to assess
+  efficiency.
+
+  \bigskip
+
+  This quite naturally leads to consider bounds on the cost: for a
+  given input size, we seek the configurations of the input that
+  minimise and maximise the cost, respectively called the
+  \begin{itemize}
+
+    \item \textbf{minimum cost} (cost for the \textbf{best case}) and
+
+    \item \textbf{maximum cost} (cost for the \textbf{worst case}).
+
+  \end{itemize}
+
+  \bigskip
+
+  For example, some sorting algorithms have their worst case when the
+  keys are already sorted, others when they are sorted in reverse
+  order, etc.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Average cost}
+
+  Once we obtain bounds on a cost, the question about the
+  \textbf{average} or \textbf{mean cost} (also called \textbf{expected
+    cost}) arises as well.
+
+  \bigskip
+
+  It is the arithmetic mean of the costs for all possible inputs of a
+  given size.
+
+  \bigskip
+
+  Some care is necessary, as there must be a finite number of such
+  inputs.
+
+  \bigskip
+
+  For instance, to assess the mean cost of sorting algorithms based on
+  comparisons, it is usual to assume
+  \begin{enumerate}
+
+    \item that the input is a series of \(n\)~\textbf{distinct keys} and
+
+    \item that the sum of the costs is taken over all their
+      \textbf{permutations}, thus divided by~\(n!\), the number of
+      permutations of size~\(n\).
+
+  \end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Average cost}
+
+  The uniqueness constraint actually allows the analysis to
+  equivalently, and more simply, consider the permutations of
+  \((1,2,\dots,n)\).
+
+  \bigskip
+
+  Some sorting algorithms, like \textbf{merge sort} or
+  \textbf{insertion sort}, have their average cost
+  \textbf{asymptotically equivalent} to their maximum cost.
+
+  \bigskip
+
+  In other words, for increasingly large numbers of keys, the ratio of
+  the two costs become arbitrarily close to~\(1\).
+
+  \bigskip
+
+  Some others, like \textbf{Hoare's sort}, also known as
+  \textbf{quicksort}, have the growth rate of their average cost being
+  of a lower magnitude than the maximum cost, on an asymptotic scale.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Amortised cost}
+
+  \begin{itemize}
+
+    \item Sometimes an update is costly because it is delayed by an
+      imbalance in the data structure that calls for an immediate
+      remediation, but this remediation itself may lead to a state
+      such that subsequent operations are faster than if the costly
+      update had not happen.
+
+    \item Therefore, when considering a series of updates, it may be
+      overly pessimistic to sum the maximum costs of all the
+      operations considered in isolation.
+
+    \item Instead, \textbf{amortised analysis} takes into account the
+      interactions between updates, so a lower maximum bound on the
+      cost is derived.
+
+    \item Note that this kind of analysis is inherently different from
+      the average case analysis, as its object is the composition of
+      different functions instead of independent calls to the same
+      function on different inputs. \textbf{Amortised analysis is a
+        worst case analysis of a sequence of updates.}
+
+  \end{itemize}
+
+\end{frame}

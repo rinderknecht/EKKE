@@ -35,14 +35,26 @@
 \newcommand\ttcons[2]{{#1}\,$::$\,{#2}}
 \newcommand\FV[1]{\mathcal{F}({#1})}
 \newcommand\smashedrightarrow[1]{\xrightarrow{\smash{#1}}}
-
+\newcommand\smashedleftarrow[1]{\xleftarrow{\smash{#1}}}
 \newcommand\measure[1]{\mathcal{M}\llbracket{#1}\rrbracket}
+\newcommand\Cost{\mathcal{C}}
+\newcommand\C[2]{\Cost_{#2}^{#1}}
+\newcommand\eqn[1]{\mathrel{\stackrel{\smash{#1}}{=}}}
+\newcommand\Trace{\mathcal{T}}
+\newcommand\T[2]{\Trace_{#2}^{#1}}
+\newcommand\len[1]{\lvert{#1}\rvert{}}
 
 % Induction
 %
 \newcommand\predName[1]{\textsf{#1}}
 \newcommand\pred[2]{\predName{#1}({#2})}
 \newcommand\IH[1]{#1}
+
+% The TeXbook, Exercise 11.6, p. 311.
+%
+\def\myfrac#1/#2{\leavevmode\kern.1em
+\raise.5ex\hbox{\the\scriptfont0 #1}\kern-.1em
+/\kern-.15em\lower.25ex\hbox{\the\scriptfont0 #2}}
 
 \title{A Theory of Programming}
 \author{Christian Rinderknecht}
@@ -85,8 +97,8 @@
 \include{tail_calls}
 \include{induction}
 \include{termination}
-\include{associativity}
-\include{unification}
+\include{proofs}
+\include{analysis}
 %\include{mini_ml}
 
 \end{document}

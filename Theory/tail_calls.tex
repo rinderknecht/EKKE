@@ -59,12 +59,12 @@
 %
 \begin{frame}{Tail call optimisation}
 
-  Let us consider an alternate version of \fun{sum}:
+  Let us consider an alternate version of `\fun{sum}':
   \begin{equation*}
     \begin{array}{@{}r@{\;}l@{\;}l@{}}
       \fun{sum}_1(\cons{n}{t}) & \xrightarrow{\gamma}
       & \fun{sum}_0(n,t).\\
-      \fun{sum}_0(n,\el) & \xrightarrow{\delta} & n\\
+      \fun{sum}_0(n,\el) & \xrightarrow{\delta} & n;\\
       \fun{sum}_0(n,\cons{m}{s}) & \xrightarrow{\epsilon}
       & \fun{sum}_0(n+m,s).
     \end{array}

@@ -1,0 +1,62 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath}
+
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{cat}}}{
+  \pstree{\TR{\fun{cat}}}{
+    \pstree{\TR{\fun{cat}}}{
+      \psset{nodesepB=0pt}
+      \pstree[nodesepA=0pt]{\TR{\fbox{\fun{rev}\(_0\)}}}{
+        \psset{nodesepB=2pt}
+        \TR{\texttt{[]}}
+      }
+      \psset{nodesepB=2pt}
+      \pstree{\TR{\texttt{::}}}{
+        \TR{\(1\)}
+        \TR{\texttt{[]}}
+      }
+    }
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(2\)}
+      \TR{\texttt{[]}}
+    }
+  }
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\(3\)}
+    \TR{\texttt{[]}}
+  }
+}
+\hspace{13pt}\raisebox{-3pt}{\(\xrightarrow{\gamma}\)}\hspace{12pt}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\fun{cat}}}{
+  \pstree{\TR{\fun{cat}}}{
+    \psset{nodesepB=0pt}
+    \pstree[nodesepA=0pt]{\TR{\fbox{\fun{cat}}}}{
+      \psset{nodesepB=2pt}
+      \TR{\texttt{[]}}
+      \pstree[nodesepA=2pt]{\TR{\texttt{::}}}{
+        \TR{\(1\)}
+        \TR{\texttt{[]}}
+      }
+    }
+    \psset{nodesepB=2pt}
+    \pstree{\TR{\texttt{::}}}{
+      \TR{\(2\)}
+      \TR{\texttt{[]}}
+    }
+  }
+  \pstree{\TR{\texttt{::}}}{
+    \TR{\(3\)}
+    \TR{\texttt{[]}}
+  }
+}
+\endTeXtoEPS
+
+\end{document}

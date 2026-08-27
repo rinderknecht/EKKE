@@ -80,8 +80,8 @@
   Here is the definition of the factorial function as a functional
   rewrite system:
   \begin{align*}
-    \fun{fact} \, 0 & \rightarrow 1\\
-    \fun{fact} \, n & \rightarrow n \times \fun{fact}(n-1)
+    \fun{fact} \, 0 & \rightarrow 1;\\
+    \fun{fact} \, n & \rightarrow n \times \fun{fact}(n-1).
   \end{align*}
 
   \medskip
@@ -279,7 +279,7 @@ Let us consider a short example:
 \begin{equation*}
 \begin{array}{r@{\;}l@{\;}l}
 \fun{isort}\,[3,1,2]
-& \smashedrightarrow{\beta} & \fun{ins}(3,\fun{isort}\,[1,2])\\
+& \smashedrightarrow{\beta} & \fun{ins}(3,\fun{isort}\,[1;2])\\
 & \smashedrightarrow{\beta}
 & \fun{ins}(3,\fun{ins}(1,\fun{isort}\,[2]))\\
 & \smashedrightarrow{\beta}
@@ -289,14 +289,14 @@ Let us consider a short example:
 & \smashedrightarrow{\delta}
 & \fun{ins}(3,\fun{ins}(1,[2]))\\
 & \smashedrightarrow{\delta}
-& \fun{ins}(3,[1,2])\\
+& \fun{ins}(3,[1;2])\\
 & \smashedrightarrow{\gamma}
 & \cons{1}{\fun{ins}(3,[2])}\\
 & \smashedrightarrow{\gamma}
 & \cons{1}{\cons{2}{\fun{ins}(3,\el)}}\\
 & \smashedrightarrow{\delta}
 & \cons{1}{\cons{2}{\cons{3}{\el}}}\\
-& = & [1,2,3].
+& = & [1;2;3].
 \end{array}
 \end{equation*}
 
