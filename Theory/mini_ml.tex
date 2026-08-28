@@ -2,18 +2,18 @@
 %
 \begin{frame}{A mini functional language}
 
-  \begin{itemize}
+  Rewrite systems are a good mathematical and mental model for
+  understanding functional languages.
 
-    \item Rewrite systems are a good mathematical and mental model for
-      understanding functional languages.
+  \bigskip
 
-    \item It is time now to learn an actual functional language, so we
-      can run programs.
+  It is time now to learn an actual functional language, so we can run
+  programs.
 
-    \item We are going to start with a mini language that is actually
-      a subset of \OCaml, then grow it step by step.
+  \bigskip
 
-  \end{itemize}
+  We are going to start with a mini language that is actually a subset
+  of \OCaml, then grow it step by step.
 
 \end{frame}
 
@@ -21,93 +21,95 @@
 %
 \begin{frame}{Growing a language}
 
-  \begin{itemize}
+  The presentation is principled, that is, it relies on a systematic
+  classification of the \textbf{syntactic constructs} and their
+  \textbf{formal semantics}.
 
-    \item The presentation is principled, that is, it relies on a
-      systematic classification of the \textbf{syntactic constructs}
-      and their \textbf{formal semantics}.
+  \bigskip
 
-    \item When we reach a certain complexity, we will drop the formal
-      descriptions.
+  When we reach a certain complexity, we will drop the formal
+  descriptions.
 
-    \item Both theoretical and pragmatic, our approach is
-      complementary to those usually found in books.
+  \bigskip
 
-    %% \item We will demonstrate how good \OCaml is for compiler
-    %%   construction by writing an interpreter for our mini language.
+  Both theoretical and pragmatic, our approach is complementary to
+  those usually found in books.
 
-    \item Let mini-ML be the name of the subset of \OCaml we are going
-      to grow.
+  \bigskip
 
-  \end{itemize}
+  Let mini-ML be the name of the subset of \OCaml we are going to
+  grow.
+
 \end{frame}
 
 % ------------------------------------------------------------------------
 %
 \begin{frame}{Appending a stack}
 
-  \begin{itemize}
+  The notation we introduced for stacks in the context of rewrite
+  systems actually follows the \OCaml convention.
 
-    \item The notation we introduced for stacks in the context of
-      rewrite systems actually follows the \OCaml convention.
+  \bigskip
 
-    \item In the context of functional programming, stacks are often
-      called \textbf{lists}.
+  In the context of functional programming, stacks are often called
+  \textbf{lists}.
 
-    \item Here are different ways to express the same list in \OCaml:
-      \begin{equation*}
-        1::(2::3::(4::\el)) = 1::2::3::4::\el = [1;2;3;4].
-      \end{equation*}
+  \bigskip
 
-    \item Before starting, let us see how a familiar function defined
-      with a rewrite system looks like in \OCaml.
+  Here are different ways to express the same list in \OCaml:
+  \begin{equation*}
+    1::(2::3::(4::\el)) = 1::2::3::4::\el = [1;2;3;4].
+  \end{equation*}
 
-    \item Let us recall the appending of a stack:
-      \begin{align*}
-        \fun{cat}(        \el,t) &\xrightarrow{\alpha} t\\
-        \fun{cat}(\cons{x}{s},t) &\xrightarrow{\smash\beta}
-        \cons{x}{\fun{cat}(s,t)}
-      \end{align*}
+  Before starting, let us see how a familiar function defined with a
+  rewrite system looks like in \OCaml.
 
-  \end{itemize}
+  \bigskip
+
+  Let us recall the appending of a stack:
+  \begin{align*}
+    \fun{cat}(        \el,t) &\smashedrightarrow{\alpha} t;\\
+    \fun{cat}(\cons{x}{s},t) &\smashedrightarrow{\beta} \cons{x}{\fun{cat}(s,t)}.
+  \end{align*}
+
 \end{frame}
 
 % ------------------------------------------------------------------------
 %
 \begin{frame}[fragile]{Appending a stack}
 
-  \begin{itemize}
+  In \OCaml, the function name is not repeated (once for each rule).
 
-    \item In \OCaml, the function name is not repeated (once for each
-      rule).
+  \bigskip
 
-    \item Instead, it is introduced once by a \textbf{binder} called
-      \Xlet, like so:
-      \vspace*{-3mm}
+  Instead, it is introduced once by a \textbf{binder} called `\Xlet',
+  like so:
+  \vspace*{-3mm}
 \begin{alltt}
 \small
 \textbf{let} cat = \textbf{function} ...
 \end{alltt}
-
-     \item The complete definition in \OCaml is:
-      \vspace*{-3mm}
+  The complete definition in \OCaml is:
+  \vspace*{-3mm}
 \begin{alltt}
 \small
 \textbf{let} \textbf{rec} cat = \textbf{function}
-\ \ \ \ [], t \(\rightarrow\) t
+\ \ \ [], t \(\rightarrow\) t
 \(\mid\) \ttcons{x}{s}, t \(\rightarrow\) \ttcons{x}{\fun{cat}(s,t)}
 \end{alltt}
 
-     \item Note the addition of the keyword \Xrec: this is meant so
-       the call \(\fun{cat}(s,t)\) indeed refers to the function being
-       defined.
+   Note the addition of the keyword \Xrec: this is meant so the call
+   \(\fun{cat}(s,t)\) indeed refers to the function being defined.
 
-     \item With rewrite systems, recursion is not an issue: any call
-       matching a pattern can be rewritten.
+   \bigskip
 
-     \item Note also how the two rules are introduced by the keyword
-       \Xfunction and are separated by a vertical line.
-  \end{itemize}
+   With rewrite systems, recursion is not an issue: any call matching
+   a pattern can be rewritten.
+
+   \bigskip
+
+   Note also how the two rules are introduced by the keyword
+   \Xfunction and are separated by a vertical line.
 
 \end{frame}
 
@@ -115,34 +117,37 @@
 %
 \begin{frame}{Sentences}
 
-  \begin{itemize}
+  An \OCaml program is a sequence of sentences. A \textbf{sentence},
+  or \textbf{global definition}, is defined by the following cases,
+  where~\(e\) denotes an expression, \(x\)~is a variable, and `\Xlet'
+  and~`\Xrec' are keywords:
 
-    \item An \OCaml program is a sequence of sentences.
+  \medskip
 
-    \item A \textbf{sentence}, or \textbf{global definition}, is defined
-      by the following cases, where~\(e\) denotes an expression,
-      \(x\)~is a variable, and \Xlet and~\Xrec are keywords:
-      \linebreak
-      \begin{tabular}{rll}
-        $\bullet$ & \emph{global definition}
-        & \phrase{$\Xlet \; x \; = \; e$}\\
-        $\bullet$ & \emph{global recursive definition}
-        & \phrase{$\Xlet \; \Xrec \; x \; = \; e$}
-      \end{tabular}
+  \begin{tabular}{rll}
+    $\bullet$ & \emph{global definition}
+    & \phrase{$\Xlet \; x \; = \; e$}\\
+    $\bullet$ & \emph{global recursive definition}
+    & \phrase{$\Xlet \; \Xrec \; x \; = \; e$}
+  \end{tabular}
 
-    \item Global definitions can be optionally followed by two
-      semicolons: these are necessary when inputting the sentences in
-      the toplevel loop (prompted after running the command
-      \texttt{ocaml} from a Unix shell).
+  \medskip
 
-    \item Note that the keyword \Xrec is necessary to enable
-      recursion. (We will see later how that works precisely.)
+  Global definitions can be optionally followed by two semicolons:
+  these are necessary when inputting the sentences in the toplevel
+  loop (prompted after running the command \texttt{\small ocaml} from
+  a Unix shell).
 
-    \item For~\(e\) to be an expression means that \(e\)~denotes a
-      part of a sentence which is classified as an expression
-      according to its \textbf{syntax}.
+  \bigskip
 
-  \end{itemize}
+  Note that the keyword `\Xrec' is necessary to enable recursion. (We
+  will see later how that works precisely.)
+
+  \bigskip
+
+  For~\(e\) to be an expression means that \(e\)~denotes a part of a
+  sentence which is classified as an expression according to its
+  \textbf{syntax}.
 
 \end{frame}
 
@@ -216,17 +221,17 @@
         & $\lpar{e}\rpar$\\
         $\bullet$
         & \emph{local definition}
-        & $\Xlet \; x = e_1 \Xin e_2$
+        & $\Xlet \; x = e_1 \; \Xin \; e_2$
       \end{tabular}
 
-    \item Note how the keywords \Xrec and \Xfunction, as well as the
-      definition of multiple cases (as seen in the definition of
+    \item Note how the keywords `\Xrec' and `\Xfunction', as well as
+      the definition of multiple cases (as seen in the definition of
       `\fun{cat}' earlier) is not found above: this is because we want
       to focus on other aspects of \OCaml first, like
       higher\hyp{}order functions.
 
-    \item Instead we have \Xfun, which enables only one case made of a
-      variable.
+    \item Instead, we have `\Xfun', which enables only one case made
+      of a variable (more generally, irrefutable patterns).
 
   \end{itemize}
 
@@ -339,13 +344,13 @@
     \item Function calls have higher priority than operator calls, for
       example,
       \begin{equation*}
-        f \; 3 + 4 \; = \; (f \; 3) + 4 \; = \; f\;(3) + 4.
+        f \; 3 + 4 \; = \; (f \; 3) + 4 \; = \; f(3) + 4.
       \end{equation*}
 
     \item Operator calls have higher syntactic priority than
       abstractions, for instance,
       \begin{equation*}
-        \Xfun \; x \rightarrow x + y \;=\;
+        \Xfun \; x \rightarrow x + y \quad\text{is the same as}\quad
         \Xfun \; x \rightarrow (x + y).
       \end{equation*}
 
@@ -357,68 +362,62 @@
 %
 \begin{frame}[fragile]{Function calls}
 
-  \begin{itemize}
+  Note the difference between \texttt{\small f x y} and \texttt{\small
+    f(x,y)}.
 
-    \item Note the difference between \texttt{\small f x y}
-      and \texttt{\small f(x,y)}.
+  \bigskip
 
-    \item The former is to be understood as \texttt{\small (f(x))(y)}
-      which means that there are \emph{two} calls:
-      \begin{enumerate}
+  The former is to be understood as \texttt{\small (f(x))(y)} which
+  means that there are \emph{two} calls:
+  \begin{enumerate}
 
-        \item First, the call \texttt{\small f(x)}
-          is evaluated. Let us assume that its value is \texttt{\small g}.
+  \item First, the call \texttt{\small f(x)}
+    is evaluated. Let us assume that its value is \texttt{\small g}.
 
-        \item Second, the call \texttt{\small g(y)} is evaluated.
+  \item Second, the call \texttt{\small g(y)} is evaluated.
 
-      \end{enumerate}
+  \end{enumerate}
 
-    \item In other words, the first case is equivalent to
-      \vspace*{-3mm}
+  In other words, the first case is equivalent to
+  \vspace*{-3mm}
 \begin{alltt}
 \small
 \textbf{let} g = f x \textbf{in} g y
 \end{alltt}
 
-  \end{itemize}
 \end{frame}
 
 % ------------------------------------------------------------------------
 %
 \begin{frame}{Abstract syntax}
 
-  \begin{itemize}
+  A graphical representation of programs (here, expressions) as trees
+  proves very handy when studying their semantics (meaning):
 
-    \item A graphical representation of programs (here, expressions)
-      as trees proves very handy when studying their semantics
-      (meaning):
-      \smallskip
-      \begin{center}
-        \begin{tabular}{lc}
-          \toprule
-          \multicolumn{1}{c}{Expression}
-          & \multicolumn{1}{c}{Tree}\\
-          \toprule
-          $x$
-          & $x$\\
-          $\Xfun \; x \rightarrow e$
-          & \includegraphics[bb=72 697 93 721]{fun_tree}\\
-          $e_1 \; e_2$
-          & \includegraphics[bb=72 695 101 720]{app_tree}\\
-          \bottomrule
-        \end{tabular}
-      \end{center}
-      \smallskip
+  \begin{center}
+    \begin{tabular}{lc}
+      \toprule
+      \multicolumn{1}{c}{Expression}
+        & \multicolumn{1}{c}{Tree}\\
+        \toprule
+        $x$
+        & $x$\\
+        $\Xfun \; x \rightarrow e$
+        & \includegraphics[bb=148 638 171 662]{fun_tree}\\
+        $e_1 \; e_2$
+        & \includegraphics[bb=148 637 177 663]{app_tree}\\
+        \bottomrule
+    \end{tabular}
+  \end{center}
 
-      \item Note that we needed some symbol for the root of the
-        application tree (\texttt{\small \$}). Traditionally, that
-        symbol is (\texttt{\small @}), but \OCaml uses it already for
-        something else.
+  Note that we needed some symbol for the root of the application tree
+  (\texttt{\small \$}). Traditionally, that symbol is (\texttt{\small
+    @}), but \OCaml uses it already for something else.
 
-      \item When trees represent programs, they are called
-        \textbf{abstract syntax trees} (AST).
+  \bigskip
 
-  \end{itemize}
+  When trees represent programs, they are called \textbf{abstract
+    syntax trees} (AST).
 
 \end{frame}
 
@@ -426,27 +425,22 @@
 %
 \begin{frame}{Abstract syntax}
 
-  \begin{itemize}
+  Intuitively, the method for constructing abstract syntax trees
+  consists in fully parenthesising the expression. Each parenthesis
+  corresponds to a subexpression and each subexpression corresponds to
+  a subtree.
 
-    \item Intuitively, the method for constructing abstract syntax
-      trees consists in fully parenthesising the expression.
+  \bigskip
 
-    \item Each parenthesis corresponds to a subexpression and each
-      subexpression corresponds to a subtree.
-
-    \item The tree is built from the root, down to the leaves, by
-      traversing subexpressions from the outermost to the innermost,
-      that is, the most embedded ones.
-
-    \item For instance, consider
-      \begin{center}
-        \includegraphics{arith_tree1}
-        \qquad
-        \includegraphics[bb=51 658 175 721]{arith_tree2}
-      \end{center}
+  The tree is built from the root, down to the leaves, by traversing
+  subexpressions from the outermost to the innermost, that is, the
+  most embedded ones. For instance, consider
+  \begin{center}
+    \includegraphics[bb=148 617 233 660]{arith_tree1}
+    \qquad
+    \includegraphics[bb=148 599 246 662]{arith_tree2}
+  \end{center}
   \centerline{\texttt{\small ((1+2)*(5/1)) \quad\qquad \texttt{\small \textbf{let} x = 1 \textbf{in} (1+2)*5/1}}}
-
-  \end{itemize}
 
 \end{frame}
 
@@ -454,63 +448,24 @@
 %
 \begin{frame}[fragile]{Abstract syntax}
 
-  \begin{itemize}
-
-  \item Another example:
+  Another example:
     \vspace*{-3mm}
 \begin{alltt}
 \small
 \textbf{let} x = 1 \textbf{in} ((\textbf{let} x = 2 \textbf{in} x) + x)
 \end{alltt}
-    corresponds to the abstract syntax tree
-    \begin{center}
-      \includegraphics[bb=71 658 160 721]{arith_tree3}
-    \end{center}
+  corresponds to the abstract syntax tree
+  \begin{center}
+    \includegraphics[bb=148 599 221 662]{arith_tree3}
+  \end{center}
 
-    \item This example features two local definitions of `x': is one
-      the redefinition of the other? Is one hiding the other?
+  This example features two local definitions of `x': is one the
+  redefinition of the other? Is one hiding the other?
 
-    \item There are also two uses of `x': which use corresponds to
-      which definition?
+  \bigskip
 
-  \end{itemize}
-
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}{Bindings, environments, scope}
-
-  \begin{itemize}
-
-    \item To answer theses questions, we must first understand
-      \begin{itemize}
-
-        \item what a \textbf{binding} is,
-
-        \item what the \textbf{scope} of a binding is, and
-
-        \item what an \textbf{environment} is.
-      \end{itemize}
-
-    \item The expression we called \textbf{local definition} earlier:
-      \begin{equation*}
-        \Xlet \; x \; = \; e_1 \; \Xin \; e_2
-      \end{equation*}
-      is evaluated as follows:
-      \begin{enumerate}
-
-        \item The expression \(e_1\)~is evaluated,
-
-        \item assuming it has a value~\(v_1\), then \(v_1\) is
-          \textbf{bound} to the variable~\(x\),
-
-        \item the expression \(e_2\)~is evaluated under the assumption
-          that \(x\)~is bound to~\(v_1\).
-
-      \end{enumerate}
-
-  \end{itemize}
+  There are also two uses of `x': which use corresponds to which
+  definition?
 
 \end{frame}
 
@@ -518,49 +473,66 @@
 %
 \begin{frame}{Bindings, environments, scope}
 
+  To answer theses questions, we must first understand
   \begin{itemize}
 
-    \item A local definition
-      \begin{equation*}
-        \Xlet \; x \; = \; e_1 \; \Xin \; e_2
-      \end{equation*}
-      associates the value~\(v_1\) of expression~\(e_1\) to the
-      variable denoted by~\(x\), making up a \textbf{binding} noted
-      \(x \; \mapsto \; v_1\), and then proceeds to evaluate~\(e_2\)
-      with this binding available.
+    \item what a \textbf{binding} is,
 
-    \item The binding \(x \mapsto v_1\) is not usable
-      outside the evaluation of~\(e_2\).
+    \item what the \textbf{scope} of a binding is, and
 
-    \item We say that the \textbf{scope} of the definition is made of
-      the subtrees of the abstract syntax tree corresponding
-      to~\(e_2\) where the binding of that definition is usable
-      (`visible').
-
-    \item A mapping from variables to values is called an
-      \textbf{environment}.
-
-    \item Let us note \(\rho_\varnothing\) the empty environment.
-
-    \item We write
-      \begin{equation*}
-        x \mapsto v \; \oplus \ \rho
-      \end{equation*}
-      to mean that the binding \((x \mapsto v)\) was added to the
-      environment~\(\rho\).
-
-      %% For example, \([a \mapsto 0; b \mapsto \textbf{fun} \, x
-      %%   \rightarrow x]\).
-
-%%    \item We use the same notation for environments as for \OCaml
-%%      lists, each new binding being pushed on the left.
-
-    %% \item Note that a binding is a pair made of a variable and a
-    %%   value, and we could therefore write it as \((x,v)\), but the
-    %%   notation \(x \mapsto v\) explicits the interpretation as a
-    %%   binding.
-
+    \item what an \textbf{environment} is.
   \end{itemize}
+
+  The expression we called \textbf{local definition} earlier:
+  \begin{equation*}
+    \Xlet \; x = e_1 \; \Xin \; e_2
+  \end{equation*}
+  is evaluated as follows:
+  \begin{enumerate}
+
+    \item The expression \(e_1\)~is evaluated,
+
+    \item assuming it has a value~\(v_1\), then \(v_1\) is
+      \textbf{bound} to the variable~\(x\),
+
+    \item the expression \(e_2\)~is evaluated under the assumption
+      that \(x\)~is bound to~\(v_1\).
+
+  \end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Bindings, environments, scope}
+
+  A local definition
+  \begin{equation*}
+    \Xlet \; x = e_1 \; \Xin \; e_2
+  \end{equation*}
+  associates the value~\(v_1\) of expression~\(e_1\) to the variable
+  denoted by~\(x\), making up a \textbf{binding} noted \(x \; \mapsto
+  \; v_1\), and then proceeds to evaluate~\(e_2\) with this binding
+  available.
+
+  \bigskip
+
+  The binding \(x \mapsto v_1\) is not usable outside the evaluation
+  of~\(e_2\). We say that the \textbf{scope} of the definition is made
+  of the subtrees of the abstract syntax tree corresponding to~\(e_2\)
+  where the binding of that definition is usable (`visible').
+
+  \bigskip
+
+  A mapping from variables to values is called an
+  \textbf{environment}. Let us note \(\rho_\varnothing\) the empty
+  environment. We write
+  \begin{equation*}
+    (x \mapsto v) \oplus \rho \quad\text{or, simply,}\quad x \mapsto v
+    \oplus \rho,
+  \end{equation*}
+  to mean that the binding \(x \mapsto v\) was added to the
+  environment~\(\rho\).
 
 \end{frame}
 
@@ -568,10 +540,18 @@
 %
 \begin{frame}[fragile]{Bindings, environments, scope}
 
-  \begin{itemize}
-
-    \item Consider again the program
-\vspace*{-3mm}
+  Environments are functions and are updated as follows:
+  \begin{equation}
+    (x \mapsto v \oplus \rho )(y) \triangleq
+    \begin{cases}
+      v         & \text{if} \; x = y,\\
+      \sigma(y) & \text{otherwise.}
+    \end{cases}
+  \end{equation}
+  with \(\forall x.\rho_\varnothing(x) = \bot\) and \(\bot\) is
+  interpreted as an \textbf{error}. Errors are special
+  values. Consider again the program
+  \vspace*{-3mm}
 \begin{alltt}
 \small
 \textbf{let} x = 0 \textbf{in}
@@ -581,17 +561,14 @@
 \textbf{in} x + 1
 \end{alltt}
 
-    \item The variable~\texttt{\small x} in the expression
-      \texttt{\small x+1} denotes the value of the expression bound to
-      the variable~\texttt{\small x} in the previous line, not the
-      first.
+  The variable~\texttt{\small x} in the expression \texttt{\small x+1}
+  denotes the value of the expression bound to the
+  variable~\texttt{\small x} in the previous line, not the first.
 
-    \item Bindings are ordered in the environment \textbf{by the order
-      of their definitions}.
+  \bigskip
 
-    \item Let us follow the evolution of the environment.
-
-  \end{itemize}
+  Bindings are ordered in the environment \textbf{by the order of
+    their definitions}. Let us follow the evolution of the environment.
 
 \end{frame}
 
@@ -641,12 +618,12 @@
 
   \begin{itemize}
 
-    %% \item If a variable~\(x\) is not bound to a value in an
-    %%   environment~\(\rho\), we say that \(x\)~is \textbf{free}
-    %%   in~\(\rho\).
+    \item If a variable~\(x\) is not bound to a value in an
+      environment~\(\rho\), we say that \(x\)~is \textbf{free}
+      in~\(\rho\).
 
-    \item By definition, a variable is \textbf{free} in an expression if
-      it is not bound by a \Xlet or a \Xfun.
+    \item By definition, a variable is \textbf{free} in an expression
+      if it is not bound by a `\Xlet' or a `\Xfun'.
 
     \item We can understand this concept on a graphic representation
       of the abstract syntax tree.
@@ -654,11 +631,11 @@
     \item From each variable occurrence, we move up, towards the
       root.
 
-    \item If we encounter a \Xlet that binds that variable (in the
+    \item If we encounter a `\Xlet' that binds that variable (in the
       left child), we create an oriented edge from the variable to
-      that \Xlet, and we stop: the variable is bound.
+      that `\Xlet', and we stop: the variable is bound.
 
-    \item Otherwise, if we reach the root (no such \Xlet has been
+    \item Otherwise, if we reach the root (no such `\Xlet' has been
       found), then the variable is free.
 
   \end{itemize}
@@ -669,57 +646,66 @@
 %
 \begin{frame}{Free variables}
 
-  \begin{center}
-    \includegraphics[bb=5 658 169 721]{free_var1}
-    \includegraphics{free_var2}
-  \end{center}
-  \centerline{\texttt{\footnotesize \textbf{let} x = 1 \textbf{in}
-      ((\textbf{let} x = 2 \textbf{in} x) + x)} \qquad
-    \texttt{\footnotesize \textbf{fun} y \(\rightarrow\) x + (\textbf{fun} x
-      \(\rightarrow\) x) y}}
+  \begin{figure}
+    \begin{center}
+      \includegraphics[bb=148 599 221 662]{free_var1}
+      \caption{\textbf{let} x = 1 \textbf{in}
+      ((\textbf{let} x = 2 \textbf{in} x) + x)}
+    \end{center}
+  \end{figure}
 
-  \begin{itemize}
+  \begin{figure}
+    \begin{center}
+      \includegraphics[bb=148 582 211 662]{free_var2}
+    \end{center}
+    \caption{\textbf{fun} y \(\rightarrow\) x + (\textbf{fun} x
+      \(\rightarrow\) x) y}
+  \end{figure}
 
-    \item A similar situation arises with functions: \Xfun is a
-      binder, just like \Xlet.
-
-    \item In \Xfun $x \rightarrow e$, the variable~\(x\) (called a
-      \textbf{parameter}) may shadow (hide) another variable~\(x\)
-      defined on the path to the root.
-
-    \item See above for an example.
-
-    \item We note \(\FV{e}\) the set of the variables free in~\(e\).
-
-  \end{itemize}
 \end{frame}
 
 % ------------------------------------------------------------------------
 %
 \begin{frame}{Free variables}
 
-  \begin{itemize}
+  A similar situation arises with functions: `\Xfun' is a binder, just
+  like `\Xlet'.
 
-    \item It is easy to formally define \(\mathcal{F}\) by case and
-      recursively:
-      \begin{align*}
-        \FV{x} &= \{x\}, \quad\texttt{where $x$ is a
-          variable}\\
-        \FV{c} &= \varnothing, \quad\texttt{where $c$ is a
-          constant}\\
-        \FV{\Xfun \; x \rightarrow e} &=
-          \FV{e} \backslash \{x\}\\
-          \FV{e_1 \; e_2} &= \FV{e_1} \;\cup\; \FV{e_2}\\
-          \FV{\Xlet \; x  = e_1 \; \Xin \; e_2} &=
-          \FV{e_1} \;\cup\; \FV{e_2} \backslash \{x\}\\
-          \FV{e_1 \; \texttt{+} \; e_2} &= \FV{e_1} \;\cup\; \FV{e_2}
-      \end{align*}
+  \bigskip
 
-    \item Now, instead of drawing abstract syntax trees, let us use
-      these equations to compute the free variables of our previous
-      examples.
+  In \Xfun $x \rightarrow e$, the variable~\(x\) (called a
+  \textbf{parameter}) may shadow (hide) another variable~\(x\) defined
+  on the path to the root.
 
-  \end{itemize}
+  \bigskip
+
+  See previous page for two examples.
+
+  \bigskip
+
+  We note \(\FV{e}\) the set of the variables free in~\(e\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Free variables}
+
+  It is easy to formally define \(\mathcal{F}\) by case and
+  recursively:
+  \begin{align*}
+    \FV{x} &= \{x\}, \quad\text{where $x$ is a  variable}\\
+    \FV{c} &= \varnothing, \quad\text{where $c$ is a constant}\\
+    \FV{\Xfun \; x \rightarrow e} &=
+    \FV{e} \backslash \{x\}\\
+    \FV{e_1 \; e_2} &= \FV{e_1} \;\cup\; \FV{e_2}\\
+    \FV{\Xlet \; x  = e_1 \; \Xin \; e_2} &=
+    \FV{e_1} \;\cup\; \FV{e_2} \backslash \{x\}\\
+    \FV{e_1 \; \texttt{+} \; e_2} &= \FV{e_1} \;\cup\; \FV{e_2}
+  \end{align*}
+
+  Now, instead of drawing abstract syntax trees, let us use these
+  equations to compute the free variables of our previous examples.
 
 \end{frame}
 
@@ -783,19 +769,20 @@
     \item That is, an expression~\(e\) is closed if, and only if,
       \(\FV{e} = \varnothing\).
 
-    \item Only a closed expression can be evaluated (executed).
-
     \item By extension, we say that~\(e\) is \textbf{closed in an
       environment}~\(\rho\) if \(\FV{e} \subseteq \dom{\rho}\) (the
       free variables are bound in~\(\rho\)).
 
-    \item That is why the first static analysis performed by compilers
-      consists in determining the variables which are free in
-      expressions: if the program is not closed, it is rejected.
+    \item Only a closed expression can be evaluated (executed). That
+      is why the first static analysis performed by compilers consists
+      in determining the variables which are free in expressions: if
+      the program is not closed, it is rejected.
 
-    \item In the case of \texttt{\small \textbf{fun} y \(\rightarrow\)
-      x + (\textbf{fun} x \(\rightarrow\) x) y}, the \OCaml compiler
-      prints
+    \item In the case of
+      \begin{center}
+        \Xfun y $\rightarrow$ x + (\Xfun x $\rightarrow$ x) y,
+      \end{center}
+      the \OCaml compiler prints out
       \begin{center}
         \texttt{\small \textbf{Unbound value x}}
       \end{center}
