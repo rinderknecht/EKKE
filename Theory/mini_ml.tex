@@ -8,12 +8,22 @@
   \bigskip
 
   It is time now to learn an actual functional language, so we can run
+  programs. We are going to start with a mini language that is
+  actually a subset of \OCaml, then grow it step by step.
+
+  \bigskip
+
+  Within rewrite systems, a `program' is simply a term that is reduced
+  until reaching a stuck term. While this is a good theoretic
+  framework to think about computation in general, it is not conducive
+  to programming in the large, nor understanding the behaviour of
   programs.
 
   \bigskip
 
-  We are going to start with a mini language that is actually a subset
-  of \OCaml, then grow it step by step.
+  We want programs to be made of different parts that can be reused in
+  different contexts, for example, variables should be defined
+  somewhere and reused at some another points.
 
 \end{frame}
 
@@ -21,7 +31,7 @@
 %
 \begin{frame}{Growing a language}
 
-  The presentation is principled, that is, it relies on a systematic
+  This presentation is principled, that is, it relies on a systematic
   classification of the \textbf{syntactic constructs} and their
   \textbf{formal semantics}.
 
@@ -33,7 +43,7 @@
   \bigskip
 
   Both theoretical and pragmatic, our approach is complementary to
-  those usually found in books.
+  those usually found in books for general audiences.
 
   \bigskip
 
@@ -278,6 +288,8 @@
 
 \end{frame}
 
+% ------------------------------------------------------------------------
+%
 \begin{frame}[fragile]{Examples of expressions}
 
   \begin{itemize}
@@ -354,7 +366,7 @@
         \Xfun \; x \rightarrow (x + y).
       \end{equation*}
 
-\end{itemize}
+  \end{itemize}
 
 \end{frame}
 
@@ -792,3 +804,593 @@
   \end{itemize}
 
 \end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Evaluation}
+
+  \textbf{Evaluation} is a partial function from expressions to
+  values. An \textbf{interpreter} is a program implementing an
+  evaluation. The partiality models the fact that an evaluation may
+  not terminate or end in an error.
+
+  \bigskip
+
+  With rewrite systems, values are defined as stuck expressions, that
+  is, expressions that cannot be rewritten further.
+
+  \bigskip
+
+  Here, since we want to define expressions (terms) whose value we can
+  reuse somewhere else (in another term), we need the notion of
+  \textbf{environment}.
+
+  \bigskip
+
+  That implies that a formal account of evaluation (the equivalent for
+  programs of rewriting terms) needs to take into account
+  environments.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Semantic values}
+
+  This goes even further because we want Mini-ML to be
+  \textbf{higher\hyp{}order}, that is, we want functions to be values
+  and this begets the question of the meaning of the free variables in
+  the function bodies: after passing around a function as argument to
+  other functions, what are the values of those variables when the
+  threaded function is finally applied?
+
+  \bigskip
+
+  The most common answer is \textbf{lexical (or static) scoping},
+  whereby the free variables in a body remain bound to their values at
+  the point the function was defined.
+
+  \bigskip
+
+  This means that values corresponding to functions have to carry
+  around the environment at the point of their definition.
+
+  \bigskip
+
+  One common way to achieve this is to have a notion of
+  \textbf{semantic value}, which differs from \textbf{syntactic
+    value}. For example, the mathematical integers are part of the
+  semantic values of Mini\hyp{}ML, but not of syntactical values.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Semantic values}
+
+  \begin{itemize}
+
+    \item The \textbf{semantic values} are defined recursively by the
+      following cases:\\
+      \smallskip
+      \begin{tabular}{@{\,}r@{\;\;}ll}
+        $\bullet$
+        & \emph{constant}
+        & \unit, \textsf{0}, \textsf{1}, \textsf{2}, etc.\\
+        $\bullet$
+        & \emph{closure}
+        & $\clos{x}{e}{\rho}$, with environment $\rho$.\\
+        $\bullet$
+        & \emph{$n$-tuple}
+        & $v_1, \dots, v_n$, with $v_i$ values.
+      \end{tabular}
+
+    \item The closure environment $\rho$ is the one at the location
+      where the function $\Xfun \; x \rightarrow e$ occurs, and the
+      function is closed in that environment (this is called
+      \textbf{static scoping}, or \textbf{lexical scoping}).
+
+    \item The evaluation of an expression must take place in the
+      context of an environment, where all free variables must be
+      bound (in other words, the expression must be closed in that
+      environment).
+
+    \item For example, let $\rho$ be the environment before the
+      sentence
+\begin{alltt}
+\small
+\textbf{let} x = 1 \textbf{in} x
+\end{alltt}
+      Then the evaluation of the \emph{second} `x' must done in the
+      environment \(\texttt{x} \mapsto 1 \oplus \rho\), where `x' is
+      the \emph{first} one.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Evaluation}
+
+  Let us proceed to define a semantics for our mini-ML, by associating
+  to each expression~\(e\) its value~\(v\), assuming the
+  environment~\(\rho\):
+
+  \bigskip
+
+  \begin{tabular}{r@{\,\,}ll@{}}
+    $\bullet$
+  & $x$
+  & Look up the \textbf{last} value bound to~\(x\) in~\(\rho\).\\
+    $\bullet$
+  & $\Xfun \; x \rightarrow e$
+  & The value is the closure $\clos{x}{e}{\rho}$.\\
+    $\bullet$
+  & $e_1$ \texttt{+} $e_2$, etc.
+  & Evaluate $e_1$ and $e_2$ in $\rho$, then add, etc.\\
+    $\bullet$
+  & \unit \ or \textsf{0} or \textsf{1} or \textsf{2}, etc.
+  & The value is \unit or \textsf{0} or \textsf{1}, etc.\\
+    $\bullet$
+  & $\lpar{e}\rpar$
+  & Evaluate $e$ into $v$ in $\rho$.\\
+    $\bullet$
+  & $\Xlet \; x = e_1 \Xin \; e_2$
+  & Evaluate $e_1$ into $v_1$ in $\rho$;\\
+  &
+  & evaluate $e_2$ into $v$ in $x \mapsto v_1 \oplus \rho$.\\
+    $\bullet$
+  & $e_1 \; e_2$
+  & Evaluate $e_1$ and $e_2$ into $v_1$ and $v_2$ in $\rho$\\
+  &
+  & (order left unspecified);\\
+  &
+  & $v_1$ must be the closure $\clos{x}{e}{\rho_1}$;\\
+  &
+  & evaluate $e$ in $x \mapsto v_2 \oplus \rho_1$:\\
+  && the value is $v$.
+\end{tabular}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Example of evaluation}
+
+  \begin{enumerate}
+
+  \item The environment is initially empty. Let us evaluate
+\begin{alltt}
+\small
+\textbf{let} x = 0 \textbf{in}
+\textbf{let} id = \textbf{fun} x \(\rightarrow\) x \textbf{in}
+\textbf{let} y = id x \textbf{in}
+\textbf{let} x = (\textbf{fun} x \(\rightarrow\) \textbf{fun} y \(\rightarrow\) x + y) 1 2
+\textbf{in} x + 1
+\end{alltt}
+
+  \item The evaluation of
+\begin{alltt}
+\small
+\textbf{let} x = 0 \textbf{in} \ldots
+\end{alltt}
+    starts with the evaluation of~\texttt{\small 0}, which, obviously,
+    yields~\(0\).
+
+   \item We create the binding $\ident{x} \; \mapsto \; 0$, with which
+     we extend~\(\rho_\varnothing\), that is, $\ident{x} \mapsto 0
+     \oplus \rho_\varnothing$.
+
+   \item We evaluate the elided subexpression within this new
+     environment.
+
+  \end{enumerate}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Example of evaluation}
+
+  \begin{itemize}
+
+    \item The evaluation of
+\begin{alltt}
+\small
+\textbf{let} id = \textbf{fun} x \(\rightarrow\) x \textbf{in} \ldots
+\end{alltt}
+      is performed within the environment $\ident{x} \mapsto 0 \oplus
+      \rho_\varnothing$.
+
+    \item The value of~\texttt{id} is then the closure
+      $\clos{\ident{x}}{\ident{x}}{\ident{x} \mapsto 0 \oplus \rho_\varnothing)}$.
+
+    \item We extend the current environment and evaluate the elided
+      subexpression within it.
+
+  \item The evaluation of
+\begin{alltt}
+\small
+\textbf{let} y = id x \textbf{in} \ldots
+\end{alltt}
+    is done within the environment $\rho = (\ident{id} \mapsto ((\Xfun
+    \; \ident{x} \rightarrow \ident{x}), \ident{x} \mapsto 0 \oplus
+    \rho_\varnothing)) \oplus (\ident{x} \mapsto 0) \oplus
+    \rho_\varnothing$.
+
+    \item We evaluate first (\texttt{\small id x}) in~\(\rho\).
+
+    \item In order to do so, we evaluate~\texttt{\small id}
+      and~\texttt{\small x}
+      separately.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Example of evaluation}
+
+  \begin{itemize}
+
+    \item These are both variables, thus we look them up in the
+      environment to retrieve their last corresponding binding:
+      \(\rho(\ident{id}) = \clos{\ident{x}}{\ident{x}}{\ident{x}
+        \mapsto 0 \oplus \rho_\varnothing}\), and \(\rho(\ident{x}) =
+      0\).
+
+    \item We need to evaluate the body in the environment $\rho =
+      (\ident{x} \mapsto 0) \oplus (\ident{x} \mapsto 0) \oplus
+      \rho_\varnothing$, which yields~\(\rho(\ident{x}) = 0\), etc.
+
+    \item We create the binding $\ident{y} \mapsto 0$, we add it to
+      the current environment and we evaluate the elided subexpression
+      with the new environment.
+
+    \item Let us stop here and move to expressing the above semantics
+      in a formal manner.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Formal semantics}
+
+  If we note \(\evalf{e}{\rho}\) the value obtained by evaluating the
+  expression~\(e\) in the environment~\(\rho\), then the evaluation of
+  mini-ML is:
+  \begin{align*}
+    \evalf{\overline{n}}{\rho} &= n, \;\, \text{with
+      $\overline{n}$ an \OCaml integer and $n \in \mathbb{N}$}\\
+    \evalf{e_1 \; \texttt{+} \; e_2}{\rho} &=
+    \evalf{e_1}{\rho} + \evalf{e_2}{\rho} \in \mathbb{N}\\
+    \evalf{\lpar{e}\rpar}{\rho} &= \evalf{e}{\rho}\\
+    \evalf{x}{\rho} &= \rho(x)\\
+    \evalf{\Xfun \; x \rightarrow e}{\rho} &= \clos{x}{e}{\rho}\\
+    \evalf{e_1 \; e_2}{\rho} &= \evalf{e_3}{(x \mapsto
+      \evalf{e_2}{\rho} \oplus \rho_3)},\\
+    &\phantom{=\llbracket} \textnormal{where} \ \evalf{e_1}{\rho} =
+    \clos{x}{e_3}{\rho_3}\\
+    \evalf{\Xlet \; x = e_1 \; \Xin \; e_2}{\rho}
+    &= \evalf{(\Xfun \; x \rightarrow e_2) \; e_1}{\rho}.
+  \end{align*}
+
+  Note that we write ``$x,\, y$'' instead of ``$(x,\, y)$'' for
+  brevity. Evaluation means applying the equations from left to right.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Partial applications}
+
+  \begin{itemize}
+
+    \item We can easily work out that
+      \begin{equation*}
+        \evalf{\Xlet \; x = e_1 \; \Xin \; e_2}{\rho}
+        = \evalf{e_2}{(x \mapsto \evalf{e_1}{\rho} \oplus \rho)}.
+      \end{equation*}
+
+    \item Since closures are values, they can be the value of a
+      function call:
+\begin{alltt}
+\small
+\textbf{let} add = \textbf{fun} x \(\rightarrow\) \textbf{fun} y \(\rightarrow\) x + y \textbf{in}
+\textbf{let} incr = add 1
+\textbf{in} incr 5
+\end{alltt}
+
+    \item The call (\texttt{\small add 1}) is a \textbf{partial
+      application}, as opposed to a \textbf{complete application} like
+      (\texttt{\small add 1 5}). A partial application, by definition,
+      always evaluates in a closure.
+
+    \item Operations are functions denoted by a symbol used in infix
+      position (between the operands). As such, they can be partially
+      evaluated:
+\begin{alltt}
+\small
+\textbf{let} incr = (+) 1 \textbf{in} incr 5
+\end{alltt}
+     \smallskip
+     \noindent where the parentheses in~\texttt{(+)} mean that the
+     operator has to be considered in \textbf{prefix} position.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Auto-application and termination}
+
+  \begin{itemize}
+
+    \item Our mini-ML is \textbf{Turing\hyp{}complete}, just as \OCaml
+      is.
+
+    \item For instance, we can write the following
+      non\hyp{}terminating program:
+      \smallskip
+\begin{alltt}
+\small
+\textbf{let} omega = \textbf{fun} f \(\rightarrow\) f f \textbf{in} omega omega
+\end{alltt}
+
+    \item The function \texttt{\small omega} is an
+      \textbf{auto\hyp{}applicative function}.
+
+    \item It enables the following non\hyp{}terminating evaluation:
+      \begin{gather*}
+        \evalf{\texttt{\textbf{let} omega = \textbf{fun} f \(\rightarrow\) f f \textbf{in} omega omega}}{\rho}\\
+\begin{align*}
+&= \evalf{\texttt{\small omega omega}}{(\texttt{\small omega} \mapsto
+    \evalf{\texttt{\small \textbf{fun} f \(\rightarrow\) f f}}{\rho} \oplus
+    \rho)}\\
+&= \evalf{\texttt{\small f f}}{(\texttt{\small f} \mapsto \clos{f}{f \; f}{\rho})
+    \oplus \rho)}\\ &= \text{\emph{idem.}}
+\end{align*}
+\end{gather*}
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Fixed points}
+
+  \begin{itemize}
+
+    \item To demonstrate the expressive power of our mini-ML, let us
+      see how we can simulate recursive functions by means of the
+      $\Omega$ function:
+\begin{alltt}
+\small
+\textbf{let} \(\Omega\) = \textbf{fun} f \(\rightarrow\) f f
+\end{alltt}
+
+    \item Let us define a function \texttt{\small fix}, called the
+      \textbf{Y combinator} in \(\lambda\)-calculus:
+      \smallskip
+\begin{alltt}
+\small
+\textbf{let} fix = \textbf{fun} g \(\rightarrow\) \(\Omega\) (\textbf{fun} h \(\rightarrow\) \textbf{fun} x \(\rightarrow\) g (h h) x)
+\end{alltt}
+
+      \item For any (terminating) function~\(f\) and
+        any function~\(x\),
+        \begin{equation*}
+          \evalf{f \; \lpar\ident{fix} \; f\rpar{} \; x}{\rho} =
+          \evalf{\ident{fix} \; f \; x}{\rho}.
+        \end{equation*}
+
+      \item In other words, we have
+        \begin{equation*}
+          f \; (\ident{fix} \; f) \; x \equiv \ident{fix} \; f \; x.
+        \end{equation*}
+
+      \item The fixed point~\(x\) of a (continuous) function~\(g\)
+        satisfies \(g(x) = x\).
+
+      \item Therefore, the fixed point of~\ident{f} (if it exists) is
+        the value of \lpar\ident{fix} \ident{f}\rpar{}.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Fixed points}
+
+   Just as with \Xlet \Xin, we can simplify the semantics of
+   \texttt{\small fix}:
+   \begin{equation*}
+     \evalf{\ident{fix} \; e}{\rho} = \evalf{e_1}{(f \mapsto
+       \evalf{\ident{fix} \, (\Xfun \, f \rightarrow e_1)}{\rho}
+       \oplus \rho_1)},
+   \end{equation*}
+   where $\evalf{e}{\rho} = \clos{f}{e_1}{\rho_1}$.
+
+   \bigskip
+
+   There is a choice:
+   \begin{itemize}
+
+     \item either we define \texttt{\small fix} in the functional
+       language (as a built\hyp{}in constant), or
+
+     \item at the meta\hyp{}language (the mathematical logic we are
+       using to define the semantics).
+
+   \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Fixed points}
+
+  Let us consider the following definitions:
+\begin{alltt}
+\small
+\textbf{let} pre\_fact =
+  \textbf{fun} f \(\rightarrow\) \textbf{fun} n \(\rightarrow\) \textbf{if} n = 1 \textbf{then} 1 \textbf{else} n * f(n-1)
+\textbf{let} fact = fix pre\_fact
+\end{alltt}
+
+  We see that \texttt{\small fact} is the fixed point of
+  \texttt{\small pre\_fact}:
+  \begin{align*}
+    \evalf{\texttt{\small fact}}{\rho} &= \evalf{\texttt{\small fix
+        pre\_fact}}{\rho}\\
+    &= \evalf{\texttt{\small pre\_fact (fix pre\_fact)}}{\rho}\\
+    &= \evalf{\texttt{\small pre\_fact fact}}{\rho}\\
+    &= \evalf{\texttt{\small \textbf{fun} n \(\rightarrow\) \textbf{if} n
+        = 1 \textbf{then} 1 \textbf{else} n * fact(n-1)}}{\rho}
+  \end{align*}
+
+  It is as if the definition of `\texttt{\small fact}' were
+  recursive... but it is not.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}[fragile]{Fixed points in C}
+
+\begin{alltt}
+\small
+\textbf{#include}<stdio.h>
+\textbf{#include}<stdlib.h>
+
+\textbf{typedef int} (*fp)();
+
+\textbf{int} fact(fp f, \textbf{int} n) \{
+  \textbf{return} n? n * ((\textbf{int} (*)(fp,\textbf{int}))f)(f,n-1) : 1; \}
+
+\textbf{int} read(\textbf{int} dec, \textbf{char} arg[]) \{
+  \textbf{return} ('0' <= *arg && *arg <= '9')?
+         read(10*dec + *arg - '0', arg+1) : dec; \}
+
+\textbf{int main}(\textbf{int} argc, \textbf{char}** argv) \{
+  \textbf{if} (argc == 2)
+     printf("%u\textbackslash{n}", fact(&fact, read(0, argv[1])));
+  \textbf{else} printf("Only one integer allowed.\textbackslash{n}");
+  \textbf{return} 0; \}
+\end{alltt}
+\end{frame}
+
+%% % ------------------------------------------------------------------------
+%% %
+%% \begin{frame}{Local recursive definitions}
+
+%%   \begin{itemize}
+
+%%     \item The function `\texttt{\small fact}' coincides pointwise with
+%%       the factorial function.
+
+%%     \item Let us extend mini-ML with a native recursive binder, using
+%%       the `\texttt{\small fix}' function:
+%%       \begin{equation*}
+%%         \evalf{\Xlet \; \Xrec \; f = e_1 \; \Xin \; e_2}{\rho} =
+%%         \evalf{\Xlet \; f = \textsf{fix} \; (\Xfun \; f \rightarrow
+%%           e_1) \; \Xin \; e_2}{\rho}.
+%%       \end{equation*}
+
+%%   \end{itemize}
+
+%% \end{frame}
+
+%% % ------------------------------------------------------------------------
+%% %
+%% \begin{frame}{Extensions}
+
+%%   \begin{itemize}
+
+%%     \item Let us extend our mini-ML with the following
+%%       expressions.\\
+%%       \smallskip
+%%       \begin{tabular}{r@{\,\,}ll@{}}
+%%         $\bullet$
+%%         & \emph{Boolean constants}
+%%         & \Xtrue{} or \Xfalse\\
+%%         $\bullet$
+%%         & \emph{Boolean operators}
+%%         & \texttt{(\&\&)} or \texttt{(||)} or \textsf{\textbf{not}}\\
+%%         $\bullet$
+%%         & \emph{$n$-tuple}
+%%         & $e_1, \ldots, e_n$\\
+%%         $\bullet$
+%%         & \emph{conditional}
+%%         & \Xif{} $e_0$ \Xthen{} $e_1$ \Xelse{} $e_2$\\
+%%         $\bullet$
+%%         & \emph{local recursive binding}
+%%         & \Xlet{} \Xrec{} $f \;\; = \;\; e_1$ \Xin{} $e_2$
+%%       \end{tabular}
+
+%%       \item Note that parentheses are recommended around tuples, but
+%%         are not mandatory.
+
+%%       \item Let us distinguish the variables occurring after \Xlet{}
+%%         and \Xfun{}, because they are \textbf{irrefutable patterns},
+%%         noted $\ipat{p}$:\\
+%%         \smallskip
+%%         \begin{tabular}{r@{\,\,}ll@{}}
+%%           $\bullet$
+%%           & \emph{function}
+%%           & $\Xfun \;\; \ipat{p} \rightarrow e$\\
+%%           $\bullet$
+%%           & \emph{local definition}
+%%           & \(\Xlet \;\; \textrm{[}\Xrec\textrm{]} \;\; \ipat{p} \;\;
+%%           = \;\; e_1 \;\; \Xin \;\; e_2\)
+%%         \end{tabular}
+
+%%   \end{itemize}
+
+%% \end{frame}
+
+%% % ------------------------------------------------------------------------
+%% %
+%% \begin{frame}{Irrefutable patterns}
+
+%%   \begin{itemize}
+
+%%     \item An irrefutable pattern $\ipat{p}$ is defined recursively by
+%%       the following cases:\\
+%%       \smallskip
+%%       \begin{tabular}{r@{\,\,}ll@{}}
+%%         $\bullet$
+%%         & \emph{variable}
+%%         & $f, g, h, x, y, z$, etc. \\
+%%         $\bullet$
+%%         & \emph{unit}
+%%         & \unit\\
+%%         $\bullet$
+%%         & \emph{$n$-tuple}
+%%         & $\ipat{p}_1, \ldots, \ipat{p}_n$\\
+%%         $\bullet$
+%%         & \emph{parenthesis}
+%%         & $\lpar\ipat{p}\rpar$\\
+%%         $\bullet$
+%%         & \emph{underscore}
+%%         & {\Large \_}
+%%       \end{tabular}
+
+%%       \item Note that, from the syntactic point of view, irrefutable
+%%         patterns are special cases of expressions, except the
+%%         underscore, which is a special case avoiding the creation of a
+%%         binding.
+
+%%       \item The sentence~\(e\) is equivalent to \(\Xlet \;\; \_ \;\; =
+%%         \;\; e\).
+
+%%   \end{itemize}
+
+%% \end{frame}
