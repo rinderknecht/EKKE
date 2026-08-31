@@ -94,32 +94,34 @@
 
   Instead, it is introduced once by a \textbf{binder} called `\Xlet',
   like so:
-  \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} cat = \textbf{function} ...
-\end{alltt}
+  \begin{equation*}
+    \Xlet \; \ident{cat} = \Xfunction \ldots
+  \end{equation*}
   The complete definition in \OCaml is:
-  \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} \textbf{rec} cat = \textbf{function}
-\ \ \ [], t \(\rightarrow\) t
-\(\mid\) \ttcons{x}{s}, t \(\rightarrow\) \ttcons{x}{\fun{cat}(s,t)}
-\end{alltt}
+  \begin{equation*}
+    \begin{gathered}
+      \Xlet\;\Xrec\;\ident{cat} = \Xfunction\\[-2pt]
+      \begin{aligned}
+        \el,\ident{t}
+        &\rightarrow \ident{t}\\[-2pt]
+        \mid\cons{\ident{x}}{\ident{s}},\ident{t}
+        &\rightarrow
+        \cons{\ident{x}}{\ident{cat}(\ident{s},\ident{t})}
+      \end{aligned}
+    \end{gathered}
+  \end{equation*}
+  Note the addition of the keyword \Xrec: this is meant so the call
+  \(\fun{cat}(s,t)\) indeed refers to the function being defined.
 
-   Note the addition of the keyword \Xrec: this is meant so the call
-   \(\fun{cat}(s,t)\) indeed refers to the function being defined.
+  \bigskip
 
-   \bigskip
+  With rewrite systems, recursion is not an issue: any call matching a
+  pattern can be rewritten.
 
-   With rewrite systems, recursion is not an issue: any call matching
-   a pattern can be rewritten.
+  \bigskip
 
-   \bigskip
-
-   Note also how the two rules are introduced by the keyword
-   \Xfunction and are separated by a vertical line.
+  Note also how the two rules are introduced by the keyword \Xfunction
+  and are separated by a vertical line.
 
 \end{frame}
 
@@ -136,9 +138,9 @@
 
   \begin{tabular}{rll}
     $\bullet$ & \emph{global definition}
-    & \phrase{$\Xlet \; x \; = \; e$}\\
+    & $\Xlet \; x = e$\\
     $\bullet$ & \emph{global recursive definition}
-    & \phrase{$\Xlet \; \Xrec \; x \; = \; e$}
+    & $\Xlet \; \Xrec \; x = e$
   \end{tabular}
 
   \medskip
@@ -174,21 +176,24 @@
       language (the \textbf{metalanguage}).
 
     \item In the following
-      \begin{center}
-        \phrase{$\Xlet \; x \; = \; e$}
-      \end{center}
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet \; x = e
+      \end{equation*}}
       the metavariable~\(x\) (mind the italics) denotes an infinite
       set of \OCaml variables and we must not confuse it with the
       \OCaml variable~\ident{x} (no italics). Similarly, the
       metavariable \(e\)~denotes an infinity of expressions, as in the
       following:
-      \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} e = 3
-\textbf{let} x = e
-\textbf{let} a = x + e
-\end{alltt}
+      {\setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \begin{aligned}
+          \Xlet\; \ident{e} &= 3\\[-2pt]
+          \Xlet\; \ident{x} &= \ident{e}\\[-2pt]
+          \Xlet\; \ident{a} &= \ident{x} + \ident{e}
+        \end{aligned}
+      \end{equation*}}
 
   \end{itemize}
 
@@ -211,7 +216,7 @@
         & my\_var, x, y, z, etc. \\
         $\bullet$
         & \emph{unit or integer constant}
-        & \unit \ or \textsf{0} or \textsf{1} or \textsf{2}, etc.\\
+        & \unit \ or $0$ or $1$ or $2$, etc.\\
         $\bullet$
         & \emph{function} (or \emph{abstraction})
         & $\Xfun \; x \rightarrow e$\\
@@ -220,15 +225,14 @@
         & $e_1 \; e_2$ \\
         $\bullet$
         & \emph{arithmetic operator}
-        & \lpar\texttt{+}\rpar \ \lpar\texttt{-}\rpar \ \lpar\texttt{/}\rpar
-        \ \lpar\texttt{*}\rpar\\
+        & (+) \ (-) \ (/) \ (*)\\
         $\bullet$
         & \emph{arithmetic operation}
-        & $e_1$ \texttt{+} $e_2$ or $e_1$ \texttt{-} $e_2$,
+        & $e_1 + e_2$ or $e_1 - e_2$,
         etc.\\
         $\bullet$
         & \emph{parenthesis}
-        & $\lpar{e}\rpar$\\
+        & $(e)$\\
         $\bullet$
         & \emph{local definition}
         & $\Xlet \; x = e_1 \; \Xin \; e_2$
@@ -260,11 +264,11 @@
       step by step.
 
     \item First, a numerical constant:
-      \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} x = 0
-\end{alltt}
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+       \begin{equation*}
+         \Xlet\; \ident{x} = 0
+       \end{equation*}}
 
     \item Note that constants can be defined by means of a rewrite
       system as functions taking the empty tuple:
@@ -273,11 +277,11 @@
       \end{equation*}
 
     \item The next sentence is
-      \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} id = \textbf{fun} x \(\rightarrow\) x
-\end{alltt}
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet\; \ident{id} = \Xfun \; \ident{x} \rightarrow \ident{x}
+      \end{equation*}}
 
     \item This is equivalent to the rewrite system
       \begin{equation*}
@@ -296,34 +300,33 @@
 
     \item Next we have another constant being defined by binding a
       variable to the value of a call:
-      \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} y = 2 \textbf{in} id y
-\end{alltt}
-      This is equivalent to the call \texttt{\small id(2)}.
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet\; \ident{y} = 2 \; \Xin\; \ident{id} \; \ident{y}
+      \end{equation*}}
+      This is equivalent to the call $\ident{id}(2)$.
 
     \item Now
-      \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} x = (\textbf{fun} x \(\rightarrow\) \textbf{fun} y \(\rightarrow\) x + y) 1 2
-\end{alltt}
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet\; \ident{x} = (\Xfun\; \ident{x} \rightarrow \Xfun\; \ident{y} \rightarrow \ident{x} + \ident{y}) \; 1 \; 2
+      \end{equation*}}
       is equivalent to
-      \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} x = 1 + 2
-\end{alltt}
+      {\setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet\; \ident{x} = 1 + 2
+      \end{equation*}}
       (We will see why later.)
 
     \item Finally
-      \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} z = x + 1
-\end{alltt}
-       is obvious.
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet\; \ident{z} = \ident{x} + 1
+      \end{equation*}}
+      is obvious.
 
   \end{itemize}
 
@@ -340,30 +343,30 @@
     \item The arrow is right-associative, so the expression
       \begin{equation*}
         \Xfun \; x_1 \rightarrow \Xfun \; x_2
-        \rightarrow \ldots
+        \rightarrow \, \ldots
         \rightarrow \Xfun \; x_n \rightarrow e
       \end{equation*}
-      is equivalent to \(\Xfun \; x_1 \rightarrow (\Xfun
-      \; x_2 \rightarrow (\ldots \rightarrow
-      (\Xfun \; x_n \rightarrow e)) \; \ldots)\).
+      is equivalent to
+      \begin{equation*}
+        \Xfun \; x_1 \rightarrow (\Xfun \; x_2
+      \rightarrow (\,\ldots \rightarrow (\Xfun \; x_n \rightarrow e)) \;
+      \ldots),
+      \end{equation*}
+      or, even shorter:
+      \begin{equation*}
+        \Xfun \; x_1 \; x_2 \, \ldots \, x_n \rightarrow e.
+      \end{equation*}
 
     \item Function calls are left\hyp{}associative, so
       \begin{equation*}
-        e_1 \; e_2 \; e_3 \; \ldots \; e_n \;=\; (((\ldots
+        e_1 \; e_2 \; e_3 \,\ldots\, e_n \triangleq (((\ldots
         (e_1 \; e_2) \; e_3) \ldots) \; e_n).
       \end{equation*}
 
     \item Function calls have higher priority than operator calls, for
       example,
       \begin{equation*}
-        f \; 3 + 4 \; = \; (f \; 3) + 4 \; = \; f(3) + 4.
-      \end{equation*}
-
-    \item Operator calls have higher syntactic priority than
-      abstractions, for instance,
-      \begin{equation*}
-        \Xfun \; x \rightarrow x + y \quad\text{is the same as}\quad
-        \Xfun \; x \rightarrow (x + y).
+        f \; 3 + 4 = (f \; 3) + 4 = f(3) + 4.
       \end{equation*}
 
   \end{itemize}
@@ -374,28 +377,33 @@
 %
 \begin{frame}[fragile]{Function calls}
 
-  Note the difference between \texttt{\small f x y} and \texttt{\small
-    f(x,y)}.
+  Operator calls have higher syntactic priority than abstractions, for
+  instance,
+  \begin{equation*}
+    \Xfun \; x \rightarrow x + y \quad\text{is the same as}\quad
+    \Xfun \; x \rightarrow (x + y).
+  \end{equation*}
+  Note the difference between $\ident{f} \; \ident{x} \; \ident{y}$
+  and $\ident{f}(\ident{x}, \ident{y})$.
 
   \bigskip
 
-  The former is to be understood as \texttt{\small (f(x))(y)} which
-  means that there are \emph{two} calls:
+  The former is to be understood as
+  $(\ident{f}(\ident{x}))(\ident{y})$ which means that there are
+  \emph{two} calls:
   \begin{enumerate}
 
-  \item First, the call \texttt{\small f(x)}
-    is evaluated. Let us assume that its value is \texttt{\small g}.
+  \item First, the call $\ident{f}(\ident{x})$ is evaluated. Let us
+    assume that its value is $\ident{g}$.
 
-  \item Second, the call \texttt{\small g(y)} is evaluated.
+  \item Second, the call $\ident{g}(\ident{y})$ is evaluated.
 
   \end{enumerate}
 
   In other words, the first case is equivalent to
-  \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} g = f x \textbf{in} g y
-\end{alltt}
+  \begin{equation*}
+    \Xlet\; \ident{g} = \ident{f} \; \ident{x} \; \Xin \; \ident{g} \; \ident{y}
+  \end{equation*}
 
 \end{frame}
 
@@ -409,15 +417,24 @@
   \begin{center}
     \begin{tabular}{lc}
       \toprule
-      \multicolumn{1}{c}{Expression}
-        & \multicolumn{1}{c}{Tree}\\
+      \multicolumn{1}{c}{Flat view}
+        & \multicolumn{1}{c}{Tree view}\\
         \toprule
         $x$
         & $x$\\
         $\Xfun \; x \rightarrow e$
-        & \includegraphics[bb=148 638 171 662]{fun_tree}\\
+        &
+        \pstree[nodesep=2pt,levelsep=15pt,treesep=10pt]{\TR{\Xfun}}{
+          \TR{$x$}
+          \TR{$e$}
+        }\\
+
         $e_1 \; e_2$
-        & \includegraphics[bb=148 637 177 663]{app_tree}\\
+        &
+        \pstree[nodesep=2pt,levelsep=15pt,treesep=10pt]{\TR{\$}}{
+          \TR{$e_1$}
+          \TR{$e_2$}
+        }\\
         \bottomrule
     \end{tabular}
   \end{center}
@@ -452,7 +469,7 @@
     \qquad
     \includegraphics[bb=148 599 246 662]{arith_tree2}
   \end{center}
-  \centerline{\texttt{\small ((1+2)*(5/1)) \quad\qquad \texttt{\small \textbf{let} x = 1 \textbf{in} (1+2)*5/1}}}
+  \centerline{$((1+2)*(5/1))$ \quad\qquad $\Xlet\; x = 1 \;\Xin\; (1+2)*5/1$}
 
 \end{frame}
 
@@ -461,11 +478,9 @@
 \begin{frame}[fragile]{Abstract syntax}
 
   Another example:
-    \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} x = 1 \textbf{in} ((\textbf{let} x = 2 \textbf{in} x) + x)
-\end{alltt}
+  \begin{equation*}
+    \Xlet\; \ident{x} = 1 \;\Xin\; ((\Xlet \; \ident{x} = 2 \;\Xin\; \ident{x}) + \ident{x})
+  \end{equation*}
   corresponds to the abstract syntax tree
   \begin{center}
     \includegraphics[bb=148 599 221 662]{arith_tree3}
@@ -540,8 +555,7 @@
   \textbf{environment}. Let us note \(\rho_\varnothing\) the empty
   environment. We write
   \begin{equation*}
-    (x \mapsto v) \oplus \rho \quad\text{or, simply,}\quad x \mapsto v
-    \oplus \rho,
+    \extend{\rho}{x}{v}
   \end{equation*}
   to mean that the binding \(x \mapsto v\) was added to the
   environment~\(\rho\).
@@ -554,33 +568,27 @@
 
   Environments are functions and are updated as follows:
   \begin{equation}
-    (x \mapsto v \oplus \rho )(y) \triangleq
+    \extend{\rho}{x}{v}(y) \triangleq
     \begin{cases}
-      v         & \text{if} \; x = y,\\
-      \sigma(y) & \text{otherwise.}
+      v       & \text{if} \; x = y,\\
+      \rho(y) & \text{otherwise.}
     \end{cases}
   \end{equation}
   with \(\forall x.\rho_\varnothing(x) = \bot\) and \(\bot\) is
   interpreted as an \textbf{error}. Errors are special
   values. Consider again the program
-  \vspace*{-3mm}
-\begin{alltt}
-\small
-\textbf{let} x = 0 \textbf{in}
-\textbf{let} id = \textbf{fun} x \(\rightarrow\) x \textbf{in}
-\textbf{let} y = id x \textbf{in}
-\textbf{let} x = (\textbf{fun} x \(\rightarrow\) \textbf{fun} y \(\rightarrow\) x + y) 1 2
-\textbf{in} x + 1
-\end{alltt}
+  \begin{flalign*}
+    &\Xlet \; \ident{x} = 0 \;\textbf{in}\\
+    &\Xlet \; \ident{id} = \Xfun\; \ident{x} \rightarrow \ident{x} \; \Xin\\
+    &\Xlet \; \ident{y} = \ident{id} \; \ident{x} \;\Xin\\
+    &\Xlet \; \ident{x} = (\Xfun \ident{x} \; \ident{y} \rightarrow \ident{x} +
+    \ident{y}) \; 1 \; 2\\
+    &\Xin\; \ident{x} + 1
+  \end{flalign*}
 
   The variable~\texttt{\small x} in the expression \texttt{\small x+1}
   denotes the value of the expression bound to the
   variable~\texttt{\small x} in the previous line, not the first.
-
-  \bigskip
-
-  Bindings are ordered in the environment \textbf{by the order of
-    their definitions}. Let us follow the evolution of the environment.
 
 \end{frame}
 
@@ -588,29 +596,29 @@
 %
 \begin{frame}{Bindings, environments, scope}
 
+   Bindings are ordered in the environment \textbf{by the order of
+     their definitions}. Let us follow the evolution of the
+   environment.
   \begin{enumerate}
 
     \item The environment is initially empty: \(\rho_\varnothing\);
 
-    \item \texttt{\small \textbf{let} x = 0 \textbf{in}
-      \ldots}\\ yields $(\ident{x} \mapsto 0) \oplus
-      \rho_\varnothing$;
+    \item $\Xlet\; \ident{x} = 0 \;\Xin\; \ldots$\\
+      yields $\extend{\rho_\varnothing}{\ident{x}}{0}$
 
-    \item \texttt{\small \textbf{let} id = \textbf{fun} x
-      $\rightarrow$ x \textbf{in} \ldots}\\ yields $(\ident{id}
-      \mapsto \Xfun \; \ident{x} \rightarrow \ident{x}) \oplus
-      (\ident{x} \mapsto 0) \oplus \rho_\varnothing$;
+    \item $\Xlet \; \ident{id} = \Xfun \; \ident{x} \rightarrow
+      \ident{x} \;\Xin\; \ldots$\\ yields
+      $\extend{\extend{\rho_\varnothing}{\ident{x}}{0}}{\ident{id}}{\Xfun
+      \; \ident{x} \rightarrow \ident{x}}$;
 
-    \item \texttt{\small \textbf{let} y = id x \textbf{in}
-      \ldots}\\ yields $(\ident{y} \mapsto 0) \oplus (\ident{id}
-      \mapsto \Xfun \; \ident{x} \rightarrow \ident{x}) \oplus
-      (\ident{x} \mapsto 0) \oplus \rho_\varnothing$;
+    \item $\Xlet\; \ident{y} = \ident{id} \; \ident{x} \;\textbf{in}\;
+      \ldots$\\ yields
+     $\extend{\extend{\extend{\rho_\varnothing}{\ident{x}}{0}}{\ident{id}}{\Xfun
+      \; \ident{x} \rightarrow \ident{x}}}{\ident{y}}{0}$;
 
     \item \texttt{\small \textbf{let} x = \ldots}\\ yields
-      $(\underline{\ident{x} \mapsto 3}) \oplus (\ident{y}
-      \mapsto 0) \oplus (\ident{id} \mapsto \Xfun \;
-      \ident{x} \rightarrow \ident{x}) \oplus (\ident{x} \mapsto
-      0) \oplus \rho_\varnothing$.
+      $\extend{\extend{\extend{\extend{\rho_\varnothing}{\ident{x}}{0}}{\ident{id}}{\Xfun
+       \; \ident{x} \rightarrow \ident{x}}}{\ident{y}}{0}}{x}{3}$.
 
     \item The expression \textsf{\small x+1} is evaluated in \(3+1=4\)
       because \(\textsf{x} \mapsto 3\) (the last binding)
@@ -897,12 +905,13 @@
 
     \item For example, let $\rho$ be the environment before the
       sentence
-\begin{alltt}
-\small
-\textbf{let} x = 1 \textbf{in} x
-\end{alltt}
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet\; \ident{x} = 1 \;\Xin\; \ident{x}
+      \end{equation*}}
       Then the evaluation of the \emph{second} `x' must done in the
-      environment \(\texttt{x} \mapsto 1 \oplus \rho\), where `x' is
+      environment $\extend{\rho}{\ident{x}}{1}$, where `x' is
       the \emph{first} one.
 
   \end{itemize}
@@ -927,19 +936,19 @@
   & $\Xfun \; x \rightarrow e$
   & The value is the closure $\clos{x}{e}{\rho}$.\\
     $\bullet$
-  & $e_1$ \texttt{+} $e_2$, etc.
+  & $e_1 + e_2$, etc.
   & Evaluate $e_1$ and $e_2$ in $\rho$, then add, etc.\\
     $\bullet$
-  & \unit \ or \textsf{0} or \textsf{1} or \textsf{2}, etc.
-  & The value is \unit or \textsf{0} or \textsf{1}, etc.\\
+  & \unit \ or \num{0} or \num{1} or \num{2}, etc.
+  & The value is \unit or $0$ or $1$, etc.\\
     $\bullet$
-  & $\lpar{e}\rpar$
+  & $(e)$
   & Evaluate $e$ into $v$ in $\rho$.\\
     $\bullet$
-  & $\Xlet \; x = e_1 \Xin \; e_2$
+  & $\Xlet \; x = e_1 \; \Xin \; e_2$
   & Evaluate $e_1$ into $v_1$ in $\rho$;\\
   &
-  & evaluate $e_2$ into $v$ in $x \mapsto v_1 \oplus \rho$.\\
+  & evaluate $e_2$ into $v$ in $\extend{\rho}{x}{v_1}$.\\
     $\bullet$
   & $e_1 \; e_2$
   & Evaluate $e_1$ and $e_2$ into $v_1$ and $v_2$ in $\rho$\\
@@ -948,7 +957,7 @@
   &
   & $v_1$ must be the closure $\clos{x}{e}{\rho_1}$;\\
   &
-  & evaluate $e$ in $x \mapsto v_2 \oplus \rho_1$:\\
+  & evaluate $e$ in $\extend{\rho_1}{x}{v_2}$:\\
   && the value is $v$.
 \end{tabular}
 
@@ -961,26 +970,26 @@
   \begin{enumerate}
 
   \item The environment is initially empty. Let us evaluate
-\begin{alltt}
-\small
-\textbf{let} x = 0 \textbf{in}
-\textbf{let} id = \textbf{fun} x \(\rightarrow\) x \textbf{in}
-\textbf{let} y = id x \textbf{in}
-\textbf{let} x = (\textbf{fun} x \(\rightarrow\) \textbf{fun} y \(\rightarrow\) x + y) 1 2
-\textbf{in} x + 1
-\end{alltt}
+  \begin{flalign*}
+    & \Xlet\; \ident{x} = 0 \; \Xin\\
+    & \Xlet\; \ident{id} = \Xfun\; \ident{x} \rightarrow \ident{x} \; \Xin\\
+    & \Xlet\; \ident{y} = \ident{id} \; \ident{x} \;\Xin\;\\
+    & \Xlet\; \ident{x} = (\Xfun\; \ident{x} \; \ident{y} \rightarrow
+    \ident{x} + \ident{y}) \; 1 \; 2 \\
+    & \Xin\; \ident{x} + 1
+  \end{flalign*}
 
   \item The evaluation of
-\begin{alltt}
-\small
-\textbf{let} x = 0 \textbf{in} \ldots
-\end{alltt}
-    starts with the evaluation of~\texttt{\small 0}, which, obviously,
-    yields~\(0\).
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet \; \ident{x} = 0 \; \Xin \; \ldots
+      \end{equation*}}
+      starts with the evaluation of~0, which, obviously, yields~$0$.
 
-   \item We create the binding $\ident{x} \; \mapsto \; 0$, with which
-     we extend~\(\rho_\varnothing\), that is, $\ident{x} \mapsto 0
-     \oplus \rho_\varnothing$.
+   \item We create the binding $\ident{x} \mapsto 0$, with which we
+     extend~\(\rho_\varnothing\), that is,
+     $\extend{\rho_\varnothing}{\ident{x}}{0}$.
 
    \item We evaluate the elided subexpression within this new
      environment.
@@ -996,33 +1005,32 @@
   \begin{itemize}
 
     \item The evaluation of
-\begin{alltt}
-\small
-\textbf{let} id = \textbf{fun} x \(\rightarrow\) x \textbf{in} \ldots
-\end{alltt}
-      is performed within the environment $\ident{x} \mapsto 0 \oplus
-      \rho_\varnothing$.
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet\; \ident{id} = \Xfun\; \ident{x} \rightarrow \ident{x} \;\Xin \ldots
+      \end{equation*}}
+      is performed within the environment
+      $\extend{\rho_\varnothing}{\ident{x}}{0}$.
 
-    \item The value of~\texttt{id} is then the closure
-      $\clos{\ident{x}}{\ident{x}}{\ident{x} \mapsto 0 \oplus \rho_\varnothing)}$.
+    \item The value of~`\ident{id}' is then the closure
+      $\clos{\ident{x}}{\ident{x}}{\extend{\rho_\varnothing}{\ident{x}}{0}}$.
 
     \item We extend the current environment and evaluate the elided
       subexpression within it.
 
   \item The evaluation of
-\begin{alltt}
-\small
-\textbf{let} y = id x \textbf{in} \ldots
-\end{alltt}
-    is done within the environment $\rho = (\ident{id} \mapsto ((\Xfun
-    \; \ident{x} \rightarrow \ident{x}), \ident{x} \mapsto 0 \oplus
-    \rho_\varnothing)) \oplus (\ident{x} \mapsto 0) \oplus
-    \rho_\varnothing$.
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet\; \ident{y} = \ident{id} \; \ident{x} \; \Xin \ldots
+      \end{equation*}}
+      is done within the environment $\rho =
+\extend{\extend{\rho_\varnothing}{\ident{x}}{0}}{\ident{id}}{\clos{\ident{x}}{\ident{x}}{\extend{\rho_\varnothing}{\ident{x}}{0}}}$.
 
-    \item We evaluate first (\texttt{\small id x}) in~\(\rho\).
+    \item We evaluate first $(\ident{id} \; \ident{x})$ within~\(\rho\).
 
-    \item In order to do so, we evaluate~\texttt{\small id}
-      and~\texttt{\small x}
+    \item In order to do so, we evaluate~`\ident{id}' and~`\ident{x}'
       separately.
 
   \end{itemize}
@@ -1037,13 +1045,13 @@
 
     \item These are both variables, thus we look them up in the
       environment to retrieve their last corresponding binding:
-      \(\rho(\ident{id}) = \clos{\ident{x}}{\ident{x}}{\ident{x}
-        \mapsto 0 \oplus \rho_\varnothing}\), and \(\rho(\ident{x}) =
-      0\).
+      \(\rho(\ident{id}) = \clos{\ident{x}}{\ident{x}}
+            {\extend{\rho_\varnothing}{\ident{x}}{0}}\) and
+            \(\rho(\ident{x}) = 0\).
 
-    \item We need to evaluate the body in the environment $\rho =
-      (\ident{x} \mapsto 0) \oplus (\ident{x} \mapsto 0) \oplus
-      \rho_\varnothing$, which yields~\(\rho(\ident{x}) = 0\), etc.
+    \item We need to evaluate the body in the environment $\rho' =
+      \extend{\extend{\rho_\varnothing}{\ident{x}}{0}}{x}{0}$, which
+      yields~\(\rho'(\ident{x}) = 0\).
 
     \item We create the binding $\ident{y} \mapsto 0$, we add it to
       the current environment and we evaluate the elided subexpression
@@ -1066,21 +1074,20 @@
   \begin{align*}
     \evalf{\overline{n}}{\rho} &= n, \;\, \text{with
       $\overline{n}$ an \OCaml integer and $n \in \mathbb{N}$}\\
-    \evalf{e_1 \; \texttt{+} \; e_2}{\rho} &=
+    \evalf{e_1 + e_2}{\rho} &=
     \evalf{e_1}{\rho} + \evalf{e_2}{\rho} \in \mathbb{N}\\
     \evalf{\lpar{e}\rpar}{\rho} &= \evalf{e}{\rho}\\
     \evalf{x}{\rho} &= \rho(x)\\
     \evalf{\Xfun \; x \rightarrow e}{\rho} &= \clos{x}{e}{\rho}\\
-    \evalf{e_1 \; e_2}{\rho} &= \evalf{e_3}{(x \mapsto
-      \evalf{e_2}{\rho} \oplus \rho_3)},\\
+    \evalf{e_1 \; e_2}{\rho}
+    &= \evalf{e_3}{\extend{\rho_3}{x}{\evalf{e_2}{\rho}}},\\
     &\phantom{=\llbracket} \textnormal{where} \ \evalf{e_1}{\rho} =
     \clos{x}{e_3}{\rho_3}\\
     \evalf{\Xlet \; x = e_1 \; \Xin \; e_2}{\rho}
     &= \evalf{(\Xfun \; x \rightarrow e_2) \; e_1}{\rho}.
   \end{align*}
 
-  Note that we write ``$x,\, y$'' instead of ``$(x,\, y)$'' for
-  brevity. Evaluation means applying the equations from left to right.
+  Evaluation means applying the equations from left to right.
 
 \end{frame}
 
@@ -1093,33 +1100,33 @@
     \item We can easily work out that
       \begin{equation*}
         \evalf{\Xlet \; x = e_1 \; \Xin \; e_2}{\rho}
-        = \evalf{e_2}{(x \mapsto \evalf{e_1}{\rho} \oplus \rho)}.
+        = \evalf{e_2}{\extend{\rho}{x}{\evalf{e_1}{\rho}}}.
       \end{equation*}
 
     \item Since closures are values, they can be the value of a
       function call:
-\begin{alltt}
-\small
-\textbf{let} add = \textbf{fun} x \(\rightarrow\) \textbf{fun} y \(\rightarrow\) x + y \textbf{in}
-\textbf{let} incr = add 1
-\textbf{in} incr 5
-\end{alltt}
+      \begin{flalign*}
+        &\Xlet \; \ident{add} = \Xfun\; \ident{x} \; \ident{y}
+        \rightarrow \ident{x} + \ident{y} \; \Xin\\
+        &\Xlet \; \ident{incr} = \ident{add} \; 1\\
+        &\Xin\; \ident{incr} \; 5
+      \end{flalign*}
 
-    \item The call (\texttt{\small add 1}) is a \textbf{partial
+    \item The call $(\ident{add} \; 1)$ is a \textbf{partial
       application}, as opposed to a \textbf{complete application} like
-      (\texttt{\small add 1 5}). A partial application, by definition,
+      $(\ident{add} \; 1 \; 5)$. A partial application, by definition,
       always evaluates in a closure.
 
     \item Operations are functions denoted by a symbol used in infix
       position (between the operands). As such, they can be partially
       evaluated:
-\begin{alltt}
-\small
-\textbf{let} incr = (+) 1 \textbf{in} incr 5
-\end{alltt}
-     \smallskip
-     \noindent where the parentheses in~\texttt{(+)} mean that the
-     operator has to be considered in \textbf{prefix} position.
+      {\setlength{\abovedisplayskip}{2pt}
+       \setlength{\belowdisplayskip}{2pt}
+      \begin{equation*}
+        \Xlet \; \ident{incr} = (+) \; 1 \; \Xin \; \ident{incr} \; 5
+      \end{equation*}}
+      where the parentheses in~$(+)$ mean that the operator has to be
+      considered in \textbf{prefix} position.
 
   \end{itemize}
 
@@ -1129,35 +1136,25 @@
 %
 \begin{frame}[fragile]{Auto-application and termination}
 
-  \begin{itemize}
+  Our mini-ML is \textbf{Turing\hyp{}complete}, just as \OCaml is.For
+  instance, we can write the following non\hyp{}terminating program:
+  {\setlength{\abovedisplayskip}{0pt}
+    \setlength{\belowdisplayskip}{2pt}
+    \begin{equation*}
+      \Xlet \; \Omega = \Xfun \; \ident{x} \rightarrow \ident{x} \;
+      \ident{x} \; \Xin \; \Omega \; \Omega
+  \end{equation*}}
 
-    \item Our mini-ML is \textbf{Turing\hyp{}complete}, just as \OCaml
-      is.
+  The function $\Omega$ is an \textbf{auto\hyp{}applicative function}.
+  It enables the following non\hyp{}terminating evaluation:
+  \begin{align*}
+     \evalf{\Xlet \; \Omega = \Xfun \; \ident{x} \rightarrow \ident{x} \; \ident{x} \; \Xin \; \Omega \; \Omega}{\rho}
+     &= \evalf{\Omega \; \Omega}%
+           {\extend{\rho}{\Omega}{\evalf{\textbf{fun}\; \ident{x} \rightarrow \ident{x} \; \ident{x}}{\rho}}}\\
+   &= \evalf{\ident{x} \; \ident{x}}{\extend{\rho}{\ident{x}}{\clos{\ident{x}}{\ident{x} \; \ident{x}}{\rho}}}\\
+   &= \text{\emph{idem.}}
+  \end{align*}
 
-    \item For instance, we can write the following
-      non\hyp{}terminating program:
-      \smallskip
-\begin{alltt}
-\small
-\textbf{let} omega = \textbf{fun} f \(\rightarrow\) f f \textbf{in} omega omega
-\end{alltt}
-
-    \item The function \texttt{\small omega} is an
-      \textbf{auto\hyp{}applicative function}.
-
-    \item It enables the following non\hyp{}terminating evaluation:
-      \begin{gather*}
-        \evalf{\texttt{\textbf{let} omega = \textbf{fun} f \(\rightarrow\) f f \textbf{in} omega omega}}{\rho}\\
-\begin{align*}
-&= \evalf{\texttt{\small omega omega}}{(\texttt{\small omega} \mapsto
-    \evalf{\texttt{\small \textbf{fun} f \(\rightarrow\) f f}}{\rho} \oplus
-    \rho)}\\
-&= \evalf{\texttt{\small f f}}{(\texttt{\small f} \mapsto \clos{f}{f \; f}{\rho})
-    \oplus \rho)}\\ &= \text{\emph{idem.}}
-\end{align*}
-\end{gather*}
-
-  \end{itemize}
 
 \end{frame}
 
@@ -1170,18 +1167,21 @@
     \item To demonstrate the expressive power of our mini-ML, let us
       see how we can simulate recursive functions by means of the
       $\Omega$ function:
-\begin{alltt}
-\small
-\textbf{let} \(\Omega\) = \textbf{fun} f \(\rightarrow\) f f
-\end{alltt}
+   {\setlength{\abovedisplayskip}{0pt}
+    \setlength{\belowdisplayskip}{2pt}
+    \begin{equation*}
+      \Xlet \; \Omega = \Xfun\; \ident{x} \rightarrow \ident{x} \; \ident{x}
+   \end{equation*}}
 
     \item Let us define a function \texttt{\small fix}, called the
       \textbf{Y combinator} in \(\lambda\)-calculus:
-      \smallskip
-\begin{alltt}
-\small
-\textbf{let} fix = \textbf{fun} g \(\rightarrow\) \(\Omega\) (\textbf{fun} h \(\rightarrow\) \textbf{fun} x \(\rightarrow\) g (h h) x)
-\end{alltt}
+   {\setlength{\abovedisplayskip}{0pt}
+    \setlength{\belowdisplayskip}{2pt}
+    \begin{equation*}
+      \Xlet \; \ident{fix} = \Xfun \; \ident{g} \rightarrow \Omega \;
+      (\Xfun\; \ident{h} \; \ident{x} \rightarrow \ident{g} \;
+      (\ident{h} \; \ident{h}) \; \ident{x})
+    \end{equation*}}
 
       \item For any (terminating) function~\(f\) and
         any function~\(x\),
@@ -1198,8 +1198,8 @@
       \item The fixed point~\(x\) of a (continuous) function~\(g\)
         satisfies \(g(x) = x\).
 
-      \item Therefore, the fixed point of~\ident{f} (if it exists) is
-        the value of \lpar\ident{fix} \ident{f}\rpar{}.
+      \item Therefore, the fixed point of `\ident{f}' (if it exists)
+        is the value of `\ident{fix} \ident{f}'.
 
   \end{itemize}
 
@@ -1210,21 +1210,20 @@
 \begin{frame}{Fixed points}
 
    Just as with \Xlet \Xin, we can simplify the semantics of
-   \texttt{\small fix}:
+   `\ident{fix}' a bit:
    \begin{equation*}
-     \evalf{\ident{fix} \; e}{\rho} = \evalf{e_1}{(f \mapsto
-       \evalf{\ident{fix} \, (\Xfun \, f \rightarrow e_1)}{\rho}
-       \oplus \rho_1)},
+     \evalf{\ident{fix} \; e}{\rho} = \evalf{e_1}{%
+       \extend{\rho_1}{\ident{x}}{\evalf{\ident{fix} \, (\Xfun \, \ident{x} \rightarrow e_1)}{\rho}}},
    \end{equation*}
-   where $\evalf{e}{\rho} = \clos{f}{e_1}{\rho_1}$.
+   where $\evalf{e}{\rho} = \clos{x}{e_1}{\rho_1}$.
 
    \bigskip
 
    There is a choice:
    \begin{itemize}
 
-     \item either we define \texttt{\small fix} in the functional
-       language (as a built\hyp{}in constant), or
+     \item either we define `\ident{fix}' in the functional language
+       (as a built\hyp{}in constant), or
 
      \item at the meta\hyp{}language (the mathematical logic we are
        using to define the semantics).
@@ -1238,26 +1237,25 @@
 \begin{frame}[fragile]{Fixed points}
 
   Let us consider the following definitions:
-\begin{alltt}
-\small
-\textbf{let} pre\_fact =
-  \textbf{fun} f \(\rightarrow\) \textbf{fun} n \(\rightarrow\) \textbf{if} n = 1 \textbf{then} 1 \textbf{else} n * f(n-1)
-\textbf{let} fact = fix pre\_fact
-\end{alltt}
+  \begin{flalign*}
+    & \Xlet\; \ident{pre\_fact} =
+    \Xfun \; \ident{f} \; \ident{n} \rightarrow
+    \Xif\; \ident{n} = 1 \;\Xthen\; 1 \;\Xelse\;
+    \ident{n} * \ident{f}(\ident{n}-1)\\
+    &\Xlet \; \ident{fact} = \ident{fix} \; \ident{pre\_fact}
+  \end{flalign*}
 
-  We see that \texttt{\small fact} is the fixed point of
-  \texttt{\small pre\_fact}:
+  We see that `\ident{fact}' is the fixed point of
+  `\ident{pre\_fact}':
   \begin{align*}
-    \evalf{\texttt{\small fact}}{\rho} &= \evalf{\texttt{\small fix
-        pre\_fact}}{\rho}\\
-    &= \evalf{\texttt{\small pre\_fact (fix pre\_fact)}}{\rho}\\
-    &= \evalf{\texttt{\small pre\_fact fact}}{\rho}\\
-    &= \evalf{\texttt{\small \textbf{fun} n \(\rightarrow\) \textbf{if} n
-        = 1 \textbf{then} 1 \textbf{else} n * fact(n-1)}}{\rho}
+    \evalf{\ident{fact}}{\rho} &= \evalf{\ident{fix} \; \ident{pre\_fact}}{\rho}\\
+    &= \evalf{\ident{pre\_fact}\; (\ident{fix} \; \ident{pre\_fact})}{\rho}\\
+    &= \evalf{\ident{pre\_fact} \; \ident{fact}}{\rho}\\
+    &= \evalf{\Xfun \; \ident{n} \rightarrow \Xif \; \ident{n}
+        = 1 \; \Xthen\; 1 \; \Xelse\; \ident{n} * \ident{fact}(\ident{n}-1)}{\rho}
   \end{align*}
 
-  It is as if the definition of `\texttt{\small fact}' were
-  recursive... but it is not.
+  A non-recursive definition of the factorial.
 
 \end{frame}
 
@@ -1287,110 +1285,226 @@
 \end{alltt}
 \end{frame}
 
-%% % ------------------------------------------------------------------------
-%% %
-%% \begin{frame}{Local recursive definitions}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Local recursive definitions}
 
-%%   \begin{itemize}
+  \begin{itemize}
 
-%%     \item The function `\texttt{\small fact}' coincides pointwise with
-%%       the factorial function.
+    \item The function `\ident{fact}' coincides pointwise with the
+      factorial function.
 
-%%     \item Let us extend mini-ML with a native recursive binder, using
-%%       the `\texttt{\small fix}' function:
-%%       \begin{equation*}
-%%         \evalf{\Xlet \; \Xrec \; f = e_1 \; \Xin \; e_2}{\rho} =
-%%         \evalf{\Xlet \; f = \textsf{fix} \; (\Xfun \; f \rightarrow
-%%           e_1) \; \Xin \; e_2}{\rho}.
-%%       \end{equation*}
+    \item Let us extend mini-ML with a native recursive binder, using
+      the `\ident{fix}' function:
+      \begin{equation*}
+        \evalf{\Xlet \; \Xrec \; f = e_1 \; \Xin \; e_2}{\rho} =
+        \evalf{\Xlet \; f = \textsf{fix} \; (\Xfun \; f \rightarrow
+          e_1) \; \Xin \; e_2}{\rho}.
+      \end{equation*}
 
-%%   \end{itemize}
+  \end{itemize}
 
-%% \end{frame}
+\end{frame}
 
-%% % ------------------------------------------------------------------------
-%% %
-%% \begin{frame}{Extensions}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Extensions}
 
-%%   \begin{itemize}
+  \begin{itemize}
 
-%%     \item Let us extend our mini-ML with the following
-%%       expressions.\\
-%%       \smallskip
-%%       \begin{tabular}{r@{\,\,}ll@{}}
-%%         $\bullet$
-%%         & \emph{Boolean constants}
-%%         & \Xtrue{} or \Xfalse\\
-%%         $\bullet$
-%%         & \emph{Boolean operators}
-%%         & \texttt{(\&\&)} or \texttt{(||)} or \textsf{\textbf{not}}\\
-%%         $\bullet$
-%%         & \emph{$n$-tuple}
-%%         & $e_1, \ldots, e_n$\\
-%%         $\bullet$
-%%         & \emph{conditional}
-%%         & \Xif{} $e_0$ \Xthen{} $e_1$ \Xelse{} $e_2$\\
-%%         $\bullet$
-%%         & \emph{local recursive binding}
-%%         & \Xlet{} \Xrec{} $f \;\; = \;\; e_1$ \Xin{} $e_2$
-%%       \end{tabular}
+    \item Let us extend our mini-ML with the following
+      expressions.\\
+      \smallskip
+      \begin{tabular}{r@{\,\,}ll@{}}
+        $\bullet$
+        & \emph{Boolean constants}
+        & \Xtrue{} or \Xfalse\\
+        $\bullet$
+        & \emph{Boolean operators}
+        & \textsf{(\&\&)} or \textsf{(||)} or \textsf{\textbf{not}}\\
+        $\bullet$
+        & \emph{$n$-tuple}
+        & $e_1, \ldots, e_n$\\
+        $\bullet$
+        & \emph{conditional}
+        & $\Xif \; e_0 \; \Xthen \; e_1\; \Xelse \; e_2$\\
+        $\bullet$
+        & \emph{local recursive binding}
+        & $\Xlet\; \Xrec\; f = e_1 \; \Xin \; e_2$
+      \end{tabular}
 
-%%       \item Note that parentheses are recommended around tuples, but
-%%         are not mandatory.
+      \item Note that parentheses are recommended around tuples, but
+        are not mandatory.
 
-%%       \item Let us distinguish the variables occurring after \Xlet{}
-%%         and \Xfun{}, because they are \textbf{irrefutable patterns},
-%%         noted $\ipat{p}$:\\
-%%         \smallskip
-%%         \begin{tabular}{r@{\,\,}ll@{}}
-%%           $\bullet$
-%%           & \emph{function}
-%%           & $\Xfun \;\; \ipat{p} \rightarrow e$\\
-%%           $\bullet$
-%%           & \emph{local definition}
-%%           & \(\Xlet \;\; \textrm{[}\Xrec\textrm{]} \;\; \ipat{p} \;\;
-%%           = \;\; e_1 \;\; \Xin \;\; e_2\)
-%%         \end{tabular}
+      \item Let us distinguish the variables occurring after \Xlet{}
+        and \Xfun{}, because they are \textbf{irrefutable patterns},
+        noted $\ipat{p}$:\\
+        \smallskip
+        \begin{tabular}{r@{\,\,}ll@{}}
+          $\bullet$
+          & \emph{function}
+          & $\Xfun \; \ipat{p} \rightarrow e$\\
+          $\bullet$
+          & \emph{local definition}
+          & $\Xlet \; \textrm{[}\Xrec\textrm{]} \; \ipat{p} = e_1 \; \Xin \; e_2$
+        \end{tabular}
 
-%%   \end{itemize}
+  \end{itemize}
 
-%% \end{frame}
+\end{frame}
 
-%% % ------------------------------------------------------------------------
-%% %
-%% \begin{frame}{Irrefutable patterns}
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Irrefutable patterns}
 
-%%   \begin{itemize}
+  \begin{itemize}
 
-%%     \item An irrefutable pattern $\ipat{p}$ is defined recursively by
-%%       the following cases:\\
-%%       \smallskip
-%%       \begin{tabular}{r@{\,\,}ll@{}}
-%%         $\bullet$
-%%         & \emph{variable}
-%%         & $f, g, h, x, y, z$, etc. \\
-%%         $\bullet$
-%%         & \emph{unit}
-%%         & \unit\\
-%%         $\bullet$
-%%         & \emph{$n$-tuple}
-%%         & $\ipat{p}_1, \ldots, \ipat{p}_n$\\
-%%         $\bullet$
-%%         & \emph{parenthesis}
-%%         & $\lpar\ipat{p}\rpar$\\
-%%         $\bullet$
-%%         & \emph{underscore}
-%%         & {\Large \_}
-%%       \end{tabular}
+    \item An irrefutable pattern $\ipat{p}$ is defined recursively by
+      the following cases:\\
+      \smallskip
+      \begin{tabular}{r@{\,\,}ll@{}}
+        $\bullet$
+        & \emph{variable}
+        & $f, g, h, x, y, z$, etc. \\
+        $\bullet$
+        & \emph{unit}
+        & \unit\\
+        $\bullet$
+        & \emph{$n$-tuple}
+        & $\ipat{p}_1, \ldots, \ipat{p}_n$\\
+        $\bullet$
+        & \emph{parenthesis}
+        & $(\ipat{p})$\\
+        $\bullet$
+        & \emph{underscore}
+        & {\Large \_}
+      \end{tabular}
 
-%%       \item Note that, from the syntactic point of view, irrefutable
-%%         patterns are special cases of expressions, except the
-%%         underscore, which is a special case avoiding the creation of a
-%%         binding.
+      \item Note that, from the syntactic point of view, irrefutable
+        patterns are special cases of expressions, except the
+        underscore, which is a special case avoiding the creation of a
+        binding.
 
-%%       \item The sentence~\(e\) is equivalent to \(\Xlet \;\; \_ \;\; =
-%%         \;\; e\).
+      \item The sentence~\(e\) is equivalent to \(\Xlet \; \_ = e\).
 
-%%   \end{itemize}
+  \end{itemize}
 
-%% \end{frame}
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Extensions}
+
+  \begin{itemize}
+
+    \item The comma takes priority over the arrow:
+      \begin{equation*}
+        \Xfun \; \ident{x} \rightarrow \ident{x}, \ident{y}
+        \quad\text{is the same as}\quad
+        \Xfun \; \ident{x} \rightarrow (\ident{x}, \ident{y}).
+      \end{equation*}
+
+    \item In order to alleviate the notation $\Xfun \;\ipat{p}_1
+      \rightarrow \ldots \rightarrow \Xfun \;
+      \ipat{p}_n \rightarrow e$, we define the equivalent
+      expressions:\\
+      \smallskip
+      \begin{tabular}{r@{\,\,}ll@{}}
+        $\bullet$
+        & $\Xlet \;
+          \textrm{[}\Xrec\textrm{]} \; f = \Xfun \; \ipat{p}_1 \; \ipat{p}_2 \, \ldots \,
+          \ipat{p}_n \rightarrow  e$
+        & (new expression)\\
+        $\bullet$
+        & $\Xlet \; \textrm{[}\Xrec\textrm{]} \; f \; \ipat{p}_1 \; \ipat{p}_2 \, \ldots \, \ipat{p}_n = e$
+        & (new sentence)
+      \end{tabular}
+
+    \item For example, we would write
+      \begin{flalign*}
+        &\Xlet \; \ident{mult} = \Xfun\; \ident{x} \; \ident{y}
+        \rightarrow \ident{x} * \ident{y} \; \Xin\\
+        &\Xlet \; \ident{eq} \; \ident{x} \; \ident{y} = (\ident{x} =
+        \ident{y}) \; \Xin\\
+        &\Xlet \; \Xrec \; \ident{fact} \; \ident{n} = \Xif\;
+        \ident{eq} \; \ident{n} \; 0 \; \Xthen\; 1 \;\Xelse\;
+        \ident{mult} \; \ident{n} \; (\ident{fact}(\ident{n}-1))\\
+        &\Xin\; \ident{fact} \; 9
+      \end{flalign*}
+
+      \item Note the two different meanings of $(=)$: one is
+        definitional, the other is operational (a Boolean operator).
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Parallel definitions}
+
+  \begin{itemize}
+
+    \item We also extend the syntax to alleviate certain
+      expressions. By definition,
+      \begin{equation*}
+        \Xlet \; \ipat{p}_1 = e_1 \;
+        \Xand \; \ipat{p}_2 = e_2 \, \ldots \,
+        \Xand \; \ipat{p}_n = e_n \; \Xin \; e
+      \end{equation*}
+      is equivalent to
+      \begin{equation*}
+        \Xlet \; \ipat{p}_1, \ldots, \ipat{p}_n = e_1, \ldots, e_n \; \Xin \; e
+      \end{equation*}
+      but the latter requires more memory (for the tuples in the heap).
+
+    \item These are called \textbf{parallel definitions} because they
+      occur within the same environment and could be conceived as
+      happening in parallel.
+
+    \item The two following sentences are equivalent:
+      \begin{flalign*}
+        &\Xlet \; \ident{x} = 1 \; \Xand\; \ident{y} = 2 \; \Xin\;
+          \ident{x} + \ident{y}\\
+        &\Xlet\; \ident{x}, \ident{y} = 1,2 \;\Xin\; \ident{x} + \ident{y}
+      \end{flalign*}
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Mutually recursive definitions}
+
+  \begin{itemize}
+
+    \item Parallel definitions are useful for \textbf{mutually
+      recursive definitions}:\\
+      \smallskip
+      \begin{tabular}{r@{\;}ll}
+        $\bullet$
+        & \(\Xlet \; \Xrec \; \ipat{p}_1 = e_1 \;
+        \Xand \; \ipat{p}_2 = e_2 \, \ldots \, \Xand
+        \; \ipat{p}_n = e_n \; \Xin \; e\) &
+        (expression)\\
+      $\bullet$
+      & \(\Xlet \; \Xrec \; \ipat{p}_1 = e_1 \; \Xand
+        \; \ipat{p}_2 = e_2 \, \ldots \, \Xand \; \ipat{p}_n = e_n\)
+      & (sentence)
+      \end{tabular}
+      \smallskip
+
+    \item A silly example:
+      \begin{flalign*}
+        &\Xlet \; \Xrec\; \ident{even} \; \ident{n} = \Xif\;
+        2*(\ident{n}/2) = \ident{n} \; \Xthen \; \Xtrue \;\Xelse \; \ident{odd} (\ident{n}-1)\\
+        &\Xand \; \ident{odd} \; \ident{n} =
+        \Xif \; 2*(\ident{n}/2) = \ident{n} \;\Xthen\; \Xfalse \;
+        \Xelse \; \ident{even} (\ident{n}-1)
+      \end{flalign*}
+     where (\textbf{/}) is the Euclidean division.
+
+  \end{itemize}
+
+\end{frame}

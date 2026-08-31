@@ -14,6 +14,7 @@
 \usepackage{clrscode}
 \usepackage{url}
 \usepackage{booktabs}
+\usepackage{pst-tree}
 
 \input{commands}
 \input{ocaml_syntax}
@@ -43,8 +44,9 @@
 \newcommand\Trace{\mathcal{T}}
 \newcommand\T[2]{\Trace_{#2}^{#1}}
 \newcommand\len[1]{\lvert{#1}\rvert{}}
-\newcommand\clos[3]{\langle (\Xfun \; #1 \rightarrow #2), #3 \rangle}
+\newcommand\clos[3]{\langle \Xfun \; #1 \rightarrow #2; #3 \rangle}
 \newcommand{\evalf}[2]{\llbracket{#1}\rrbracket{#2}}
+\newcommand{\extend}[3]{#1[#2 \mapsto #3]}
 
 % Induction
 %
@@ -62,6 +64,8 @@
 \author{Christian Rinderknecht}
 \institute{Eszterházy Károly Katolikus Egyetem}
 \date{September 2026}
+
+\includeonly{mini_ml}
 
 \begin{document}
 
