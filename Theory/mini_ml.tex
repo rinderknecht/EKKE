@@ -581,7 +581,7 @@
     &\Xlet \; \ident{x} = 0 \;\textbf{in}\\
     &\Xlet \; \ident{id} = \Xfun\; \ident{x} \rightarrow \ident{x} \; \Xin\\
     &\Xlet \; \ident{y} = \ident{id} \; \ident{x} \;\Xin\\
-    &\Xlet \; \ident{x} = (\Xfun \ident{x} \; \ident{y} \rightarrow \ident{x} +
+    &\Xlet \; \ident{x} = (\Xfun \; \ident{x} \; \ident{y} \rightarrow \ident{x} +
     \ident{y}) \; 1 \; 2\\
     &\Xin\; \ident{x} + 1
   \end{flalign*}
@@ -1213,7 +1213,7 @@
    `\ident{fix}' a bit:
    \begin{equation*}
      \evalf{\ident{fix} \; e}{\rho} = \evalf{e_1}{%
-       \extend{\rho_1}{\ident{x}}{\evalf{\ident{fix} \, (\Xfun \, \ident{x} \rightarrow e_1)}{\rho}}},
+       \extend{\rho_1}{x}{\evalf{\ident{fix} \, (\Xfun \, x \rightarrow e_1)}{\rho}}},
    \end{equation*}
    where $\evalf{e}{\rho} = \clos{x}{e_1}{\rho_1}$.
 
@@ -1297,10 +1297,14 @@
     \item Let us extend mini-ML with a native recursive binder, using
       the `\ident{fix}' function:
       \begin{equation*}
-        \evalf{\Xlet \; \Xrec \; f = e_1 \; \Xin \; e_2}{\rho} =
-        \evalf{\Xlet \; f = \textsf{fix} \; (\Xfun \; f \rightarrow
+        \evalf{\Xlet \; \Xrec \; x = e_1 \; \Xin \; e_2}{\rho} =
+        \evalf{\Xlet \; x = \textsf{fix} \; (\Xfun \; x \rightarrow
           e_1) \; \Xin \; e_2}{\rho}.
       \end{equation*}
+
+    \item In practice, recursive definitions are given a built\hyp{}in
+      semantics, as opposed to being defined in terms of a special
+      combinator like `\ident{fix}'.
 
   \end{itemize}
 
@@ -1504,6 +1508,388 @@
         \Xelse \; \ident{even} (\ident{n}-1)
       \end{flalign*}
      where (\textbf{/}) is the Euclidean division.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Static typing and inference}
+
+  \begin{itemize}
+
+    \item The aim of \textbf{static typing} is to detect and reject at
+      compile\hyp{}time some kinds of programming errors which would
+      otherwise result into an error at run\hyp{}time, like $(1\;2)$
+      or $(\Xfun \; \ident{x} \rightarrow \ident{x}) + 1$.
+
+    \item With this aim, a \textbf{type} is assigned by the compiler
+      or the programmer to each subexpression of an expression (in
+      particular, the whole program).
+
+    \item For example, `\type{int}' for an arithmetic expression, or
+      $\type{int} \rightarrow \type{int}$ for a function from the
+      integers to the integers.
+
+    \item The \textbf{coherence} of these types is checked by the
+      \OCaml compiler, that is, if we think of a type as an
+      assumption, no assumption must contradict another one.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Static typing and inference}
+
+  \begin{itemize}
+
+    \item It is undecidable to determine all possible run\hyp{}time
+      errors for all programs before running them.
+
+    \item \textbf{Type systems}, on the other hand, are often
+      \textbf{decidable}, because it is considered a good design to
+      ensure that the compiler terminates on all input programs.
+
+    \item Therefore, it is impossible for the compiler to reject only
+      those programs that would `go wrong' at run\hyp{}time.
+
+    \item In other words, all type systems reject innocent programs,
+      and that is why the quest for better type systems, with better
+      compromises between unfair rejection and guaranteed safety, will
+      never end.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Types}
+
+  \begin{itemize}
+
+    \item \textbf{Types are terms} associated to expressions, either
+      by the programmer or the compiler, and they capture some
+      \textbf{invariant properties} which can be automatically
+      composed and checked.
+
+    \item A type~$t$ is a term defined recursively by the following
+      cases:\\
+      \smallskip
+      \begin{tabular}{r@{\,\,}ll}
+        $\bullet$
+        & \emph{simple}
+        & \textsf{char}, \textsf{bool}, \textsf{int}, \textsf{string},
+        \textsf{float}, \textsf{unit}\\
+        $\bullet$
+        & \emph{Cartesian product}
+        & $t_1 \times \ldots \times t_n$\\
+        $\bullet$
+        & \emph{functional}
+        & $t_1 \rightarrow t_2$\\
+        $\bullet$
+        & \emph{parenthesis}
+        & $(t)$\\
+        $\bullet$
+        & \emph{free variable}
+        & $\alpha$, $\beta$, $\gamma$, etc. \\
+        $\bullet$
+        & \emph{parameterised}
+        & $\alpha$ \textsf{list}
+      \end{tabular}
+
+    \item Until now, we have not encountered values of the type
+      \textsf{float}, \textsf{char} or \textsf{string}, but they are
+      fairly obvious.
+
+    \item We write $\times$, $\alpha$, $\beta$, etc. what is written
+      \textsf{*}, \textsf{'a}, \textsf{'b}, etc. in the source code.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Type expressions}
+
+  \begin{itemize}
+
+    \item The Cartesian product takes multiple arguments, instead of
+      being binary like in mathematics, and $(\times)$~is not
+      associative in \OCaml:
+      \begin{equation*}
+        t_1 \times t_2 \times t_3 \neq (t_1 \times t_2) \times
+        t_3 \neq t_1 \times (t_2 \times t_3).
+      \end{equation*}
+
+    \item The arrow is used in types too, where it is also
+      right\hyp{}associative:
+      \begin{equation*}
+        t_1 \rightarrow t_2 \rightarrow \ldots
+        \rightarrow t_{n-1} \rightarrow t_n
+      \end{equation*}
+      is equivalent to
+      \begin{equation*}
+        t_1 \rightarrow (t_2 \rightarrow (\ldots
+        (t_{n-1} \rightarrow t_n)) \; \ldots).
+      \end{equation*}
+
+    \item The Cartesian product has priority over the arrow:
+      \begin{equation*}
+        t_1 \times t_2 \rightarrow t_3
+      \end{equation*}
+      is equivalent to
+      \begin{equation*}
+        (t_1 \times t_2) \rightarrow t_3.
+      \end{equation*}
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Type expressions}
+
+  \begin{itemize}
+
+    \item The \OCaml compiler computes a type for each expression:
+      this is called \textbf{static type inference}.
+
+    \item For the simple constants, we have
+      \smallskip
+      \begin{center}
+        \begin{tabular}{l|l|c}
+          \toprule
+          \multicolumn{1}{c}{Type} & \multicolumn{1}{c}{Values}
+          & \multicolumn{1}{c}{Some functions}\\
+          \midrule
+          \textsf{unit}
+          & \unit
+          & \\
+          \textsf{bool}
+          & \Xtrue \ \Xfalse
+          & \textsf{\&\&} \ \textsf{||} \ \textsf{not} \\
+          \textsf{int}
+          & \textsf{1} \, \textsf{2} \ \textsf{max\_int}
+          & \textsf{+} \ \textsf{-} \ \textsf{*} \ \textsf{/}\\
+          \textsf{float}
+          & \textsf{1.0} \, \textsf{2.} \ \textsf{1e4}
+          & \textsf{+.} \ \textsf{-.} \ \textsf{*.} \ \textsf{/.} \
+          \textsf{cos}\\
+          \textsf{char}
+          & \textsf{'a'} \ \textsf{'\textbackslash n'} \
+          \textsf{'\textbackslash 097'}
+          & \textsf{Char.code} \, \textsf{Char.chr}\\
+          \textsf{string}
+          & \textsf{"a\textbackslash tb\textbackslash 010c\textbackslash n"},
+          & \textsf{(\textasciicircum)} \, \textsf{s.[i]}\\
+          \bottomrule
+        \end{tabular}
+      \end{center}
+      \smallskip
+
+    \item Operations on floating point numbers are written differently
+      from their equivalent counterparts on integers.
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Type definitions}
+
+  \begin{itemize}
+
+    \item We further extend the syntax of the sentences to allow the
+      binding of a type to a name, or \textbf{type definition}:\\
+      \smallskip
+      \begin{tabular}{@{\,}r@{\,\,}l@{\,\;}l@{}}
+        $\bullet$
+        & \emph{type definition}
+        & \(\Xtype \; [\Xnonrec] \; q = t\)\\
+        $\bullet$
+        & \emph{parallel type definition}
+        & \(\Xtype \; [\Xnonrec] \; q_1 = t_1 \; [\Xand \; q_2 =
+          t_2 \, \ldots]\)\\
+        $\bullet$
+        & \emph{type variable}
+        & $q$\\
+        \multicolumn{2}{l}{In particular:}\\
+        $\bullet$
+        & \emph{type aliasing}
+        & \(\Xtype \; q_0 = q_1\)
+      \end{tabular}
+      \smallskip
+
+    \item By default, type definitions can be recursive (we will see
+      an example later). If not, use the keyword \textbf{nonrec}.
+
+    \item \noindent We can now write, for instance, the following:
+      \begin{flalign*}
+        &\Xtype\; \ident{abscissa} = \ident{floa}t \\
+        &\Xtype\; \ident{ordinate} = \ident{float}\\
+        &\Xtype\; \ident{point} = \ident{abscissa} \times \ident{ordinate}\\
+        &\Xtype\; \ident{origin} = \ident{point}
+      \end{flalign*}
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Type inference}
+
+  \begin{itemize}
+
+    \item Tuples contain data of the same type and their arity is part
+      of their type.
+
+    \item For instance, the pair \textsf{(1,2)} has type $\textsf{int}
+      \times \textsf{int}$, and the triplet \textsf{(1,2,3)} has type
+      $\textsf{int} \times \textsf{int} \times \textsf{int}$, thus
+      are incompatible.
+
+    \item Consider also the following session at the \OCaml
+      toplevel:
+      \medskip
+
+      \noindent\topin{\textbf{let} middle x y = (x+y)/2}
+
+      \noindent\topout{\textbf{val} middle~:~int $\rightarrow$ int
+        $\rightarrow$ int}
+
+      \medskip
+
+      \noindent\topin{\textbf{let} middle (x,y) = (x+y)/2}
+
+      \noindent\topout{\textbf{val} middle~:~int $\times$ int
+        $\rightarrow$ int}
+
+      \smallskip
+
+    \item In the above, the \OCaml compiler figures out in both cases
+      that, since we compute \textsf{(x+y)}, that implies
+      that~\textsf{x} and~\textsf{y} must have type \type{int}.
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Polymorphism}
+
+  \begin{itemize}
+
+    \item When a variable is not constrained by its uses,
+      like~\textsf{x} in $\Xfun \; \ident{x} \rightarrow \ident{x}$,
+      it is assigned the most general type, that is, a \textbf{type
+        variable}:\\
+      \noindent\topin{\Xlet id = \Xfun x $\rightarrow$ x}
+
+      \noindent\topout{\textbf{val} id : $\alpha \rightarrow \alpha =
+        \topclos$}
+
+    \item This means that the above identity function can be applied
+      to any kind of value, and that the type of the call is that of
+      the argument.
+
+    \item This property of a function to accept values of different
+      types is called \textbf{parametric polymorphism}. Consider more
+      examples:\\
+      \noindent\topin{\Xfun (x,y,z) $\rightarrow$ x}
+
+      \noindent\topout{\textbf{-} : $\alpha \times \beta \times
+        \gamma \rightarrow \alpha$}.
+
+      \noindent\topin{\Xlet compose f g = \Xfun x \(\rightarrow\) f (g x)}
+
+      \noindent\topout{\Xval compose~: $(\alpha \rightarrow
+        \beta) \rightarrow (\gamma \rightarrow \alpha) \rightarrow
+        \gamma \rightarrow \beta = \topclos$}
+
+      \noindent\topin{\Xlet \Xrec power f n =\\
+        \ \ \ \ \Xif n $\leqslant$ 0 \Xthen id \Xelse compose f (power f (n-1))}
+
+      \noindent\topout{\Xval power~:~($\alpha \rightarrow \alpha$)
+        $\rightarrow$ int $\rightarrow$ ($\alpha \rightarrow \alpha$) =
+        $\topclos$}
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Polymorphism inference}
+
+  \noindent\topin{\Xlet compose f g x = f (g x)}
+
+  \noindent\topout{\textbf{val} compose~: $(\alpha \rightarrow \beta)
+    \rightarrow (\gamma \rightarrow \alpha) \rightarrow \gamma
+    \rightarrow \beta = \topclos$}
+
+  \bigskip
+
+  The type of the function \fun{compose} is inferred as follows:
+  \begin{itemize}
+
+    \item the first argument~\textsf{f} is an arbitrary function,
+      hence of type \(\alpha \rightarrow \beta\);
+
+    \item the second argument~\textsf{g} is a function whose result is
+      the argument of~\textsf{f}, therefore of type~\(\alpha\);
+
+    \item the domain of~\textsf{g} is arbitrary, hence \textsf{g}~has
+      type \(\gamma \rightarrow \alpha\);
+
+    \item the function \fun{compose} has an argument~\textsf{x}
+      which is passed to~\textsf{g}, hence has type~\(\gamma\);
+
+    \item finally, the result of \fun{compose} is returned
+      by~\textsf{f}, hence of type~\(\beta\).
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Polymorphic equality}
+
+  \begin{itemize}
+
+    \item The \textbf{equality operator} in \OCaml is polymorphic and
+      built in:
+
+      \noindent\topin{(=)}
+
+      \noindent\topout{- : $\alpha \rightarrow \alpha \rightarrow
+        \textsf{bool} = \topclos$}
+
+      \item We must be very careful that it coincides with our
+        intended notion of equality, because the compiler will always
+        accept it on \textbf{non\hyp{}functional values}.
+
+      \item It consists in the \textbf{syntactical equality}: two
+        values are equal if they have the same structure and if their
+        respective parts are equal, recursively. It fails on closures.
+
+        \smallskip
+
+        \noindent\topin{1 = 1 \&\& [1;2] = [1;2] \&\& \str{yes} =
+          \str{yes}}
+
+        \noindent\topout{- : bool = true}
+
+        \noindent\topin{(\Xfun x $\rightarrow$ x) = (\Xfun x $\rightarrow$ x)}
+
+        \error{\small Exception: Invalid\_argument "equal: functional value".}
 
   \end{itemize}
 
