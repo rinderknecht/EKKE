@@ -360,7 +360,7 @@ z &= \fun{h}(\fun{a}(), \fun{a}())
   Here is a functional rewrite system that defines a function
   `\fun{len}' that computes the length of a stack.
   \begin{equation*}
-    \begin{array}{r@{\;}l@{\;}l@{\qquad}r@{}}
+    \begin{array}{r@{\;}l@{\;}l@{}}
       \fun{len}\,\el & \smashedrightarrow{\gamma} & 0;\\
       \fun{len}(\cons{x}{s}) & \smashedrightarrow{\delta}
       & 1 + \fun{len}\, s.
@@ -443,5 +443,266 @@ z &= \fun{h}(\fun{a}(), \fun{a}())
   \end{equation*}
   We proved \(\forall x \in T.\pred{LenCat}{\cons{x}{s}, t}\).\hfill\(\Box\)
 
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Higher-order rewrite systems}
+
+  We already extended term-rewriting systems (TRS) with conditions.
+
+  \bigskip
+
+  We can also extend them in another direction: variables could denote
+  functions. These are called \textbf{higher\hyp{}order systems}.
+
+  \bigskip
+
+  They enable defining functions that can be parameterised by other
+  functions.
+
+  \bigskip
+
+  For example, let us consider \textbf{iterators}. Typically, those
+  are functions that traverse a data structure and apply a given
+  function at each step.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Maps on stacks}
+
+  In the case of stacks, a simple iterator is a function `\fun{map}'
+  that takes a stack and returns a stack made of the images of the
+  elements, in the original order. So $[e_1; e_2; \ldots; e_n]$ becomes $[f(e_1);
+    f(e_2); \ldots; f(e_n)]$.
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{map}(f, \el) &\smashedrightarrow{\alpha} & \el;\\
+      \fun{map}(f, \cons{x}{s}) &\smashedrightarrow{\beta}
+      & \cons{f(x)}{\fun{map}(f, s)}.
+    \end{array}
+  \end{equation*}
+
+  For example, if we set
+  \begin{align*}
+    \fun{incr}(n)   &\rightarrow n + 1.\\
+    \fun{square}(n) &\rightarrow n * n.
+  \end{align*}
+  then we have
+  \begin{align*}
+    \fun{map}(\fun{incr}, [4; 4; 5; 0]) &\twoheadrightarrow [5; 5; 6; 1].\\
+    \fun{map}(\fun{square}, [4; 4; 5; 0]) &\twoheadrightarrow [16; 16; 25; 0].
+  \end{align*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Folds on stacks}
+
+  Folds take an additional parameter with is supposed to be the
+  initial value of an \textbf{accumulator}. In this framework, the
+  given function is applied to an element of the stack \emph{and to the
+  current value of the accumulator}.
+
+  \bigskip
+
+  For example, for summing all integers in a stack, we would have
+  \begin{equation*}
+    \fun{fold} (\fun{add}, [4; 4; 5; 0], 0) \twoheadrightarrow 13,
+  \end{equation*}
+  where $\fun{add}(x,y) \rightarrow x + y$.
+
+  \bigskip
+
+  Note how the direction of iteration does not matter, because
+  \begin{equation*}
+    4 + (4 + (5 + (0 + \underline{0})))
+    = (((\underline{0} + 4) + 4) + 5) + 0,
+  \end{equation*}
+  where the initial value of the accumulator is~\(\underline{0}\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Lambdas}
+
+  Note how cumbersome it is sometimes to have to define the function
+  applied by the iterator (here a fold), when it is probably used only
+  once.
+
+  \bigskip
+
+  To remedy this, we can further extend or systems with
+  \textbf{anonymous functions}, also known as \textbf{lambdas} (a
+  name coming from the $\lambda$\hyp{}calculus, which is a different
+  framework in which to model computations.)
+
+  \bigskip
+
+  For example, we will write $\Xfun\; x \rightarrow x$ to denote the
+  identity function, without naming it. Of course, we have to forbid
+  calling any function `\fun{fun}` now (in other words, \Xfun is a
+  \textbf{keyword}).
+
+  \bigskip
+
+  In our case above:
+  \begin{equation*}
+    \fun{fold} ((\Xfun\; (x,y) \rightarrow x + y), [4; 4; 5; 0], 0)
+    \twoheadrightarrow 13,
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{A map is a fold}
+
+  A map is then a special case of a fold, where the accumulator is the
+  new stack:
+  \begin{equation*}
+    \fun{map}(f, s)
+    \rightarrow \fun{fold}((\Xfun\; (e, a) \rightarrow \cons{f(e)}{a}), s, \el),
+  \end{equation*}
+  where $a$ is the accumulator and $e$ a stack element.
+
+  \bigskip
+
+  Contrary to $(+)$, pushing on a stack is not a symmetric relation,
+  so the order of traversal matters.  If `\fun{fold}' visited the
+  stack elements from left to right, then the result of the call
+  $\fun{map}(\fun{incr}, [4; 4; 5; 0])$ would be $[1;6;5;5]$, which is
+  the reverse of what we expect, which is $[5;5;6;1]$.
+
+  \bigskip
+
+  Here, since we want to conserve the order of the original elements
+  of the stack, the fold must apply the given function first to the
+  bottom element, then the penultimate, then the antepenultimate
+  etc. until the top. If we consider a stack a being layout
+  horizontally, this means applying the function from right to left.
+
+  \bigskip
+
+  This is called a \textbf{right fold}.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Right fold}
+
+  Let's rename `\fun{fold}' as `\fun{foldr}' (`fold right'). Then:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{foldr} (f, [], a) & \rightarrow a;\\
+      \fun{foldr} (f, \cons{x}{s}, a) & \rightarrow f(x, \fun{foldr}(f, s, a)).
+    \end{array}
+  \end{equation*}
+  A way to understand this definition is by extension:
+  \begin{equation*}
+    \fun{foldr}(f,[e_1; e_2; \ldots; e_n], a) \equiv f(e_1, f(e_2, \ldots f(e_n, a))).
+  \end{equation*}
+
+  Note that the recursive call in the definition of `\fun{foldr}' is
+  not in tail position. (See page~\pageref{tail_call} an onwards.)
+
+  \bigskip
+
+  In this case, this means that all the calls to the iterated
+  function~$f$ will be waiting for all the calls to~`\fun{foldr}' to
+  be finished (as well as all the calls to~$f$ on the previous
+  elements of the stack).
+
+  \bigskip
+
+  Generally speaking, the call stack will grow proportionally to the
+  length of the stack.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Left fold}
+
+  The dual iteration of a right fold is a \textbf{left fold}:
+  \begin{equation*}
+    \fun{foldr}(f,[e_1; e_2; \ldots; e_n], a) \equiv f(e_n, \ldots f(e_2, f(e_1, a))).
+  \end{equation*}
+  It is a simple matter of rearranging the calls in the definition of `\fun{foldr}`:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{foldl} (f, [], a) & \rightarrow a;\\
+      \fun{foldl} (f, \cons{x}{s}, a) & \rightarrow \fun{foldl}(f, s, f(x,a)).
+    \end{array}
+  \end{equation*}
+
+  Note how the recursive call is in tail position, so, if tail call
+  optimisation is performed, the call stack will grow a constant a
+  constant amount if the calls to the given function also grow the
+  stack a constant amount.
+
+  \bigskip
+
+  These considerations on memory usage are only meaningful when
+  running our programs, but not when designing a system.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Binary trees}
+
+  \begin{itemize}
+
+    \item A \textbf{binary tree} is a special case of tree, where each
+      node has either no children or exactly two.
+      \begin{center}
+        \includegraphics{bt_shape}
+      \end{center}
+
+    \item Nodes are of two kinds: \textbf{internal}
+      ({\tiny\raisebox{1pt}{\(\oslash\)}}, \(\circ\) and \(\bullet\))
+      or \textbf{external} (\(\scriptstyle \Box\)).
+
+    \item The \textbf{root} is the only internal node without a parent
+      ({\tiny\raisebox{1pt}{\(\oslash\)}}).
+
+    \item \textbf{Leaves} (\(\bullet\)) are internal nodes whose
+      children are two external nodes (\(\scriptstyle \Box\)).
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Binary trees}
+
+  Internal nodes are usually associated with some kind of information,
+  whilst external nodes are not, like
+  \begin{center}
+    \includegraphics[bb=71 645 190 721]{bt_ex1}
+    \qquad
+    \includegraphics[bb=71 645 190 721]{bt_ex2}
+  \end{center}
+  \centerline{Extended binary tree \qquad\quad Pruned binary tree}
+
+  We need to ponder how many shapes a binary tree can take, just like
+  stacks. Each shape as a value constructor and maybe some data.
+  \begin{itemize}
+
+    \item The \textbf{empty tree} is an external node, without
+      information: \(\fun{ext}().\)
+
+    \item A \textbf{non\hyp{}empty tree} is an internal node carrying
+      some information \(x\), and which has a left child~\(t_1\) and a
+      right child~\(t_2\): \(\fun{int}(x, t_1, t_2).\)
+
+  \end{itemize}
 
 \end{frame}
