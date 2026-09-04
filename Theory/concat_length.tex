@@ -1,0 +1,97 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{More proofs by induction}
+
+  Here is again the concatenation of two stacks:
+  \begin{align*}
+    \fun{cat}(        \el,t) &\xrightarrow{\alpha} t\\
+    \fun{cat}(\cons{x}{s},t) &\xrightarrow{\smash{\beta}}
+    \cons{x}{\fun{cat}(s,t)}
+  \end{align*}
+  Here is a functional rewrite system that defines a function
+  `\fun{len}' that computes the length of a stack.
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{len}\,\el & \smashedrightarrow{\gamma} & 0;\\
+      \fun{len}(\cons{x}{s}) & \smashedrightarrow{\delta}
+      & 1 + \fun{len}\, s.
+    \end{array}
+  \end{equation*}
+  So, for example: \(\fun{len}\,[1;2;3] \twoheadrightarrow 1 + (1 + (1
+  + (0))) = 3.\)
+
+  \bigskip
+
+  Let us prove the property
+  \begin{equation*}
+    \pred{LenCat}{s,t} \colon \fun{len}(\fun{cat}(s, t)) \equiv
+    \fun{len}\,s + \fun{len}\,t.
+  \end{equation*}
+  That is: concatenation preserves the length of the stacks.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{More proofs by induction}
+
+  Note how there are \textbf{two parameters}, \(s\)~and~\(t\), instead
+  of one.
+
+  \bigskip
+
+  In this case, we can try to prove the property by induction on one
+  parameter, as we did before, and hope that the induction hypothesis
+  with the other parameter considered constant suffice. Let us chose
+  the first one.
+
+  \bigskip
+
+  The base case is \(\forall t \in S.\pred{LenCat}{\el,t}\), that is
+  \[\fun{len}(\fun{cat}(\el,t)) \equiv \fun{len}\,\el +
+  \fun{len}\,t.\] It is immediate (the call being rewritten is
+  underlined):
+  \begin{equation*}
+    \fun{len}(\ufun{cat}(\el,t)) \smashedrightarrow{\alpha}
+    \fun{len}\,t = 0 + \fun{len}\,t
+    \smashedleftarrow{\gamma} \ufun{len}\,\el + \fun{len}\,t.
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{More proofs by induction}
+
+  The general case \(\forall s,t \in S.\pred{LenCat}{s,t} \Rightarrow
+  \forall x \in T.\pred{LenCat}{\cons{x}{s}, t}\), where \(S\)~is the
+  set of all stacks, and \(T\)~is the set of all terms (\(S \subset
+  T\)).
+
+  \bigskip
+
+  Let us assume now \(\forall s,t \in S.\pred{LenCat}{s,t}\) (the
+  induction hypothesis), and prove \(\forall x \in
+  T.\pred{LenCat}{\cons{x}{s}, t}\).
+
+  \bigskip
+
+  We have:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{\qquad}r@{}}
+        \fun{len}(\ufun{cat}(\cons{x}{s},t))
+      & \smashedrightarrow{\beta}
+      & \ufun{len}(\cons{x}{\fun{cat}(s,t)})\\
+      & \smashedrightarrow{\delta}
+      & 1 + \fun{len}(\fun{cat}(s,t))\\
+      & \equiv & 1 + (\fun{len}\,s + \fun{len}\,t)
+      & \pred{LenCat}{s,t}\\
+      & = & (1 + \fun{len}\,s) + \fun{len}\,t
+      & \text{associativity of \((+)\)}\\
+      & \smashedleftarrow{\delta}
+      & \ufun{len}(\cons{x}{s}) + \fun{len}\,t.
+    \end{array}
+  \end{equation*}
+  We proved \(\forall x \in T.\pred{LenCat}{\cons{x}{s}, t}\).\hfill\(\Box\)
+
+\end{frame}

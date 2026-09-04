@@ -1,0 +1,26 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath}
+
+\newcommand\cons[2]{{#1}\!::\!{#2}}
+\newcommand\fun[1]{\textsf{#1}}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesepA=0pt,nodesepB=1pt,levelsep=24pt,treesep=20pt]{\TCircle{$x$}~[tnpos=l]{\raisebox{-0.8pt}{\rnode[lb]{x_out}{$s_2$}}}~[tnpos=r]{\raisebox{0.8pt}{\rnode[rb]{x_in}{$s$}}}}{
+  \psset{levelsep=30pt}
+\TR{$t_1$}~[tnpos=l]{\raisebox{4.8pt}{\rnode[t]{t1_out}{\rnode[b]{t1_up}{$s_2$}}}}~[tnpos=r]{\raisebox{5pt}{\rnode[t]{t1_in}{\rnode[b]{t1_down}{$s_1$}}}}
+\TR{$t_2$}~[tnpos=l]{\raisebox{5pt}{\rnode[t]{t2_out}{\rnode[b]{t2_up}{$s_1$}}}}~[tnpos=r]{\raisebox{5pt}{\rnode[lt]{t2_in}{\rnode[b]{t2_down}{$\cons{x}{s}$}}}}
+}
+\ncline[nodesep=2pt]{->}{x_in}{t2_in}
+\ncline[nodesep=2pt]{->}{t1_out}{x_out}
+\nccurve[nodesep=2pt,angleA=135,angleB=45,ncurv=0.9]{->}{t2_out}{t1_in}
+\nccurve[nodesep=2pt,angleA=-120,angleB=-55,ncurv=0.8]{->}{t2_down}{t2_up}
+\nccurve[nodesep=2pt,angleA=-120,angleB=-55,ncurv=0.9]{->}{t1_down}{t1_up}
+\endTeXtoEPS
+
+\end{document}

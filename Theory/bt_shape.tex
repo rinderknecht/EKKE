@@ -1,0 +1,54 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath}
+
+\begin{document}
+
+\TeXtoEPS
+\psset{radius=3pt}
+\pstree[levelsep=17pt,treesep=14pt]{\TR{\scriptsize\(\oslash\)}}{
+  \pstree{\TC}{
+    \pstree{\TC}{
+      \pstree{\TC}{
+        \Tf[framesize=6pt]
+        \pstree{\TC*[linecolor=black]}{
+          \Tf[framesize=6pt]
+          \Tf[framesize=6pt]
+        }
+      }
+      \pstree{\TC*[linecolor=black]}{
+        \Tf[framesize=6pt]
+        \Tf[framesize=6pt]
+      }
+    }
+    \pstree{\TC}{
+      \Tf[framesize=6pt]
+      \pstree{\TC}{
+        \Tf[framesize=6pt]
+        \pstree{\TC*[linecolor=black]}{
+          \Tf[framesize=6pt]
+          \Tf[framesize=6pt]
+        }
+      }
+    }
+  }
+  \pstree{\TC}{
+    \pstree{\TC*[linecolor=black]}{
+      \Tf[framesize=6pt]
+      \Tf[framesize=6pt]
+    }
+    \pstree{\TC}{
+      \pstree{\TC*[linecolor=black]}{
+        \Tf[framesize=6pt]
+        \Tf[framesize=6pt]
+      }
+      \Tf[framesize=6pt]
+    }
+  }
+}
+\endTeXtoEPS
+
+\end{document}

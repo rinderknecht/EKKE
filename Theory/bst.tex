@@ -1,0 +1,74 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Binary Search Trees}
+  \label{frame:balanced}
+
+  Searching in a binary tree can be costly because, in the worst case,
+  the whole tree must be traversed.
+
+  \bigskip
+
+  To improve upon the worst case, two scenarios are desirable:
+  \begin{enumerate}
+
+    \item the binary tree should be as \textbf{balanced} as possible,
+      that is, the nodes should lie as close as possible to the root
+      (for a given notion of distance), and
+
+    \item at a given node, \textbf{only the left or the right subtree
+      should be visited}, a decision taken solely by comparing the key
+      at the root and the sought key.
+
+  \end{enumerate}
+
+  The simplest solution consists in satisfying the second goal, and
+  see later how to also reach the first.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Binary Search Trees}
+
+  A \textbf{binary search tree} is a binary tree where the key of the
+  roo (if any) is greater than or equal to the nodes in the left
+  subtree, and lower than the nodes in the right subtree.
+
+  \bigskip
+
+  In the context of search trees, the (contents of the) nodes are
+  called \textbf{keys}, and they need to be \textbf{totally ordered}
+  (that is, the fact that any two keys must be comparable).
+
+  \bigskip
+
+  A consequence is that the inorder traversal of a binary search tree
+  is the list of its keys sorted in non\hyp{}decreasing order.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Binary Search Trees}
+
+  Here is an example:
+  \begin{center}
+    \includegraphics[bb=71 661 115 721]{bst_ex}
+  \end{center}
+
+  \smallskip
+
+  The value for that tree is:
+  \begin{tabbing}
+    $t = \fun{Int}(17,$ \= $\fun{Int}(5,$ \= $\fun{Int} (3, \fun{Ext}(), \fun{Ext}()),$\\
+                        \>                \> $\fun{Int}(11,$ \= $\fun{Ext}(),$\\
+                        \>                \>                 \> $\fun{Int}(13, \fun{Ext}(), \fun{Ext}()))),$\\
+                        \> $\fun{Int}(29, \fun{Ext}(), \fun{Ext}()))$
+   \end{tabbing}
+
+  \bigskip
+
+  The inorder traversal is: $\fun{inorder} \; t \twoheadrightarrow [3;
+    5; 11; 13; 17; 29].$
+
+\end{frame}

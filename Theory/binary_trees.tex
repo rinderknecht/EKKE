@@ -1,0 +1,111 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Binary trees}
+
+  \begin{itemize}
+
+    \item A \textbf{binary tree} is a special case of tree, where each
+      node has either no children or exactly two.
+      \begin{center}
+        \includegraphics{bt_shape}
+      \end{center}
+
+    \item Nodes are of two kinds: \textbf{internal}
+      ({\tiny\raisebox{1pt}{\(\oslash\)}}, \(\circ\) and \(\bullet\))
+      or \textbf{external} (\(\scriptstyle \Box\)).
+
+    \item The \textbf{root} is the only internal node without a parent
+      ({\tiny\raisebox{1pt}{\(\oslash\)}}).
+
+    \item \textbf{Leaves} (\(\bullet\)) are internal nodes whose
+      children are two external nodes (\(\scriptstyle \Box\)).
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Binary trees}
+
+  Internal nodes are usually associated with some kind of information,
+  whilst external nodes are not, like
+  \begin{center}
+    \includegraphics[bb=71 645 190 721]{bt_ex1}
+    \qquad
+    \includegraphics[bb=71 645 190 721]{bt_ex2}
+  \end{center}
+  \centerline{Extended binary tree \qquad\quad Pruned binary tree}
+
+  We need to ponder how many shapes a binary tree can take, just like
+  stacks. Each shape as a value constructor and maybe some data.
+  \begin{itemize}
+
+    \item The \textbf{empty tree} is an external node, without
+      information: \(\fun{ext}().\)
+
+    \item A \textbf{non\hyp{}empty tree} is an internal node carrying
+      some information \(x\), and which has a left child~\(t_1\) and a
+      right child~\(t_2\): \(\fun{int}(x, t_1, t_2).\)
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Binary trees}
+
+  The previous tree in the following term:
+  \begin{tabbing}
+    $\fun{int}(8,$ \= $\fun{int}(1,$ \= $\fun{int}(3,$ \= $\fun{ext}(),$\\
+                   \>                \>                \> $\fun{int}(5, \fun{ext}(), \fun{ext}()),$\\
+                   \>                \> $\fun{int}(9, \fun{ext}(), \fun{ext}()),$\\
+                   \> $\fun{int}(3,$ \= $\fun{ext}(),$\\
+                   \>                \> $\fun{int}(2, \fun{ext}(), \fun{ext}())).$
+  \end{tabbing}
+  We may want to define a function that sums the integers in a binary
+  tree like so:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{add}(\fun{ext}()) & \rightarrow & 0;\\
+      \fun{add}(\fun{int}(x, left, right)) & \rightarrow & x + \fun{add} \; left + \fun{add} \; right.
+    \end{array}
+  \end{equation*}
+
+  The only issue is that we wanted a function that does \emph{not}
+  apply to empty trees (it is partial), but we need the value~\(0\)
+  for the recursion to work.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Optional values}
+
+  We need another function that checks whether the \textbf{whole tree}
+  is empty, and, if, returns a special value that means `No sum is
+  possible'.
+
+  \bigskip
+
+  The solution is to use a data type called the \textbf{option type}:
+  We simply use $\fun{none}()$ to denote that no value is intended,
+  and `$\fun{some} \; v$' to mean that the value~$v$ is here.
+
+  \bigskip
+
+  All we need is to call another function, \fun{add'} that handles the
+  optional (final) value, like so:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{add'}(\fun{ext}()) & \rightarrow & \fun{none}();\\
+      \fun{add'}(\fun{int} \; node) & \rightarrow & \fun{some} (\fun{add} \; node).
+    \end{array}
+  \end{equation*}
+  Notice how we treated $\fun{int}(x, left, right)$ as a tuple, which
+  we named \emph{node}. To make it easier to know that a function is
+  undefined (it is used to denote data structures), we will have its
+  name start with a capital letter, e.g. `\fun{None}' and `\fun{Int}'.
+
+\end{frame}

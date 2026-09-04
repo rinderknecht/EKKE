@@ -1,0 +1,150 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tree traversals}
+
+  Let~$t$ be the tree $\fun{Int}(x, left, right)$.
+  \begin{itemize}
+
+    \item The \textbf{preorder traversal} of~$t$ is the list whose
+      first element is~$x$, followed by the elements of the preorder
+      traversal of~\emph{left}, followed by the elements of the
+      preorder traversal of~\emph{right}. The previous tree yields
+      $[8; 1; 3; 5; 9; 3; 2]$.
+
+    \item The \textbf{postorder traversal} of~$t$ is the list made of
+      the elements of the postorder traversal of~\emph{left}, followed
+      by the elements of the postorder traversal of~\emph{right},
+      followed by~$x$. The previous tree yields $[5; 3; 9; 1; 2; 3;
+        8]$.
+
+    \item The \textbf{inorder traversal} of~$t$ is the list made of
+      the elements of the inorder traversal of~\emph{left}, followed
+      by~$x$, followed by the elements of the inorder traversal
+      of~\emph{right}. The previous tree yields $[3; 5; 1; 9; 8; 3;
+        2]$.
+
+  \end{itemize}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Tree traversals}
+
+  We want to build the traversals only by pushing values on a stack.
+  We must add an \textbf{auxiliary parameter}, originally set to the
+  empty list, on which the contents of the nodes are pushed in the
+  proper order. For preorder:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{pre}(t,s) & \rightarrow & \ldots\\
+      \fun{pre'} \; t & \rightarrow & \fun{pre}(t, \el).
+    \end{array}
+  \end{equation*}
+  This extra parameter is the initial value of an accumulator.  We
+  should interpret this accumulator when considering the call
+  \(\fun{pre} (t, s)\). Let us consider the tree \(t = \fun{Int} (x,
+  t_1, t_2)\) in the following figures:
+  \begin{center}
+    \includegraphics[bb=71 672 165 722]{pre_tree}
+    \includegraphics[bb=71 672 180 722]{in_tree}
+    \includegraphics[bb=71 672 180 722]{post_tree}
+  \end{center}
+  \centerline{Preorder (\fun{pre}) \qquad\qquad Inorder
+    (\fun{in}) \qquad Postorder (\fun{post})}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Preorder traversal}
+
+  Each arrow is a step in the traversal and connects different stages
+  of the accumulator: a downwards arrow points to the argument of a
+  recursive call on the corresponding child; an upwards arrow points
+  to the value of the call on the parent. The rules for external
+  nodes are not shown and simply consist in leaving the accumulator
+  invariant.
+
+  \bigskip
+
+  In the preorder traversal figure, the subtree~\(t_2\) is used in the
+  first recursive call \(\fun{pre}(t_2, s)\) whose value is
+  named~\(s_1\): \(\fun{pre}(t_2, s) \twoheadrightarrow s_1\).
+  Likewise, we have \(\fun{pre}(t_1, s_1) \twoheadrightarrow
+  s_2\). Therefore
+  \begin{equation*}
+    \fun{pre}(t_1, \fun{pre}(t_2, s)) \twoheadrightarrow s_2.
+  \end{equation*}
+
+  The root is associated with the evaluation
+  $\fun{pre}(t, s) \twoheadrightarrow \cons{x}{s_2}.$
+  Consequently,
+  \begin{equation*}
+    \fun{pre}(t, s) \equiv \cons{x}{\fun{pre}(t_1, \fun{pre}(t_2, s))}.
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Three traversals}
+
+  Finally:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{pre}(\fun{Ext}(), s) & \rightarrow & s; \\
+      \fun{pre}(\fun{Int}(x, t_1, t_2), s) & \rightarrow
+      & \cons{x}{\fun{pre}(t_1, \fun{pre}(t_2, s))}.\\
+      \fun{pre'} \; t & \rightarrow & \fun{pre}(t, \el).
+    \end{array}
+  \end{equation*}
+
+  Similarly:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{in}(\fun{Ext}(), s) & \rightarrow & s; \\
+      \fun{in}(\fun{Int}(x, t_1, t_2), s) & \rightarrow
+      & \fun{in}(t_1, \cons{x}{\fun{in}(t_2, s)}).\\
+      \fun{in'} \; t & \rightarrow & \fun{in}(t, \el).
+    \end{array}
+  \end{equation*}
+  And
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{post}(\fun{Ext}(), s) & \rightarrow & s; \\
+      \fun{post}(\fun{Int}(x, t_1, t_2), s) & \rightarrow
+      & \fun{post}(t_1, \fun{post}(t_2, \cons{x}{s})).\\
+      \fun{post'} \; t & \rightarrow & \fun{post}(t, \el).
+    \end{array}
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Three folds on binary trees}
+
+  We can abstract the pushing and parameterise pre-, in- and
+  post\hyp{}order traversals, so they act like a fold on trees:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{fold\_pre}(f, \fun{Ext}(), s) & \rightarrow & s; \\
+      \fun{fold\_pre}(f, \fun{Int}(x, t_1, t_2), s) & \rightarrow
+      & f(x, \fun{fold\_pre}(f, t_1, \fun{fold\_pre}(f, t_2, s)))).\\
+      \fun{fold\_pre'}(f, t) & \rightarrow & \fun{fold\_pre}(f, t, \el).\\
+      \fun{pre} \; t & \rightarrow & \fun{fold\_pre'}((\Xfun \; (x, s) \rightarrow \cons{x}{s}), t).\\\\
+      \fun{fold\_in}(f, \fun{Ext}(), s) & \rightarrow & s; \\
+      \fun{fold\_in}(f, \fun{Int}(x, t_1, t_2), s) & \rightarrow
+      & \fun{fold\_in}(f, t_1, f (x, \fun{fold\_in}(f, t_2, s))).\\
+      \fun{fold\_in'}(f, t) & \rightarrow & \fun{fold\_in}(f, t, \el).\\
+      \fun{in} \; t & \rightarrow & \fun{fold\_in'}((\Xfun \; (x, s) \rightarrow \cons{x}{s}), t).\\\\
+      \fun{fold\_post}(f, \fun{Ext}(), s) & \rightarrow & s; \\
+      \fun{fold\_post}(f, \fun{Int}(x, t_1, t_2), s) & \rightarrow
+      & \fun{fold\_post}(f, t_1, \fun{fold\_post}(f, t_2, f(x,s))).\\
+      \fun{fold\_post'} (f, t) & \rightarrow & \fun{fold\_post}(f, t, \el).\\
+      \fun{post} \; t & \rightarrow & \fun{fold\_post'}((\Xfun \; (x, s) \rightarrow \cons{x}{s}), t).
+    \end{array}
+  \end{equation*}
+
+\end{frame}

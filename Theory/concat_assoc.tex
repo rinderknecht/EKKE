@@ -1,0 +1,195 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+The definition of the concatenation of two stacks was:
+\begin{equation*}
+\fun{cat}(        \el,t) \xrightarrow{\smash{\alpha}} t;\qquad
+\fun{cat}(\cons{x}{s},t) \xrightarrow{\smash{\beta}}
+\cons{x}{\fun{cat}(s,t)}.
+\end{equation*}
+Let us prove the associativity of `\fun{cat}', which we express
+formally as
+\begin{equation*}
+  \pred{CatAssoc}{s,t,u} \colon
+\fun{cat}(s,\fun{cat}(t,u)) \equiv
+\fun{cat}(\fun{cat}(s,t),u)
+\end{equation*}
+for all stack values \(s\), \(t\) and~\(u\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+  We apply the well\hyp{}founded induction principle to the structure
+  of~\(s\), so we must establish
+  \begin{itemize}
+
+    \item the basis \(\forall t,u \in S.\pred{CatAssoc}{\el,t,u}\), and the
+
+    \item step \(\forall s,t,u \in S.\pred{CatAssoc}{s,t,u}
+      \Rightarrow \forall x \in T.\pred{CatAssoc}{\cons{x}{s},t,u}\).
+
+  \end{itemize}
+
+  \bigskip
+
+  Underlining the call being rewritten, the base case is:
+  \begin{equation*}
+    \ufun{cat}(\el,\fun{cat}(t,u))
+    \xrightarrow{\smash{\alpha}} \fun{cat}(t,u)
+    \xleftarrow{\smash{\alpha}} \fun{cat}(\ufun{cat}(\el,t),u).
+  \end{equation*}
+
+  Let us assume now \(\pred{CatAssoc}{s,t,u}\), called the
+  \textbf{induction hypothesis}, and let us prove
+  \(\pred{CatAssoc}{\cons{x}{s},t,u}\), for any term~\(x\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+  The goal here is to use the rewrite system as an abstract machine to
+  prove a property, with the timely help of the induction principle.
+
+  \bigskip
+
+  Precisely, we want to rewrite each side of the equivalence we wish
+  to prove until we either find the same term (equality), or we use
+  the induction hypothesis (equivalence).
+
+  \bigskip
+
+  Since we are going to work with equivalences, we should lift the
+  call\hyp{}by\hyp{}value reduction strategy here, as it does not
+  matter when arguments are evaluated, as long as their evaluation
+  terminates and is confluent: we always assume these properties on
+  the system hold when proving properties of the functions it defines.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+  We may start with the left\hyp{}hand side of
+  \(\pred{CatAssoc}{\cons{x}{s},t,u}\), that is
+  \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\).
+
+  \bigskip
+
+  We notice that this is \textbf{not} a value, as the call contains a
+  reducible call, \(\fun{cat}(t,u)\).
+
+  \bigskip
+
+  When using functions to compute, we match a call containing only
+  values against the patterns of the rules.
+
+  \bigskip
+
+  Here, we would like to match a pattern against a pattern. This is
+  more general than matching, because values are patterns, and is
+  called \textbf{unification}. Given two patterns, we want to find
+  whether we can find assignments to the variables of these so that,
+  when they are substituted by their denotation, the two patterns
+  become equal.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+ Here, we would like to unify
+ \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\) (called the \textbf{goal})
+ and \(\fun{cat}(\cons{x}{s},t)\) (the pattern).
+
+ \bigskip
+
+The problem is that we have variables that are the same in the goal
+and the pattern (\(x\), \(s\)~and~\(t\)).
+
+\bigskip
+
+The case of \(\cons{x}{s}\) and \(\cons{x}{s}\) is harmless, but the
+unification of \(\fun{cat}(t,u)\) and~\(t\) is not.
+
+\bigskip
+
+That is why it is best to rename the variables in the pattern so they
+are not found in the goal (this is the
+\textbf{\(\alpha\)\hyp{}renaming} of \(\lambda\)\hyp{}calculus), and
+then try to unify them.
+
+\bigskip
+
+To simplify things even more, we are going to rename \emph{all} the
+variables in the definition of `\fun{cat}'.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+  Let us try for example the following renaming:
+  \begin{align*}
+    \fun{cat}(        \el,b) &\xrightarrow{\alpha} b\\
+    \fun{cat}(\cons{i}{a},b) &\xrightarrow{\smash{\beta}}
+    \cons{i}{\fun{cat}(a,b)}
+  \end{align*}
+
+  We want to unify the goal \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\)
+  with the pattern \(\fun{cat}(\cons{i}{a},b)\).
+
+  \bigskip
+
+  The unification yields the equations \(x = i\), \(s = a\) and
+  \(\fun{cat}(t,u) = b\).
+
+  \bigskip
+
+  Then we apply the set of equations from the unification, so the
+  right\hyp{}hand side of~\(\beta\), \(\cons{i}{\fun{cat}(a,b)}\),
+  becomes \(\cons{x}{\fun{cat}(s,\fun{cat}(t,u))}\).
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Proving associativity of stack concatenation}
+
+  We have:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{\qquad}r@{}}
+      \ufun{cat}(\cons{x}{s},\fun{cat}(t,u))
+      & \xrightarrow{\smash\beta}
+      & \cons{x}{\fun{cat}(s,\fun{cat}(t,u))}\\
+      & \equiv
+      & \cons{x}{\fun{cat}(\fun{cat}(s,t),u)}
+      & \IH{\pred{CatAssoc}{s,t,u}}\\
+      & \xleftarrow{\smash\beta}
+      & \ufun{cat}(\cons{x}{\fun{cat}(s,t)},u)\\
+      & \xleftarrow{\smash\beta}
+      & \fun{cat}(\ufun{cat}(\cons{x}{s},t),u).
+    \end{array}
+  \end{equation*}
+
+  Note the use of the inductive hypothesis \(\pred{CatAssoc}{s,t,u}\).
+
+  \bigskip
+
+  This derivation above establishes that
+  \(\pred{CatAssoc}{\cons{x}{s},t,u}\) holds.
+
+  \bigskip
+
+  The induction principle entails that \(\forall s,t,u \in
+  S.\pred{CatAssoc}{s,t,u}\).\hfill\(\Box\)
+
+\end{frame}

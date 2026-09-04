@@ -1,0 +1,36 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=1pt,levelsep=17pt,treesep=14pt]{\TR{\(8\)}}{
+  \pstree{\TR{\(1\)}}{
+    \pstree[treesep=20pt]{\TR{\(3\)}}{
+      \Tn
+      \pstree[treesep=14pt]{\TR{\(5\)}}{
+        \Tn
+        \Tn
+      }
+    }
+    \pstree{\TR{\(9\)}}{
+      \Tn
+      \Tn
+    }
+  }
+  \pstree[nodesepB=0pt,treesep=20pt]{\TR{\(3\)}}{
+    \Tn
+    \psset{nodesepB=1pt}
+    \pstree[nodesepB=0pt,treesep=14pt]{\TR{\(2\)}}{
+      \Tn
+      \Tn
+    }
+  }
+}
+\endTeXtoEPS
+
+\end{document}
