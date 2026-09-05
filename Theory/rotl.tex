@@ -1,0 +1,28 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\(x\)}}{
+  \TR{\(t_1\)}
+  \pstree{\TR{\(y\)}}{
+    \TR{\(t_2\)}
+    \TR{\(t_3\)}
+  }
+}
+\raisebox{-3pt}{\(\rightarrow\)}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\(y\)}}{
+  \pstree{\TR{\(x\)}}{
+    \TR{\(t_1\)}
+    \TR{\(t_2\)}
+  }
+  \TR{\(t_3\)}
+}
+\endTeXtoEPS
+
+\end{document}

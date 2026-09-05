@@ -31,7 +31,7 @@
   elements, in the original order. So $[e_1; e_2; \ldots; e_n]$ becomes $[f(e_1);
     f(e_2); \ldots; f(e_n)]$.
   \begin{equation*}
-    \begin{array}{r@{\;}l@{\;}l@{}}
+    \begin{array}{r@{\;}c@{\;}l@{}}
       \fun{map}(f, \el) &\smashedrightarrow{\alpha} & \el;\\
       \fun{map}(f, \cons{x}{s}) &\smashedrightarrow{\beta}
       & \cons{f(x)}{\fun{map}(f, s)}.
@@ -148,9 +148,9 @@
 
   Let's rename `\fun{fold}' as `\fun{foldr}' (`fold right'). Then:
   \begin{equation*}
-    \begin{array}{r@{\;}l@{\;}l@{}}
-      \fun{foldr} (f, [], a) & \rightarrow a;\\
-      \fun{foldr} (f, \cons{x}{s}, a) & \rightarrow f(x, \fun{foldr}(f, s, a)).
+    \begin{array}{r@{\;}c@{\;}l@{}}
+      \fun{foldr} (f, [], a) & \rightarrow & a;\\
+      \fun{foldr} (f, \cons{x}{s}, a) & \rightarrow & f(x, \fun{foldr}(f, s, a)).
     \end{array}
   \end{equation*}
   A way to understand this definition is by extension:
@@ -185,9 +185,9 @@
   \end{equation*}
   It is a simple matter of rearranging the calls in the definition of `\fun{foldr}`:
   \begin{equation*}
-    \begin{array}{r@{\;}l@{\;}l@{}}
-      \fun{foldl} (f, [], a) & \rightarrow a;\\
-      \fun{foldl} (f, \cons{x}{s}, a) & \rightarrow \fun{foldl}(f, s, f(x,a)).
+    \begin{array}{r@{\;}c@{\;}l@{}}
+      \fun{foldl} (f, [], a) & \rightarrow & a;\\
+      \fun{foldl} (f, \cons{x}{s}, a) & \rightarrow &\fun{foldl}(f, s, f(x,a)).
     \end{array}
   \end{equation*}
 

@@ -15,9 +15,9 @@
       that is, the nodes should lie as close as possible to the root
       (for a given notion of distance), and
 
-    \item at a given node, \textbf{only the left or the right subtree
-      should be visited}, a decision taken solely by comparing the key
-      at the root and the sought key.
+    \item for a given tree, \textbf{only the left or the right subtree
+      should be visited}, a decision taken solely by comparing the
+      root and the sought key.
 
   \end{enumerate}
 
@@ -30,15 +30,15 @@
 %
 \begin{frame}{Binary Search Trees}
 
-  A \textbf{binary search tree} is a binary tree where the key of the
-  roo (if any) is greater than or equal to the nodes in the left
-  subtree, and lower than the nodes in the right subtree.
+  A \textbf{binary search tree} is a binary tree where the root (if
+  any) is greater than or equal to the nodes in the left subtree, and
+  lower than the nodes in the right subtree.
 
   \bigskip
 
-  In the context of search trees, the (contents of the) nodes are
-  called \textbf{keys}, and they need to be \textbf{totally ordered}
-  (that is, the fact that any two keys must be comparable).
+  In the context of search trees, the nodes are called \textbf{keys},
+  and they need to be \textbf{totally ordered} (that is, the fact that
+  any two keys must be comparable).
 
   \bigskip
 
@@ -70,5 +70,272 @@
 
   The inorder traversal is: $\fun{inorder} \; t \twoheadrightarrow [3;
     5; 11; 13; 17; 29].$
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Searching}
+
+  Let consider checking the \textbf{membership} of a key~\(k\) in a
+  binary search tree.
+  \begin{itemize}
+
+    \item Any key is absent from the empty tree.
+
+    \item If the tree is not empty, it has the shape $\fun{Int}(x,
+      t_1, t_2)$. We compare~\(k\) with~\(x\): if equal, we found it;
+      if lower, we resume the search in~\(t_1\), else in~\(t_2\).
+
+  \end{itemize}
+
+  \begin{equation*}
+    \begin{array}{r@{\;}c@{\;}l@{\quad}l@{}}
+      \fun{mem}(k, \fun{Ext}()) & \rightarrow & \fun{False}();\\
+      \fun{mem}(k, \fun{Int}(x, t_1, t_2)) & \rightarrow
+      & \fun{mem}(k, t_1), & \text{if} \; k \prec x; \\
+      \fun{mem}(k, \fun{Int}(x, t_1, t_2)) & \rightarrow
+      & \fun{mem}(k, t_2), & \text{if} \; x \prec k; \\
+      \fun{mem}(k, \fun{Int}(k, t_1, t_2)) & \rightarrow
+      & \fun{True}().
+    \end{array}
+  \end{equation*}
+
+  \smallskip
+
+  Note how the last rule features a \textbf{non\hyp{}linear
+    pattern}. Otherwise, we would have to use the condition $x = k$.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Leaf insertion}
+
+  Since all unsuccessful searches end at an external node, it is
+  tempting to start the insertion of a unique key by an unsuccessful
+  search and then grow a leaf with the new key at the external node we
+  reached.
+
+  \bigskip
+
+  If the key is already present in the tree, we decide to leave the
+  tree unchanged.
+
+  \bigskip
+
+  Let us modify the membership function like so:
+  \begin{equation*}
+    \begin{array}{r@{\;}c@{\;}l@{\quad}l@{}}
+      \fun{add\_leaf}(k, \fun{Ext}()) & \rightarrow & \fun{Int}(k, \fun{Ext}(), \fun{Ext}());\\
+      \fun{add\_leaf}(k, \fun{Int}(x, t_1, t_2)) & \rightarrow
+      & \fun{Int}(x, \fun{add\_leaf}(k, t_1), t_2), & \text{if} \; k \prec x; \\
+      \fun{add\_leaf}(k, \fun{Int}(x, t_1, t_2)) & \rightarrow
+      & \fun{Int}(x, t_1, \fun{add\_leaf}(k, t_2)), & \text{if} \; x \prec k; \\
+      \fun{add\_leaf}(k, \fun{Int}(k, t_1, t_2)) & \rightarrow
+      & \fun{Int}(k, t_1, t_2).
+    \end{array}
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Root insertion}
+
+  If recently inserted keys are looked up, the cost is relatively high
+  because these keys are leaves or close to a leaf.
+
+  \bigskip
+
+  In this scenario, instead of inserting a key as a leaf, it is better
+  to insert it as a root.
+
+  \bigskip
+
+  The idea is to perform a leaf insertion and, on the way back to the
+  root (that is to say, after the recursive calls are evaluated, one
+  after the other), we perform rotations to bring the inserted node up
+  to the root.
+
+  \bigskip
+
+  More precisely, if the node was inserted in a left subtree, then a
+  \textbf{right rotation} brings it one level up, otherwise a
+  \textbf{left rotation} has the same effect.
+
+  \bigskip
+
+  The composition of these rotations brings the leaf to the root.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Right rotation}
+
+  The right rotation can be depicted as
+  \begin{center}
+    \includegraphics[bb=71 679 173 721]{rotr}
+  \end{center}
+
+  We can see that \(x\)~goes `up' and \(y\)~goes `down' one level
+  (this is a local transformation).
+
+  \bigskip
+
+  Let us define `\fun{rotr}' (right rotation) like so:
+  \begin{equation*}
+    \begin{array}{r@{\;}c@{\;}l@{\quad}l@{}}
+      \fun{rotr}(\fun{Ext}()) & \rightarrow & \fun{Ext}();\\
+      \fun{rotr}(\fun{Int}(y, \fun{Int}(x, t_1, t_2), t_3)) & \rightarrow
+      & \fun{Int}(x, t_1, \fun{Int}(y, t_2, t_3)).
+    \end{array}
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Left rotation}
+
+  The left rotation can be depicted as
+  \begin{center}
+    \includegraphics[bb=71 679 173 721]{rotl}
+  \end{center}
+
+  We can see that \(x\)~goes `down' and \(y\)~goes `up' one level
+  (this is a local transformation).
+
+  \bigskip
+
+  Let us defined `\fun{rotl}' (left rotation) like so:
+  \begin{equation*}
+    \begin{array}{r@{\;}c@{\;}l@{\quad}l@{}}
+      \fun{rotl}(\fun{Ext}()) & \rightarrow & \fun{Ext}();\\
+      \fun{rotl}(\fun{Int}(x, t_1, \fun{Int}(y, t_2, t_3))) & \rightarrow
+      & \fun{Int}(y, \fun{Int}(x, t_1, t_2), t_3).
+    \end{array}
+  \end{equation*}
+
+  Left and right rotations are the \textbf{inverse} of each other:
+  \begin{equation*}
+    \forall t. \fun{rotl} (\fun{rotr} \; t) \equiv
+    \fun{rotr} (\fun{rotl} \; t) \equiv t.
+    \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Root insertion (resumed)}
+
+  Let us consider an example, where \(7\)~is first added as a leaf,
+  and then a series of rotations, left and right, bring it to the
+  root:
+
+  \bigskip
+  \includegraphics[bb=71 637 412 721]{insr_ex}
+
+  The transitive closure \;\((\twoheadrightarrow)\) captures the
+  preliminary leaf insertion, \((\xrightarrow{\textsf{r}})\) is a
+  right rotation and \((\xrightarrow{\textsf{l}})\) is a left
+  rotation, both applied to the node containing~\(7\).
+
+  \bigskip
+
+  Note also that the inorder traversal of all those trees remains
+  invariant and a sorted list.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Root insertion}
+
+  It is now a simple matter to modify the definition of
+  \fun{add\_leaf} so it becomes root insertion \fun{add\_root} as follows:
+  \begin{equation*}
+    \begin{array}{r@{\;}c@{\;}l@{\quad}l@{}}
+      \fun{add\_root}(k, \fun{Ext}()) & \rightarrow & \fun{Int}(k, \fun{Ext}(), \fun{Ext}());\\
+      \fun{add\_root}(k, \fun{Int}(x, t_1, t_2)) & \rightarrow
+      & \textcolor{blue}{\fun{rotr}(}\fun{Int}(x, \fun{add\_root}(k, t_1), t_2)\textcolor{blue}{)},
+      & \text{if} \; k \prec x; \\
+      \fun{add\_root}(k, \fun{Int}(x, t_1, t_2)) & \rightarrow
+      & \textcolor{blue}{\fun{rotl}(}\fun{Int}(x, t_1, \fun{add\_root}(k, t_2))\textcolor{blue}{)},
+      & \text{if} \; x \prec k; \\
+      \fun{add\_root}(k, \fun{Int}(k, t_1, t_2)) & \rightarrow
+      & \fun{Int}(k, t_1, t_2).
+    \end{array}
+  \end{equation*}
+
+  We simply added a right rotation just after performing a left
+  insertion, and a left rotation after a right insertion.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Balancing a binary search tree}
+
+  Whether we insert a root or a leaf to a binary search tree, we may
+  still obtain \textbf{degenerate trees}, that is, trees isomorphic to
+  lists (each internal node has exactly one internal child, except the
+  last).
+
+  \bigskip
+
+  You may recall that we mentioned page~\pageref{frame:balanced} the
+  usefulness of balancing a search tree, so that these extreme cases
+  do not happen.
+
+  \bigskip
+
+  There exist different criteria to balance a tree, the two most
+  common relying on
+  \begin{enumerate}
+
+    \item the \textbf{distance} of a node to the root (the path
+      length),
+
+    \item the \textbf{weight} of a node (the number of nodes in its
+      subtrees).
+
+  \end{enumerate}
+
+  Unfortunately, discussing and implementing these strategies would
+  lead us too far in this lecture, but you can refer to the
+  literature.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Sorting with Binary Search Trees}
+
+  We already noticed how insertions leave the inorder traversal of a
+  binary search tree unchanged.
+
+  \bigskip
+
+  Also the inorder traversal of a binary search tree is the list of
+  its keys sorted in non\hyp{}decreasing order.
+
+  \bigskip
+
+  Combining these two facts (which can be made formal claims and
+  proved), we deduce that we can use binary search trees to sort a
+  list of keys chosen from a totally ordered set.
+
+  \bigskip
+
+  We start by inserting each key in an empty binary search tree.
+
+  \bigskip
+
+  Next, we collate the inorder traversal of the final tree:
+  \begin{equation*}
+    \ident{sort}\; l \rightarrow \ident{inorder} (\ident{fold}(\ident{add\_leaf}, l, \fun{Ext}())).
+  \end{equation*}
 
 \end{frame}

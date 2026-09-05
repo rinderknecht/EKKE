@@ -1,0 +1,83 @@
+%%-*-latex-*-
+
+\documentclass[11pt]{article}
+
+\usepackage{pst-tree,pst-eps}
+\usepackage{amsmath,amssymb}
+
+\begin{document}
+
+\TeXtoEPS
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\(17\)}}{
+  \pstree{\TR{\(5\)}}{
+    \TR{\(3\)}
+    \pstree{\TR{\(11\)}}{
+      \Tn
+      \TR{\(13\)}
+    }
+  }
+  \TR{\(29\)}
+}
+\raisebox{-3pt}{\(\twoheadrightarrow\)}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\(17\)}}{
+  \pstree{\TR{\(5\)}}{
+    \TR{\(3\)}
+    \pstree[nodesepB=0pt]{\TR{\(11\)}}{
+      \TCircle{\(7\)}
+      \psset{nodesepB=2pt}
+      \TR{\(13\)}
+    }
+  }
+  \TR{\(29\)}
+}
+\raisebox{-3pt}{\(\xrightarrow{\textsf{r}}\)}
+\pstree[nodesep=2pt,levelsep=17pt,treesep=14pt]{\TR{\(17\)}}{
+  \pstree{\TR{\(5\)}}{
+    \TR{\(3\)}
+    \psset{nodesepB=0pt}
+    \pstree{\TCircle{\(7\)}}{
+      \psset{nodesepA=0pt,nodesepB=2pt}
+      \Tn
+      \pstree[nodesepA=2pt]{\TR{\(11\)}}{
+        \Tn
+        \TR{\(13\)}
+      }
+    }
+  }
+  \TR{\(29\)}
+}
+\raisebox{-3pt}{\(\xrightarrow{\textsf{l}}\)}\hspace*{-2mm}
+\pstree[nodesepA=2pt,nodesepB=0pt,levelsep=17pt,treesep=14pt]{\TR{\(17\)}}{
+  \pstree[nodesepA=0pt,nodesepB=2pt]{\TCircle{\(7\)}}{
+    \pstree[nodesepA=2pt]{\TR{\(5\)}}{
+      \TR{\(3\)}
+      \Tn
+    }
+    \pstree[nodesepA=2pt]{\TR{\(11\)}}{
+      \Tn
+      \TR{\(13\)}
+    }
+  }
+  \psset{nodesepB=2pt}
+  \TR{\(29\)}
+}
+%\hspace*{2mm}
+\raisebox{-3pt}{\(\xrightarrow{\textsf{r}}\)}
+\hspace*{-2mm}
+\pstree[nodesepA=0pt,nodesepB=2pt,levelsep=17pt,treesep=14pt]%
+{\TCircle{\(7\)}}{
+  \pstree[nodesepA=2pt]{\TR{\(5\)}}{
+    \TR{\(3\)}
+    \Tn
+  }
+  \pstree[nodesepA=2pt]{\TR{\(17\)}}{
+    \pstree{\TR{\(11\)}}{
+      \Tn
+      \TR{\(13\)}
+    }
+    \TR{\(29\)}
+  }
+}
+\endTeXtoEPS
+
+\end{document}
