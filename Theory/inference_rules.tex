@@ -1,0 +1,73 @@
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Inference rules}
+
+  Let's say we want to define a function `\fun{cut}' that takes a
+  stack~$s$ and an index~$k$ in that stack (the top has index~0) oand
+  returns the prefix of the stack~$s$ of length~$k$ (if any) and the
+  corresponding suffix.
+
+  \bigskip
+
+  For instance,
+  \begin{equation*}
+    \begin{array}{r@{\;}c@{\;}l@{}}
+      \fun{cut}([4; 2], 0) & \rightarrow
+      & (\el, [4; 2]).\\
+      \fun{cut}([5; 3; 6; 0; 2], 3) & \rightarrow
+      & ([5; 3; 6], [0; 2]).
+    \end{array}
+  \end{equation*}
+  but, for the sake simplicity, nothing is said about \(\fun{cut}([0],
+  7)\) and \(\fun{cut}([0], -1)\), which we write as stuck terms:
+  \begin{equation*}
+    \begin{array}{r@{\;}c@{}}
+      \fun{cut}([0], 7) & \not\rightarrow \\
+      \fun{cut}([0], -1) & \not\rightarrow
+    \end{array}
+  \end{equation*}
+
+  We have:
+  \begin{equation*}
+    \begin{array}{@{}r@{\;}l@{\;}lr@{\;}l@{\;}l@{}}
+      \fun{cut}(s, 0) & \rightarrow & (\el, s);
+      & \fun{push}(x, (t, u)) & \rightarrow & (\cons{x}{t}, u).\\
+      \fun{cut}(\cons{x}{s}, k+1) & \rightarrow
+      & \fun{push}(x, \fun{cut}(s, k)).
+    \end{array}
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Inference rules}
+
+  When the value of a recursive call needs to be destructured, it is
+convenient to use an extension of our language to avoid creating
+auxiliary functions like `\fun{push}':
+\begin{mathpar}
+\inferrule*{}{\fun{cut}(s,0) \rightarrow (\el, s)} \;\TirName{Nil}
+\qquad
+\inferrule
+  {\fun{cut}(s, k)             \rightarrow (t, u)}
+  {\fun{cut}(\cons{x}{s}, k+1) \rightarrow (\cons{x}{t}, u)}
+\,\TirName{Pref}
+\end{mathpar}
+The new construct is called an \emph{inference rule} because it means:
+`For the value of \(\fun{cut}(\cons{x}{s}, k+1)\) to be
+\((\cons{x}{t}, u)\), we infer that the value of \(\fun{cut}(s,
+k)\) must be \((t, u)\)'. This interpretation corresponds to an
+upwards reading of the rule \TirName{Pref} (\emph{prefix}). Just as we
+compose horizontally rewrite rules, we compose inference rules
+vertically, stacking them, as in
+\begin{mathpar}
+\inferrule
+  {\inferrule{
+     \inferrule{\fun{cut}([0;2], 0) \rightarrow (\el, [0;2])}
+               {\fun{cut}([6;0;2], 1) \rightarrow ([6], [0;2])}}
+      {\fun{cut}([3;6;0;2], 2) \rightarrow ([3;6], [0;2])}}
+  {\fun{cut}([5;3;6;0;2], 3) \rightarrow ([5;3;6], [0;2])}
+\end{mathpar}
+
+\end{frame}
