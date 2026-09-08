@@ -1,2 +1,2 @@
 clean::
-> @rm -f *.nav *.out *.snm *.vrb *.toc
+> @rm -f *.nav *.out *.snm *.vrb *.toc *.aux *.dvi *.ps *.log
