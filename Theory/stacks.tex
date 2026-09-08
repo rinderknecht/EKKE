@@ -28,8 +28,9 @@
 
   \bigskip
 
-  Let \(\fun{nil}()\) be the irreducible call that denotes an empty
-  stack (that is, the function `\fun{nil}' is undefined).
+  Let \(\fun{Nil}()\) be the irreducible call that denotes an empty
+  stack (that is, the function \fun{Nil} is undefined and its name is
+  in uppercase to remind us of that fact).
 
   \bigskip
 
@@ -39,7 +40,7 @@
 
   \bigskip
 
-  Let \(\fun{cons}(x,s)\) denote the non\hyp{}empty stack with the
+  Let \(\fun{Cons}(x,s)\) denote the non\hyp{}empty stack with the
   item~\(x\) on top and the \textbf{immediate substack}~\(s\).
 
 \end{frame}
@@ -48,11 +49,9 @@
 %
 \begin{frame}{Inductive definition of stacks}
 
+  The previous definition is intuitive, but not formal yet.  Data
+  structures are usually defined \textbf{inductively}.
   \begin{itemize}
-
-    \item The previous definition is intuitive, but not formal yet.
-
-    \item Data structures are usually defined \textbf{inductively}.
 
     \item Let~\(\mathcal{T}\) be the set of all possible terms and
       \(\mathcal{S} \subset \mathcal{T}\) be the set of all stacks.
@@ -61,18 +60,24 @@
       \textbf{induction} as the smallest set such that
       \begin{enumerate}
 
-        \item \(\fun{nil}() \in \mathcal{S}\);
+        \item $\fun{Nil}() \in \mathcal{S}$;
 
         \item if \(x \in \mathcal{T}\) and \(s \in \mathcal{S}\), then
-          \(\fun{cons}(x,s) \in \mathcal{S}\).
+          \(\fun{Cons}(x,s) \in \mathcal{S}\).
       \end{enumerate}
 
-    \item We take the smallest set because we do not want
-      in~\(\mathcal{S}\) terms that were not constructed by the
-      inductive rules (this is called the \textbf{smallest fixed
-        point} of the inductive relation).
-
   \end{itemize}
+
+   We take the smallest set because we do not want in~\(\mathcal{S}\)
+   terms that were not constructed by the inductive rules (this is
+   called the \textbf{smallest fixed point} of the inductive
+   relation). Another way to write the above is with inference rules:
+   \begin{mathpar}
+     \inferrule{}{\fun{Nil}() \in \mathcal{S}}
+     \and
+     \inferrule{x \in \mathcal{T}\\ s \in \mathcal{S}}%
+               {\fun{Cons}(x,s) \in \mathcal{S}}
+   \end{mathpar}
 
 \end{frame}
 
@@ -85,9 +90,9 @@
     \item For all \(s, t \in \mathcal{S}\), let us consider the
       functional program
       \begin{align*}
-        \fun{cat}(\fun{nil}(),t) &\xrightarrow{\alpha} t\\
-        \fun{cat}(\fun{cons}(x,s),t) &\xrightarrow{\smash\beta}
-        \fun{cons}(x,\fun{cat}(s,t))
+        \fun{cat}(\fun{Nil}(),t) & \xrightarrow{\alpha} t\\
+        \fun{cat}(\fun{Cons}(x,s),t) &\xrightarrow{\smash\beta}
+        \fun{Cons}(x,\fun{cat}(s,t))
       \end{align*}
 
     \item This is a functional program suitable for
@@ -96,14 +101,14 @@
       irreducible.
 
     \item The right\hyp{}hand sides are stacks, so a call to
-      `\fun{cat}' is a stack.
+      \fun{cat} is a stack.
 
     \item Rule~\(\alpha\) says that, if the first stack is empty, the
       value is the second.
 
     \item In rule~\(\beta\), the first stack is not empty, and its top
       item is the top of the final stack~(\(x\)), the immediate
-      substack~(\(s\)) being used in a call to `\fun{cat}' with the
+      substack~(\(s\)) being used in a call to \fun{cat} with the
       second stack~(\(t\)) unchanged.
 
   \end{itemize}
@@ -115,8 +120,8 @@
 \begin{frame}{Appending a stack}
 
   This function appends the second stack at the bottom of a
-  \textbf{copy} of the first. (The function name `\fun{cat}' stands
-  for `catenation', and is slightly better than `\fun{app}').
+  \textbf{copy} of the first. (The function name \fun{cat} stands
+  for `catenation', and is slightly better than \fun{app}).
 
   \bigskip
 
@@ -124,7 +129,7 @@
   stack on top of the other. But this is not the same as pushing the
   first stack on top of the other, like
   \begin{equation*}
-    \fun{cat}(s,t) \rightarrow \fun{cons}(s,t) \qquad
+    \fun{cat}(s,t) \rightarrow \fun{Cons}(s,t) \qquad
     \text{Wrong!}
   \end{equation*}
 
@@ -148,9 +153,9 @@
   Let us set the abbreviations
   \begin{itemize}
 
-    \item \(\el := \fun{nil}()\),
+    \item \(\el := \fun{Nil}()\),
 
-    \item \(\cons{x}{s} := \fun{cons}(x,s)\),
+    \item \(\cons{x}{s} := \fun{Cons}(x,s)\),
 
   \end{itemize}
   after the convention of the programming language \OCaml.
@@ -161,7 +166,7 @@
   \begin{itemize}
 
     \item \(\cons{x_1}{\cons{x_2}{\cons{\dots}{\cons{x_n}{s}}}} :=
-      \fun{cons}(x_1, \fun{cons}(x_2, \dots \fun{cons}(x_n,s)))\)
+      \fun{Cons}(x_1, \fun{Cons}(x_2, \dots \fun{Cons}(x_n,s)))\)
 
     \item \([x] := \cons{x}{\el}\)
 

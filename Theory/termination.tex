@@ -43,8 +43,8 @@
   \begin{equation*}
     h(g) =
     \begin{cases}
-      \text{loops forever} & \text{if } f(g),\\
-      \text{terminates on all inputs}    & \text{otherwise}
+      \text{loops forever}            & \text{if $f(g)$},\\
+      \text{terminates on all inputs} & \text{otherwise.}
     \end{cases}
   \end{equation*}
   In other words, \(h\) looks at \(f(g)\) and does the opposite of
@@ -59,10 +59,10 @@
   Let us consider now \(h(h)\):
   \begin{itemize}
 
-    \item If \(f(h)\), then, by definition of~\(f\), \(h\)~terminates
-      on all inputs, in particular \(h(h)\)~terminates. But, by
-      definition of~\(h\), since \(f(h)\) holds, \(h(h)\) loops on all
-      inputs, yielding a contradiction.
+    \item If \(f(h)\) is true, then, by definition of~\(f\),
+      \(h\)~terminates on all inputs, in particular
+      \(h(h)\)~terminates. But, by definition of~\(h\), since \(f(h)\)
+      holds, \(h(h)\) loops on all inputs, yielding a contradiction.
 
     \item If \(f(h)\) is false, then, by definition of~\(f\),
       \(h\)~does not terminate on all its inputs. But, by definition
@@ -87,13 +87,18 @@
   \medskip
 
   Given a call \(\fun{fact}(n)\), with \(n \geqslant 0\), the rewrites
-  yield a series of calls \(\fun{fact}(n-1)\), \(\fun{fact}(n-2)\),
-  etc. until \(\fun{fact}(0)\).
+  yield a series of calls with decreasing arguments:
+  \(\fun{fact}(n-1)\), \(\fun{fact}(n-2)\), etc. until
+  \(\fun{fact}(0)\).
 
   \bigskip
 
   Termination here ensues from the \textbf{strictly decreasing
-    argument} \(n > n-1 > n-2 > \dots > 0\). (No infinite descent.)
+    arguments}:
+  \begin{equation*}
+    n > n-1 > n-2 > \dots > 0.
+  \end{equation*}
+  No infinite descent.
 
 \end{frame}
 
@@ -128,8 +133,8 @@ decrease, the second largely increases.
 
 Let us define a well\hyp{}founded ordering on pairs, called
 \textbf{lexicographic order}. Let \((\succ_A)\) and \((\succ_B)\) be
-well\hyp{}founded orders on the sets \(A\) and~\(B\). Then \((\succ_{A
-  \times B})\) defined as follows on \(A \times B\) is
+well\hyp{}founded orders on the sets \(A\) and~\(B\). Then \({(\succ_{A
+  \times B})}\) defined as follows on \(A \times B\) is
 well\hyp{}founded:
 \begin{equation*}
 (a_0,b_0) \succ_{A \times B} (a_1,b_1) :\Leftrightarrow \text{\(a_0
@@ -165,7 +170,7 @@ Here, a lexicographic order on \((m,n) \in \mathbb{N}^2\) extended to
 
   \bigskip
 
-  Second, we must prove that `\fun{ack}' rewrites to smaller calls. We
+  Second, we must prove that \fun{ack} rewrites to smaller calls. We
   are only concerned with rules \(\beta\)~and~\(\gamma\). With the
   former, we have the inequality
   \begin{equation*}
@@ -214,7 +219,8 @@ Here, a lexicographic order on \((m,n) \in \mathbb{N}^2\) extended to
 
   \bigskip
 
-  What about other data types, like lists and trees?
+  What about other data types, like stacks (sometimes called `lists')
+  and trees?
 
 \end{frame}
 
@@ -314,7 +320,7 @@ Let us consider a short example:
 
   \bigskip
 
-  Let us prove the termination of `\fun{isort}' by the method of
+  Let us prove the termination of \fun{isort} by the method of
   dependency pairs. The pairs to order are the following:
   \begin{itemize}
 
@@ -331,12 +337,12 @@ Let us consider a short example:
 \begin{frame}{Termination / Insertion sort}
 
   By using the proper subterm relation on the second parameter of
-  `\fun{ins}', we order the first pair:
+  \fun{ins}, we order the first pair:
   \begin{equation*}
     \cons{y}{s} \succ s \Rightarrow \fun{ins}(x, \cons{y}{s}) \succ
     \fun{ins}(x,s).
   \end{equation*}
-  This is enough to prove that `\fun{ins}' terminates. The second pair
+  This is enough to prove that \fun{ins} terminates. The second pair
   is similarly oriented:
   \begin{equation*}
     \cons{x}{s} \succ s \Rightarrow \fun{isort}(\cons{x}{s}) \succ
@@ -350,12 +356,12 @@ Let us consider a short example:
 \begin{frame}{Termination / Insertion sort}
 
   The third pair is not worth considering after all, because we
-  already know that `\fun{ins}' terminates, so the second pair is
-  enough to entail the termination of `\fun{isort}'.
+  already know that \fun{ins} terminates, so the second pair is
+  enough to entail the termination of \fun{isort}.
 
   \bigskip
 
-  In other words, since `\fun{ins}' terminates, it can be considered,
+  In other words, since \fun{ins} terminates, it can be considered,
   as far as termination analysis is concerned, as a data constructor,
   so the third pair becomes:
   \begin{equation*}
@@ -365,7 +371,7 @@ Let us consider a short example:
     \Rightarrow
     \fun{isort}(\cons{x}{s}) \succ \underline{\fun{ins}}(x, \fun{isort}\,s).
   \end{equation*}
-  where \(\fun{\ufun{ins}}\) stands for `\fun{ins}' considered as a
+  where \(\fun{\ufun{ins}}\) stands for \fun{ins} considered as a
   \textbf{constructor}, that is, an undefined function.\hfill\(\Box\)
 
 \end{frame}
@@ -440,23 +446,24 @@ Let us consider a short example:
 %
 \begin{frame}{Termination / List flattening}
 
-    The function `\fun{cat}' is independent of `\fun{flat}' and we
+    The function \fun{cat} is independent of \fun{flat} and we
     proved its termination in isolation by using the proper subterm
     order on its first argument.
 
     \bigskip
 
-    Assuming now that `\fun{cat}' terminates, let's prove the
-    termination of `\fun{flat}'.
+    Assuming now that \fun{cat} terminates, let's prove the
+    termination of \fun{flat}.
 
     \bigskip
 
-    Because the recursive calls to `\fun{flat}' contain only (list)
+    Because the recursive calls to \fun{flat} contain only (list)
     constructors, we can try to order their arguments.
 
     \bigskip
 
     The proper subterm order works:
+    \begin{center}
     \begin{tabular}{r@{\;\,}c@{\;}ll}
       \(\cons{y}{t}\) & \(\succ\) & \(t\) & (rule~\(\delta\)
       and rule~\(\beta\) when \(y=\el\))\\
@@ -465,6 +472,7 @@ Let us consider a short example:
       \(\cons{(\cons{x}{s})}{t}\) & \(\succ\) & \(\cons{x}{s}\)
       & (rule~\(\gamma\))
     \end{tabular}
+    \end{center}
 
     \bigskip
 
@@ -554,7 +562,7 @@ Let us consider a short example:
   \bigskip
 
   We can actually drop the function names, as all the pairs involve
-  `\fun{flat}'.
+  \fun{flat}.
 
   \bigskip
 
@@ -604,7 +612,7 @@ Let us consider a short example:
   \end{center}
 
   Since \(\measure{x} \in \mathbb{N}\), for all~\(x\), these
-  inequalities entail the termination of `\fun{flat}' (no infinite
+  inequalities entail the termination of \fun{flat} (no infinite
   descent).\hfill\(\Box\)
 
 \end{frame}
@@ -666,13 +674,13 @@ Let us consider a short example:
    \fun{ins}(x,\cons{y}{s})
 & \smashedrightarrow{\delta}
 & \fun{choose}(x, \cons{y}{s}, x, y).\\
-  \fun{choose}(x, \cons{y}{s}, \fun{succ}\,a, \fun{succ}\,b)
+  \fun{choose}(x, \cons{y}{s}, \fun{Succ}\,a, \fun{Succ}\,b)
 & \smashedrightarrow{\epsilon}
 & \fun{choose}(x, \cons{y}{s}, a, b);\\
   \fun{choose}(x, \cons{y}{s}, a, 0)
 & \smashedrightarrow{\phi}
 & \cons{y}{\fun{ins}(x,s)};\\
-  \fun{choose}(x, \cons{y}{s}, 0, \fun{succ}\,b)
+  \fun{choose}(x, \cons{y}{s}, 0, \fun{Succ}\,b)
 & \smashedrightarrow{\psi}
 & \cons{x}{\cons{y}{s}}.
 \end{array}
@@ -680,11 +688,11 @@ Let us consider a short example:
 Here, we use Peano's unary encoding of integers:
 \begin{itemize}
 
-  \item the successor function `\fun{succ}', so that \(\fun{succ}(x)\)
+  \item the successor function \fun{Succ}, so that \(\fun{Succ}(x)\)
     denotes canonically the value of \(x+1\); (We do not have to assume
     `-'.)
 
-  \item Also, `0' here actually stands for \fun{zero}().
+  \item Also, `0' here actually stands for \fun{Zero}().
 
 \end{itemize}
 
@@ -714,7 +722,7 @@ Here, we use Peano's unary encoding of integers:
         \fun{ins}^\#(x,\cons{y}{s})
       & \smashedrightarrow{c}
       & \fun{choose}^\#(x, \cons{y}{s}, x, y), & \text{from \(\delta\)};\\
-        \fun{choose}^\#(x, \cons{y}{s}, \fun{succ}\,a, \fun{succ}\,b)
+        \fun{choose}^\#(x, \cons{y}{s}, \fun{Succ}\,a, \fun{Succ}\,b)
       & \smashedrightarrow{d}
       & \fun{choose}^\#(x, \cons{y}{s}, a, b), & \text{from \(\epsilon\)};\\
         \fun{choose}^\#(x, \cons{y}{s}, a, 0)
@@ -799,7 +807,7 @@ Here, we use Peano's unary encoding of integers:
   components of the pair along the third parameter of
   \(\fun{choose}^\#\):
   \begin{equation*}
-    \fun{succ} \, a \xrightarrow{d} a.
+    \fun{Succ} \; a \xrightarrow{d} a.
   \end{equation*}
   So
   \begin{center}

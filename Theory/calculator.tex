@@ -67,10 +67,10 @@
     (\underline{4+5}) \rightarrow \underline{5 \times \textbf{9}}
     \rightarrow \textbf{45}
   \end{equation*}
-  It is usual to write, as a summary: \((2+3)\times(4+5)
-  \xrightarrow{*} 45\) or \((2+3)\times(4+5)=45\).
-
-  \bigskip
+  It is usual to write, as a summary:
+  \begin{center}
+    $(2+3)\times(4+5) \xrightarrow{*} 45$ or $(2+3)\times(4+5)=45$.
+  \end{center}
 
   So, there are two concepts involved here:
   \begin{enumerate}
@@ -126,11 +126,11 @@
 
   Consider the multiplication:
   \begin{equation*}
-    e_1 \times e_2 \rightarrow e'_1 \times e_2 \quad \text{if} \; e_1
+    e_1 \times e_2 \rightarrow e'_1 \times e_2, \quad \text{if} \;\; e_1
     \rightarrow e'_1
   \end{equation*}
-  where \(e_1\), \(e'_1\) and \(e_2\) denote any expression and are
-  called \textbf{meta\hyp{}variables}.
+  and where \(e_1\), \(e'_1\) and \(e_2\) denote any expression and
+  are called \textbf{meta\hyp{}variables}.
 
 \end{frame}
 
@@ -151,14 +151,15 @@
   \bigskip
 
   Let us rewrite \(((2 + 3) \times 6) \times (4+5)\). First, we see
-  that the previous rule has the required shape, i.e., the left side
-  of the arrow is \(e_1 \times e_2\) and if \(e_1 = (2+3) \times 6\)
-  and \(e_2 = 4+5\) then \(e_1 \times e_2\) is exactly the expression
-  we wish to rewrite. So, we replace \(e_1\) and \(e_2\) by their
-  associated expressions in the rule and we get an instance of it:
+  that the previous rule has the required shape, that is, the left
+  side of the arrow is \(e_1 \times e_2\) and if \(e_1 = (2+3) \times
+  6\) and \(e_2 = 4+5\) then \(e_1 \times e_2\) is exactly the
+  expression we wish to rewrite. So, we replace \(e_1\) and \(e_2\) by
+  their associated expressions in the rule and we get an instance of
+  it:
   \begin{equation*}
-    ((2 + 3) \times 6) \times (4+5) \rightarrow e'_1 \times (4+5)
-    \quad \text{if} \; (2+3) \times 6 \rightarrow e'_1
+    ((2 + 3) \times 6) \times (4+5) \rightarrow e'_1 \times (4+5),
+    \quad \text{if} \;\; (2+3) \times 6 \rightarrow e'_1.
   \end{equation*}
   Therefore, we now know that we have to rewrite \((2 + 3) \times 6\).
 
@@ -171,8 +172,8 @@
   We need another instance of the same rule. This time, let \(e_1 =
   2+3\) and \(e_2 = 6\). We get
   \begin{equation*}
-    (2+3) \times 6 \rightarrow e'_1 \times 6 \quad \text{if} \; 2 + 3
-    \rightarrow e'_1
+    (2+3) \times 6 \rightarrow e'_1 \times 6, \quad \text{if} \;\; 2 + 3
+    \rightarrow e'_1.
   \end{equation*}
   It is important to understand that this latter \(e'_1\) is not the
   same as the former: they belong to two different instances of the
@@ -180,14 +181,14 @@
   have all the rules for basic cases as \(2 + 3 \rightarrow
   5\). Hence, \(e'_1 = 5\) and the second instance is now complete:
   \begin{equation*}
-    (2+3) \times 6 \rightarrow 5 \times 6 \quad \text{if} \; 2 + 3
-    \rightarrow 5
+    (2+3) \times 6 \rightarrow 5 \times 6, \quad \text{if} \;\; 2 + 3
+    \rightarrow 5.
   \end{equation*}
   Going backwards, this implies that the former \(e'_1\) is \(5 \times
   6\). So, the first instance is
   \begin{equation*}
     ((2+3) \times 6) \times (4+5) \rightarrow (5 \times 6) \times
-    (4+5) \quad \text{if} \; 2 + 3 \rightarrow 5
+    (4+5), \quad \text{if} \;\; 2 + 3 \rightarrow 5.
   \end{equation*}
 
 \end{frame}
@@ -243,6 +244,8 @@
                {((2+3) \times 6) \times (4+5) \rightarrow e'_1 \times (4+5)}
   \end{mathpar}
 
+  When no meta\hyp{}variables remain, we have a \textbf{ground instance}.
+
 \end{frame}
 
 % ------------------------------------------------------------------------
@@ -267,7 +270,7 @@
   \bigskip
 
   We have a basic rewrite rule \(2 + 3 \rightarrow 5\), thus we extend
-  \(\sigma'\) with \(e'_1 \mapsto 5\) and get
+  \(\sigma'\) with \(e'_1 \mapsto 5\) and obtain
   \begin{mathpar}
     \inferrule*[right=\(\sigma'(\TirName{Mult}_1)\)]
         {2 + 3 \rightarrow 5}
@@ -399,7 +402,7 @@
   following properties:
   \begin{itemize}
 
-    \item \textbf{Finiteness.} All the reductions are finite, i.e.,
+    \item \textbf{Finiteness.} All the reductions are finite, that is,
       all the computations terminate.
 
     \item \textbf{Soundness.} All the reductions of an expression end
@@ -480,11 +483,11 @@
 
   In this case:
   \begin{equation*}
-    (2+3)/(4-4) \rightarrow 5/(4-4) \rightarrow 5/0 \rightarrow \NaN
+    (2+3)/(4-4) \rightarrow 5/(4-4) \rightarrow 5/0 \rightarrow \NaN,
   \end{equation*}
   or, even the shortest possible:
   \begin{equation*}
-    (2+3)/(4-4) \rightarrow (2+3)/0 \rightarrow \NaN
+    (2+3)/(4-4) \rightarrow (2+3)/0 \rightarrow \NaN.
   \end{equation*}
 
 \end{frame}
@@ -496,7 +499,7 @@
   The interesting phenomenon here is that, now, any reduction ends in
   a value (since errors are values). In the previous rewrite system,
   any reduction ends either in a value or a \textbf{stuck expression},
-  i.e., an expression that cannot be rewritten further.
+  namely, an expression that cannot be rewritten further.
 
   \bigskip
 
@@ -575,7 +578,7 @@
 
   \bigskip
 
-  This is a stronger property than soundness, i.e., it implies
+  This is a stronger property than soundness, to wit, it implies
   soundness. Indeed, determinism implies that there is only one
   reduction from an expression to its value (if any).
 
@@ -594,13 +597,13 @@
   \bigskip
 
   Formally, this means that the underlying rewrite system is
-  \textbf{non-deterministic}.
+  \textbf{non\hyp{}deterministic}.
 
   \bigskip
 
   One notable exception is \Java, which specifies that the arguments
-  are always evaluated from left to right, i.e., following the order
-  of writing.
+  are always evaluated from left to right, that is, following the
+  order of writing.
 
   \bigskip
 
@@ -620,7 +623,7 @@
 
   \bigskip
 
-  There are some languages, like \Maude, whose programs actually are
+  Some languages, like \Maude, whose programs actually \emph{are}
   rewrite systems.
 
   \bigskip
@@ -629,11 +632,7 @@
   and output a program, called \textbf{byte-code}, which can be
   reduced by a rewrite system.
 
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}{Rewrite systems as models of languages}
+  \bigskip
 
   This is the case of \Java. This is why, in general, we need a
   \textbf{\Java virtual machine} (JVM) to run the program: this JVM
@@ -662,11 +661,7 @@
   property), it is possible to reduce different parts of an expression
   in parallel if the rewrite system allows it.
 
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}{Sequentiality and parallelism}
+  \bigskip
 
   For example, the first argument of \((\times)\) can be computed
   \emph{at the same time} as its second argument. In the case of
@@ -690,7 +685,7 @@
 
   Why is the order left unspecified? Simply because of possible
   \textbf{side-effects}. Imagine the following situation:
-{\small
+{\footnotesize
 \begin{verbatim}
 int n = 0;
 int f () { n++; return n; };

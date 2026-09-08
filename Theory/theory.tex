@@ -1,8 +1,13 @@
 \documentclass[compress,dvips,xcolor={dvipsnames},t]{beamer}
 
+% For 2-up handout:
+\usepackage{pgfpages}
+\pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
+\setbeamertemplate{navigation symbols}{}
+
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
-\usepackage{lmodern}
+\usepackage{mathptmx}
 \usepackage{beramono}          % Bold in verbatim
 \usepackage{hyphenat}          % \hyp{} is a breakable dash
 \usepackage{xspace}
@@ -16,9 +21,13 @@
 \usepackage{booktabs}
 \usepackage{pst-tree}
 
-\input{commands}
-\input{ocaml_syntax}
 \input{beamer_cfg}
+\input{ocaml_syntax}
+
+\newcommand{\dom}[1]{\mathrm{dom} (#1)}
+\newcommand{\topin}[1]{\textsf{\#}\ {#1}\textbf{;;}}
+\newcommand{\topout}[1]{\emph{\textsf{\textcolor{blue}{#1}}}}
+\newcommand{\error}[1]{\emph{\texttt{\textcolor{red}{#1}}}}
 
 \newcommand\Clang{\textsf{C}\xspace}
 \newcommand{\Ada}{\textsf{Ada}\xspace}
@@ -26,6 +35,7 @@
 \newcommand{\OCaml}{\textsf{OCaml}\xspace}
 \newcommand{\Maude}{\textsf{Maude}\xspace}
 \newcommand{\Csharp}{\textsf{C}\raise 0.7mm \hbox{\(\scriptscriptstyle \textsf{\#}\)}\xspace}
+
 \newcommand{\NaN}{\textsf{NaN}\xspace}
 \newcommand{\true}{\textsf{true}\xspace}
 \newcommand{\false}{\textsf{false}\xspace}
@@ -47,6 +57,7 @@
 \newcommand\clos[3]{\langle \Xfun \; #1 \rightarrow #2; #3 \rangle}
 \newcommand{\evalf}[2]{\llbracket{#1}\rrbracket{#2}}
 \newcommand{\extend}[3]{#1[#2 \mapsto #3]}
+\newcommand\Call[1]{\Cost\llbracket{#1}\rrbracket}
 
 % Induction
 %
@@ -61,9 +72,9 @@
 /\kern-.15em\lower.25ex\hbox{\the\scriptfont0 #2}}
 
 
-\title{A Theory of Programming}
-\author{Christian Rinderknecht}
-\institute{Eszterházy Károly Katolikus Egyetem}
+\title{\LARGE A Theory of Programming}
+\author{\Large Christian Rinderknecht}
+\institute{\normalsize Eszterházy Károly Katolikus Egyetem}
 \date{September 2026}
 
 \begin{document}
@@ -107,10 +118,10 @@
 \include{concat_length}
 \include{ho_stack_folds}
 \include{inference_rules}
+\include{analysis}
 \include{binary_trees}
 \include{bt_traversals}
 \include{bst}
-\include{analysis}
 \include{mini_ml}
 
 \end{document}

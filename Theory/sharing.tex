@@ -30,19 +30,18 @@
 %
 \begin{frame}{Data sharing}
 
+  Consider for instance
+  \begin{center}
+    \includegraphics[bb=71 656 302 721]{cat_dag}
+  \end{center}
+  which is the same definition of \fun{cat} as given above:
+  \begin{equation*}
+    \fun{cat}(\el,t) \xrightarrow{\alpha} t
+    \qquad\qquad\qquad
+    \fun{cat}(\cons{x}{s},t) \xrightarrow{\beta}
+    \cons{x}{\fun{cat}(s,t)}
+  \end{equation*}
   \begin{itemize}
-
-    \item Consider for instance
-      \begin{center}
-        \includegraphics[bb=71 656 302 721]{cat_dag}
-      \end{center}
-      which is the same definition of `\fun{cat}' as given above:
-      \begin{equation*}
-        \fun{cat}(\el,t) \xrightarrow{\alpha} t
-        \qquad\qquad\qquad
-        \fun{cat}(\cons{x}{s},t) \xrightarrow{\beta}
-        \cons{x}{\fun{cat}(s,t)}
-      \end{equation*}
 
     \item The arrows on certain edges denote data sharing.
 
@@ -62,7 +61,6 @@
 \begin{frame}{Data sharing and evaluation}
 
   The evaluation of \(\fun{cat}([1;2],[3])\) is:
-  \bigskip
   \begin{center}
     \includegraphics[bb=71 621 276 733]{cat123_push}
   \end{center}

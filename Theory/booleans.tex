@@ -44,7 +44,7 @@
        {}
        {v \wedge \false \rightarrow \false}
   \end{mathpar}
-  where \(v\) denotes any value, i.e., either \true or \false.
+  where \(v\) denotes any value, that is, either \true or \false.
 
 \end{frame}
 
@@ -141,7 +141,7 @@
 
 % ------------------------------------------------------------------------
 %
-\begin{frame}{Boolean expressions}
+\begin{frame}[fragile]{Boolean expressions}
 
   Try to reduce
   \begin{equation*}
@@ -153,13 +153,6 @@
   then we can check if it is \true or \false: in the latter case, we
   do not need to reduce the right argument.
 
-\end{frame}
-
-% ------------------------------------------------------------------------
-%
-\begin{frame}[fragile]{Boolean expressions}
-
-  This is easy to specify:
   \begin{mathpar}
     \inferrule*[right=\(\quad\wedge_{\TirName{True}}\)]
        {}
@@ -174,7 +167,7 @@
   \end{mathpar}
   Many programming languages, as C, use this strategy. It allows the
   programmers to write handy code like
-{\small
+{\footnotesize
 \begin{verbatim}
 while (index < max && tab[index] > 0) ...
 \end{verbatim}
@@ -188,7 +181,7 @@ while (index < max && tab[index] > 0) ...
 
   Note that this strategy (left argument before the right one) is not
   optimal in general: the first argument may reduce to
-  \true. \emph{Finding an optimal strategy is not always possible.}
+  \true. \textbf{Finding an optimal strategy is not always possible.}
   For example, we could add another rule that shortens sometimes the
   reductions:
   \begin{mathpar}
@@ -247,7 +240,7 @@ while (index < max && tab[index] > 0) ...
 
   Perhaps the most infamous case is in C, where variables do not need
   to be initialised at their declaration:
-{\small
+{\footnotesize
 \begin{verbatim}
 int a;
 \end{verbatim}
@@ -316,15 +309,13 @@ int a;
 
   \bigskip
 
-  This particular kind of non-termination, due to commutativity, is
-  the model in programming languages of so-called `\textbf{infinite
-    loops}' that do not allocate memory, i.e., that do not require
-  additional memory at each loop step. Equivalently, it corresponds to
-  a \emph{recursive call} like
-{\small
+  This particular kind of non\hyp{}termination, due to commutativity,
+  is the model in programming languages of so\hyp{}called
+  `\textbf{infinite loops}' that do not allocate memory. Equivalently,
+  it corresponds to a \emph{recursive call} like
+{\footnotesize
 \begin{verbatim}
-bool and(bool e1, bool e2) {
-  ... return and(e2, e1); ... }
+bool and(bool e1, bool e2) { ... return and(e2, e1); ... }
 \end{verbatim}
 }
   Anyway, in the presence of infinite reductions, the soundness

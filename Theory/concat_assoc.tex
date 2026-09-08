@@ -8,7 +8,7 @@ The definition of the concatenation of two stacks was:
 \fun{cat}(\cons{x}{s},t) \xrightarrow{\smash{\beta}}
 \cons{x}{\fun{cat}(s,t)}.
 \end{equation*}
-Let us prove the associativity of `\fun{cat}', which we express
+Let us prove the associativity of \fun{cat}, which we express
 formally as
 \begin{equation*}
   \pred{CatAssoc}{s,t,u} \colon
@@ -27,7 +27,8 @@ for all stack values \(s\), \(t\) and~\(u\).
   of~\(s\), so we must establish
   \begin{itemize}
 
-    \item the basis \(\forall t,u \in S.\pred{CatAssoc}{\el,t,u}\), and the
+    \item the basis \(\forall t,u \in S.\pred{CatAssoc}{\el,t,u}\),
+      and the inductive
 
     \item step \(\forall s,t,u \in S.\pred{CatAssoc}{s,t,u}
       \Rightarrow \forall x \in T.\pred{CatAssoc}{\cons{x}{s},t,u}\).
@@ -36,7 +37,8 @@ for all stack values \(s\), \(t\) and~\(u\).
 
   \bigskip
 
-  Underlining the call being rewritten, the base case is:
+  Underlining the call being rewritten, the base case is
+  straightforward:
   \begin{equation*}
     \ufun{cat}(\el,\fun{cat}(t,u))
     \xrightarrow{\smash{\alpha}} \fun{cat}(t,u)
@@ -77,7 +79,7 @@ for all stack values \(s\), \(t\) and~\(u\).
 \begin{frame}{Proving associativity of stack concatenation}
 
   We may start with the left\hyp{}hand side of
-  \(\pred{CatAssoc}{\cons{x}{s},t,u}\), that is
+  \(\pred{CatAssoc}{\cons{x}{s},t,u}\), in other words:
   \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\).
 
   \bigskip
@@ -105,31 +107,31 @@ for all stack values \(s\), \(t\) and~\(u\).
 %
 \begin{frame}{Proving associativity of stack concatenation}
 
- Here, we would like to unify
- \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\) (called the \textbf{goal})
- and \(\fun{cat}(\cons{x}{s},t)\) (the pattern).
+  Here, we would like to unify the \textbf{goal}
+  \(\fun{cat}(\cons{x}{s},\fun{cat}(t,u))\) with the \textbf{pattern}
+  \(\fun{cat}(\cons{x}{s},t)\).
 
- \bigskip
+  \bigskip
 
-The problem is that we have variables that are the same in the goal
-and the pattern (\(x\), \(s\)~and~\(t\)).
+  The problem is that we have variables that are the same in the goal
+  and the pattern (\(x\), \(s\)~and~\(t\)).
 
-\bigskip
+  \bigskip
 
-The case of \(\cons{x}{s}\) and \(\cons{x}{s}\) is harmless, but the
-unification of \(\fun{cat}(t,u)\) and~\(t\) is not.
+  The case of \(\cons{x}{s}\) and \(\cons{x}{s}\) is harmless, but the
+  unification of \(\fun{cat}(t,u)\) and~\(t\) is not.
 
-\bigskip
+  \bigskip
 
-That is why it is best to rename the variables in the pattern so they
-are not found in the goal (this is the
-\textbf{\(\alpha\)\hyp{}renaming} of \(\lambda\)\hyp{}calculus), and
-then try to unify them.
+  That is why it is best to rename the variables in the pattern so
+  they are not found in the goal (this is the
+  \textbf{\(\alpha\)\hyp{}renaming} of \(\lambda\)\hyp{}calculus), and
+  then try to unify them.
 
-\bigskip
+  \bigskip
 
-To simplify things even more, we are going to rename \emph{all} the
-variables in the definition of `\fun{cat}'.
+  To simplify things even more, we are going to rename \emph{all} the
+  variables in the definition of \fun{cat}.
 
 \end{frame}
 

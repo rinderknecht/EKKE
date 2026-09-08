@@ -2,7 +2,7 @@
 %
 \begin{frame}{Inference rules}
 
-  Let's say we want to define a function `\fun{cut}' that takes a
+  Let's say we want to define a function \fun{cut} that takes a
   stack~$s$ and an index~$k$ in that stack (the top has index~0) oand
   returns the prefix of the stack~$s$ of length~$k$ (if any) and the
   corresponding suffix.
@@ -45,7 +45,7 @@
 
   When the value of a recursive call needs to be destructured, it is
 convenient to use an extension of our language to avoid creating
-auxiliary functions like `\fun{push}':
+auxiliary functions like \fun{push}:
 \begin{mathpar}
 \inferrule*{}{\fun{cut}(s,0) \rightarrow (\el, s)} \;\TirName{Nil}
 \qquad

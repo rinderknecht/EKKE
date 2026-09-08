@@ -26,7 +26,7 @@
 %
 \begin{frame}{Maps on stacks}
 
-  In the case of stacks, a simple iterator is a function `\fun{map}'
+  In the case of stacks, a simple iterator is a function \fun{map}
   that takes a stack and returns a stack made of the images of the
   elements, in the original order. So $[e_1; e_2; \ldots; e_n]$ becomes $[f(e_1);
     f(e_2); \ldots; f(e_n)]$.
@@ -41,7 +41,7 @@
   For example, if we set
   \begin{align*}
     \fun{incr}(n)   &\rightarrow n + 1.\\
-    \fun{square}(n) &\rightarrow n * n.
+    \fun{square}(n) &\rightarrow n \times n.
   \end{align*}
   then we have
   \begin{align*}
@@ -98,7 +98,7 @@
 
   For example, we will write $\Xfun\; x \rightarrow x$ to denote the
   identity function, without naming it. Of course, we have to forbid
-  calling any function `\fun{fun}` now (in other words, `\Xfun' is a
+  calling any function `\fun{fun}' now (in other words, \Xfun is a
   \textbf{keyword}).
 
   \bigskip
@@ -146,7 +146,7 @@
 %
 \begin{frame}{Right fold}
 
-  Let's rename `\fun{fold}' as `\fun{foldr}' (`fold right'). Then:
+  Let's rename \fun{fold} as \fun{foldr} (`fold right'). Then:
   \begin{equation*}
     \begin{array}{r@{\;}c@{\;}l@{}}
       \fun{foldr} (f, [], a) & \rightarrow & a;\\
@@ -155,18 +155,19 @@
   \end{equation*}
   A way to understand this definition is by extension:
   \begin{equation*}
-    \fun{foldr}(f,[e_1; e_2; \ldots; e_n], a) \equiv f(e_1, f(e_2, \ldots f(e_n, a))).
+    \fun{foldr}(f,[e_1; e_2; \ldots; e_n], a) \equiv f(e_1, f(e_2,
+    \ldots, f(e_n, a))).
   \end{equation*}
 
-  Note that the recursive call in the definition of `\fun{foldr}' is
+  Note that the recursive call in the definition of \fun{foldr} is
   not in tail position. (See page~\pageref{tail_call} an onwards.)
 
   \bigskip
 
   In this case, this means that all the calls to the iterated
-  function~$f$ will be waiting for all the calls to~`\fun{foldr}' to
-  be finished (as well as all the calls to~$f$ on the previous
-  elements of the stack).
+  function~$f$ will be waiting for all the calls to~\fun{foldr} to be
+  finished (as well as all the calls to~$f$ on the previous elements
+  of the stack).
 
   \bigskip
 
@@ -181,9 +182,11 @@
 
   The dual iteration of a right fold is a \textbf{left fold}:
   \begin{equation*}
-    \fun{foldr}(f,[e_1; e_2; \ldots; e_n], a) \equiv f(e_n, \ldots f(e_2, f(e_1, a))).
+    \fun{foldl}(f,[e_1; e_2; \ldots; e_n], a) \equiv f(e_n, \ldots,
+    f(e_2, f(e_1, a))).
   \end{equation*}
-  It is a simple matter of rearranging the calls in the definition of `\fun{foldr}`:
+  It is a simple matter of rearranging the calls in the definition of
+  \fun{foldr}:
   \begin{equation*}
     \begin{array}{r@{\;}c@{\;}l@{}}
       \fun{foldl} (f, [], a) & \rightarrow & a;\\

@@ -1,2 +1,0 @@
-clean::
-> rm -f *.out *.err *.nav *.snm *.toc *.vrb

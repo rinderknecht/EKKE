@@ -453,6 +453,8 @@
 %
 \begin{frame}{Exact cost / Efficient reversal}
 
+  \label{def:rev}
+
   We would be remiss not to consider a more efficient (that is, less
   costly) definition of a reversal function. Here it is:
   \begin{align*}
@@ -461,11 +463,11 @@
     \fun{rcat}(\cons{x}{s},t) &\smashedrightarrow{\eta}
     \fun{rcat}(s,\cons{x}{t}).
   \end{align*}
-  (The name `\fun{rcat}' stands for \emph{reverse and catenate}.)
+  (The name \fun{rcat} stands for \emph{reverse and catenate}.)
 
   \bigskip
 
-  The additional parameter introduced by `\fun{rcat}' accumulates
+  The additional parameter introduced by \fun{rcat} accumulates
   partial results, thus is called an \textbf{accumulator}:
   \begin{equation*}
     \begin{array}{r@{\;}l@{\;}l}
@@ -484,9 +486,9 @@
 %
 \begin{frame}{Exact cost / Efficient reversal}
 
-  To draw the cost of `\fun{rev}', it is sufficient to notice that the
-  first argument of `\fun{rcat}' strictly decreases at each rewrite,
-  so all evaluation traces have the shape \(\epsilon\eta^n\zeta\), so
+  To draw the cost of \fun{rev}, it is sufficient to notice that the
+  first argument of \fun{rcat} strictly decreases at each rewrite, so
+  all evaluation traces have the shape \(\epsilon\eta^n\zeta\), so
   \(\C{\fun{rev}}{n} = n + 2\). The cost is \textbf{linear}, so
   \fun{rev} must always be used instead of \fun{rev\(_0\)}.
 
@@ -494,18 +496,18 @@
 
   The reason for the inefficiency of \fun{rev\(_0\)} can be seen in
   the fact that rule~\(\delta\) produces a series of calls to
-  `\fun{cat}' following the pattern
+  \fun{cat} following the pattern
   \begin{equation*}
     \fun{rev}_0\,s \twoheadrightarrow \fun{cat}(\fun{cat}(\dots
     \fun{cat}(\el, [x_n]), \dots, [x_2]), [x_1]),
   \end{equation*}
   where \(s = [x_1, x_2, \dots, x_n]\). The cost of all these calls to
-  `\fun{cat}' is thus
+  \fun{cat} is thus
   \begin{equation*}
-    1 + 2 + \dots + (n-1) = \tfrac{1}{2}n(n-1).
+    1 + 2 + \dots + (n-1) = \frac{n(n-1)}{2}.
   \end{equation*}
   because the cost of \(\fun{cat}(s,t)\) is \(n+1\). The problem is
-  not calling `\fun{cat}', but the fact that the calls are embedded in
+  not calling \fun{cat}, but the fact that the calls are embedded in
   the most unfavourable configuration.
 
 \end{frame}

@@ -184,7 +184,7 @@
 
   \bigskip
 
-  Let us define `\fun{rotr}' (right rotation) like so:
+  Let us define \fun{rotr} (right rotation) like so:
   \begin{equation*}
     \begin{array}{r@{\;}c@{\;}l@{\quad}l@{}}
       \fun{rotr}(\fun{Ext}()) & \rightarrow & \fun{Ext}();\\
@@ -209,7 +209,7 @@
 
   \bigskip
 
-  Let us defined `\fun{rotl}' (left rotation) like so:
+  Let us define \fun{rotl} (left rotation) like so:
   \begin{equation*}
     \begin{array}{r@{\;}c@{\;}l@{\quad}l@{}}
       \fun{rotl}(\fun{Ext}()) & \rightarrow & \fun{Ext}();\\
@@ -235,7 +235,7 @@
   root:
 
   \bigskip
-  \includegraphics[bb=71 637 412 721]{insr_ex}
+  \includegraphics[bb=71 637 396 721]{insr_ex}
 
   The transitive closure \;\((\twoheadrightarrow)\) captures the
   preliminary leaf insertion, \((\xrightarrow{\textsf{r}})\) is a
@@ -254,15 +254,16 @@
 \begin{frame}{Root insertion}
 
   It is now a simple matter to modify the definition of
-  \fun{add\_leaf} so it becomes root insertion \fun{add\_root} as follows:
+  \fun{add\_leaf} so it becomes root insertion \fun{add\_root} as
+  follows:
   \begin{equation*}
     \begin{array}{r@{\;}c@{\;}l@{\quad}l@{}}
       \fun{add\_root}(k, \fun{Ext}()) & \rightarrow & \fun{Int}(k, \fun{Ext}(), \fun{Ext}());\\
       \fun{add\_root}(k, \fun{Int}(x, t_1, t_2)) & \rightarrow
-      & \textcolor{blue}{\fun{rotr}(}\fun{Int}(x, \fun{add\_root}(k, t_1), t_2)\textcolor{blue}{)},
+      & \ufun{rotr}(\fun{Int}(x, \fun{add\_root}(k, t_1), t_2)),
       & \text{if} \; k \prec x; \\
       \fun{add\_root}(k, \fun{Int}(x, t_1, t_2)) & \rightarrow
-      & \textcolor{blue}{\fun{rotl}(}\fun{Int}(x, t_1, \fun{add\_root}(k, t_2))\textcolor{blue}{)},
+      & \ufun{rotl}(\fun{Int}(x, t_1, \fun{add\_root}(k, t_2))),
       & \text{if} \; x \prec k; \\
       \fun{add\_root}(k, \fun{Int}(k, t_1, t_2)) & \rightarrow
       & \fun{Int}(k, t_1, t_2).

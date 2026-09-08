@@ -148,3 +148,55 @@
   \end{equation*}
 
 \end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Mirroring}
+
+  Let us define a function `\fun{mir}' (\emph{mirror}) such that
+  \(\fun{mir}(t)\) is the symmetric of the binary tree~\(t\) with
+  respect to an exterior vertical line.
+  \begin{center}
+    \includegraphics[bb=78 660 162 722]{bt_ex2}
+    \qquad
+    \includegraphics[bb=75 660 158 722]{bt_ex4}
+  \end{center}
+  It is easy to define this function:
+  \begin{equation*}
+    \begin{array}{r@{\;}l@{\;}l@{}}
+      \fun{mir}(\fun{Ext}()) & \rightarrow & \fun{Ext}();\\
+      \fun{mir}(\fun{Int}(x,t_1,t_2)) & \rightarrow
+      & \fun{Int}(x, \fun{mir}\; t_2, \fun{mir} \; t_1).
+    \end{array}
+  \end{equation*}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Mirroring}
+
+  From the previous example, it is quite simple to postulate the
+  property
+  \begin{equation*}
+    \pred{InMir}{t} \colon \fun{in}(\fun{mir}(t)) \equiv
+    \fun{rev}(\fun{in}(t)),
+  \end{equation*}
+  where `\fun{rev}' reverses its stack argument (see definition
+  page~\pageref{def:rev}).
+
+  \bigskip
+
+  This property is useful because the left\hyp{}hand side of the
+  equivalence is more costly than the right\hyp{}hand side:
+  \begin{equation*}
+    \Call{\fun{in}(\fun{mir}(t))} = \C{\fun{mir}}{n} + \C{\fun{in}}{n}
+    = (2n+1) + (2n+2) = 4n + 3,
+  \end{equation*}
+  to be compared with
+  \begin{equation*}
+    \Call{\fun{rev}(\fun{in}(t))} = \C{\fun{in}}{n} + \C{\fun{rev}}{n}
+    = (2n+2) + (n+2) = 3n + 4.
+  \end{equation*}
+
+\end{frame}
