@@ -1,8 +1,10 @@
-\documentclass[compress,dvipdfmx]{beamer}
+\documentclass[compress,dvips,xcolor={dvipsnames},t]{beamer}
+
+\input{handout} % 2-up/page colour handouts
 
 \usepackage[T1]{fontenc}
-\usepackage[english]{babel}
-\usepackage{lmodern}
+\usepackage[british]{babel}
+\usepackage{mathptmx}
 \usepackage{beramono}          % Bold in verbatim
 \usepackage{hyphenat}          % \hyp{} is a breakable dash
 \usepackage{xspace}
@@ -13,9 +15,12 @@
 \input{commands}
 \input{beamer_cfg}
 
-\title{Introduction to Formal Methods}
-\author{Christian Rinderknecht}
-\institute{Eszterházy Károly Katolikus Egyetem}
+\hyphenation{aero-spa-ce}
+\hyphenation{pro-pa-ga-tion}
+
+\title{\LARGE Introduction to Formal Methods}
+\author{\Large Christian Rinderknecht}
+\institute{\normalsize Eszterházy Károly Katolikus Egyetem}
 \date{September 2026}
 
 \begin{document}
@@ -70,8 +75,8 @@
 
   \bigskip
 
-  Some recent advances with AI agents (LeanZip) renew the hope of
-  more affordable formal methods.
+  Some recent advances with AI agents (LeanZip, famous mathematical
+  theorems in Lean) renew the hope of more affordable formal methods.
 
   \bigskip
 
@@ -365,8 +370,7 @@
 %
 \begin{frame}{Abstract interpretation / An illustration}
 
-  \vspace*{15mm}
-  \includegraphics[bb=95 428 500 727, scale=0.7]{traces}
+  \centerline{\includegraphics[bb=95 428 500 727, scale=0.75]{traces}}
 
 \end{frame}
 
@@ -401,8 +405,7 @@
 %
 \begin{frame}{Abstract interpretation / An illustration}
 
-  \vspace*{15mm}
-  \includegraphics[bb=95 428 500 727, scale=0.7]{traces}
+  \centerline{\includegraphics[bb=95 428 500 727, scale=0.75]{traces}}
 
 \end{frame}
 
@@ -410,8 +413,7 @@
 %
 \begin{frame}{Abstract interpretation / An illustration}
 
-  \vspace*{15mm}
-  \includegraphics[bb=95 428 500 727, scale=0.7]{traces_square}
+  \centerline{\includegraphics[bb=95 428 500 727, scale=0.7]{traces_square}}
 
 \end{frame}
 
@@ -419,8 +421,7 @@
 %
 \begin{frame}{Abstract interpretation / An illustration}
 
-  \vspace*{15mm}
-  \includegraphics[bb=95 428 500 727, scale=0.7]{traces_square_cropped}
+  \centerline{\includegraphics[bb=95 428 500 727, scale=0.75]{traces_square_cropped}}
 
 \end{frame}
 
@@ -454,8 +455,7 @@
 %
 \begin{frame}{Abstract interpretation}
 
-  \vspace*{15mm}
-  \includegraphics[bb=85 428 500 727, scale=0.7]{traces_square_cropped}
+  \centerline{\includegraphics[bb=85 428 500 727, scale=0.75]{traces_square_cropped}}
 
 \end{frame}
 
@@ -463,8 +463,7 @@
 %
 \begin{frame}{Abstract interpretation}
 
-  \vspace*{15mm}
-  \includegraphics[bb=85 428 500 727, scale=0.7]{traces_hexagon}
+  \centerline{\includegraphics[bb=85 428 500 727, scale=0.75]{traces_hexagon}}
 
 \end{frame}
 
@@ -960,11 +959,11 @@
 
   \bigskip
 
-  Compilers translate programs of high\hyp{}level languages (`close to
-  human thought'), like \Clang, \Ada or \OCaml into programs of
-  low\hyp{}level languages (`close to machine thought'), like assembly
-  or byte\hyp{}code, and these two programs must be
-  \textbf{operationally equivalent}.
+  Compilers translate programs of high\hyp{}level languages (that is,
+  featuring abstract concepts), like \Clang, \Ada or \OCaml into
+  programs of low\hyp{}level languages (that is, featuring concepts
+  closer to those of the hardware), like assembly or byte\hyp{}code,
+  and these two programs must be \textbf{operationally equivalent}.
 
   \bigskip
 
@@ -1057,6 +1056,9 @@
 
   John Regher and his colleagues are experts in finding bugs
   in \Clang compilers. They wrote, in 2011:
+
+  \bigskip
+
   \begin{quote}
     \textit{The striking thing about our CompCert results is that the
       middle\hyp{}end bugs we found in all other compilers are
@@ -1082,7 +1084,8 @@
 %
 \begin{frame}{The proof assistant \Coq}
 
-  \includegraphics[scale=0.3]{world_map_with_four_colours.png}
+  \includegraphics[scale=0.3]{world_map_with_four_colours.eps}
+
   \centerline{Political map of the world. Credit: Fibonacci, CC BY-SA
     3.0}
 
@@ -1159,7 +1162,7 @@
 \begin{frame}{Certified cryptographic primitives}
 
   \begin{center}
-    \includegraphics[scale=0.6]{heartbleed.png}
+    \includegraphics[scale=0.6]{heartbleed.eps}
   \end{center}
 
   \centerline{Heartbleed bug logo. Credit: Codenomicon, CC0 1.0}
@@ -1250,7 +1253,7 @@
 \begin{frame}{F*}
 
   \begin{center}
-    \includegraphics[scale=0.2]{SecureHTTPS.png}
+    \includegraphics[scale=0.2]{SecureHTTPS.eps}
   \end{center}
 
 \end{frame}
@@ -1282,8 +1285,8 @@
 
   \bigskip
 
-  There is an online tutorial
-  \small\url{https://www.fstar-lang.org/tutorial/}
+  There is an online tutorial at
+  {\footnotesize\url{https://www.fstar-lang.org/tutorial/}}
 \end{frame}
 
 % ------------------------------------------------------------------------
@@ -1292,7 +1295,7 @@
 
    Here is the factorial function in \Fstar:
 \begin{alltt}
-\small
+\footnotesize
 \textbf{val} fact: n:int\{n \(\geqslant\) 0\} \(\rightarrow\) Tot int
 
 \textbf{let rec} fact n =
@@ -1301,11 +1304,11 @@
   | \_ \(\rightarrow\) n * fact (n-1)
 \end{alltt}
 
-The annotation `\texttt{\small n:int\{n \(\geqslant\) 0\}
+The annotation `\texttt{\footnotesize n:int\{n \(\geqslant\) 0\}
   \(\rightarrow\) Tot int}' is requesting the \Fstar compiler to prove
-that the factorial function terminates (\texttt{\small Tot}) and
-returns a positive integer (\texttt{\small \{n \(\geqslant\) 0\}})
-when given as input a positive integer.
+that the factorial function terminates (\texttt{\footnotesize Tot}) and
+returns a positive integer (\texttt{\footnotesize \{n \(\geqslant\)
+  0\}}) when given as input a positive integer.
 
 \end{frame}
 
@@ -1334,7 +1337,7 @@ when given as input a positive integer.
 \begin{frame}{The Intel Pentium bug}
 
   \begin{center}
-    \includegraphics[scale=0.2]{Intel_Pentium_A80501.png}
+    \includegraphics[scale=0.2]{Intel_Pentium_A80501.eps}
   \end{center}
 
   \centerline{CPU Intel Pentium, 66 MHz. Credit: Konstantin Lanzet, CC
@@ -1561,8 +1564,7 @@ variables, and any combination of these.
 
 The language for defining the models is \Promela (\textbf{Pro}cess
 \textbf{me}ta\hyp{}\textbf{la}nguage), from which the name \SPIN is
-actually derived: `\textbf{S}imple \textbf{P}romela
-\textbf{In}terpreter.'
+derived: `\textbf{S}imple \textbf{P}romela \textbf{In}terpreter.'
 
 \bigskip
 
@@ -1951,10 +1953,10 @@ tasks in addition to protocol related operations.
 
   \bigskip
 
-  Formalisation (using logic to model) reveals many tricky points
-  earlier. These tricky points are often inherent to the problem to be
-  solved, which may therefore be much more complex than it first
-  appears.
+  Formalisation (using logic to model) reveals many tricky points at
+  an early stage. These tricky points are often inherent to the
+  problem to be solved, which may therefore be much more complex than
+  it first appears.
 
   \bigskip
 
@@ -2000,7 +2002,7 @@ currently exist, most of them featuring
 
   \bigskip
 
-  Information exchange can be modelled via shared data (centralised
+  Information exchange can be modelled via shared data (central
   memory), synchronous communication (which assumes a single clock
   with no propagation delay) or asynchronous messaging, or function
   invocation (of the \emph{Remote Procedure Call} kind in \textsf{C}
@@ -2205,8 +2207,8 @@ model having properties A, B, C, etc., also has property E.
 %
 \begin{frame}{Proof theory}
 
-  The semantic-consequence relation has the drawback of needing to be
-  checked over all possible models, and there may in general be
+  The semantic-consequence relation conveys the drawback of needing to
+  be checked over all possible models, and there may in general be
   infinitely many of them.
 
   \bigskip
