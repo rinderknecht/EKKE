@@ -94,7 +94,7 @@
 
 % Rewrite systems
 %
-\newcommand\len[1]{\left\lvert{#1}\right\rvert{}}
+\newcommand\len[1]{\left\lvert\smash{#1}\right\rvert{}}
 \newcommand\eqn[1]{\mathrel{\stackrel{\smash{#1}}{=}}}
 %\newcommand\pair[2]{\langle{#1},{#2}\rangle}
 \newcommand\pair[2]{({#1},{#2})}
@@ -110,7 +110,7 @@
 % Word Factoring
 %
 \newcommand\wlen[1]{\lVert{#1}\rVert{}}
-\newcommand\ind[2]{{#1}[{#2}]}
+\newcommand\ind[2]{{#1}\left[\smash{#2}\right]}
 \newcommand\Ind[2]{\ind{#1}{#2}}
 \newcommand\BorderName{\mathfrak{B}}
 \newcommand\Border[2]{\BorderName^{#1}(#2)}

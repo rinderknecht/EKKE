@@ -24,10 +24,10 @@ success, to wit, we know \(\ind{p}{0,i-1} = \ind{t}{j-i,j-1}\) and
   &
   &
   &
-  & \phantom{HHHH}
+  & \phantom{HHH}
   &
   & \multicolumn{1}{|>{\columncolor{mygrey}}c|}{\textcolor{white}{\texttt{b}}}
-  & \phantom{HHHH}\\
+  & \phantom{HHH}\\
 \cline{2-15}
   &
   &
@@ -678,15 +678,16 @@ example of pattern is \(p=a^{m}\).
 Let us parameterise the search with the failure function:
 \begin{codebox}
 \(\proc{Find} (p, t, \id{next})\)\\
-\li \((i, j) \gets (0, 0)\)
+\li \(i, j \gets 0, 0\)
 \li \While \(i < \len{p}\) \LogAnd \(j < \len{t}\) \kw{do}
 \li \> \If \(i = -1\) \LogOr \(p[i] = t[j]\)
-\li    \Then \((i, j) \gets (i + 1, j + 1)\)
+\li    \Then \(i, j \gets i + 1, j + 1\)
 \li    \Else \(i \gets \id{next}[i]\)\RComment \(j\) invariant
        \End
-\li \If \(i = \len{p}\)
-\li \Then \(\proc{Find} \gets j - \len{p}\)\RComment Index of first occurrence
-\li \Else \(\proc{Find} \gets -1\)\RComment Not found
+\li \(\proc{Find} \gets\) \kw{if} \(i = \len{p}\) \kw{then} \(j - \len{p}\) \kw{else} -1
+%% \li \If \(i = \len{p}\)
+%% \li \Then \(\proc{Find} \gets j - \len{p}\)\RComment Index of first occurrence
+%% \li \Else \(\proc{Find} \gets -1\)\RComment Not found
 \End
 \end{codebox}
 

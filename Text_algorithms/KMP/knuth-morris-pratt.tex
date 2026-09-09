@@ -122,7 +122,7 @@ edges \(i \dashrightarrow j\)).
 
 \begin{codebox}
 \(\proc{Next'} (x)\)\\
-\li \(\id{next}[0] \gets -1\); \(j \gets 0\)
+\li \(\id{next}[0], j \gets -1, 0\)
 \li \For \(i \gets 1\) \To \(\len{x} - 1\) \kw{do}
 \li \> \If \(x[j] = x[i]\)
 \li   \Then \(\id{next}[i] \gets \id{next}[j]\)
