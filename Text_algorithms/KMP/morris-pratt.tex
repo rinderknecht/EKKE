@@ -308,11 +308,13 @@ the smallest \(q > p\) such that \(\Border{}{\Border{q-1}{y} \cdot a}
 \begin{frame}{Morris-Pratt algorithm}
 
 Because a border is a proper prefix, that is to say, \(\Border{}{y}
-\pref y\), we have \(\Border{2}{y} = \Border{}{\Border{}{y}} \pref
-\Border{}{y}\), so \(\Border{q}{y} \cdot a \prefeq \Border{q-1}{y}
-\pref \dots \pref \Border{}{y} \pref y\). Therefore \(\Border{q}{y}
-\cdot a \prefeq y\), since \({q > 0}\), and \(\Border{}{ya} =
-\Border{q}{y} \cdot a\).
+\pref y\), we have
+\begin{equation*}
+  \Border{2}{y} = \Border{}{\Border{}{y}} \pref \Border{}{y},
+\end{equation*}
+so \(\Border{q}{y} \cdot a \prefeq \Border{q-1}{y} \pref \dots \pref
+\Border{}{y} \pref y\). Therefore \(\Border{q}{y} \cdot a \prefeq y\),
+since \({q > 0}\), and \(\Border{}{ya} = \Border{q}{y} \cdot a\).
 
 \bigskip
 
@@ -361,12 +363,12 @@ What we need is the offset corresponding to the \textbf{length of the
 
 Let us define a function \(\MPfailureName_{x}\) on all the prefixes of
 a word~\(x\) as follows:
-\begin{equation}
+\begin{equation*}
   \MPfailure{x}{}{\len{y}}
 := \len{\Border{}{y}},\,\; \text{for
     all \(x\) and \(y \neq \varepsilon\) such
-    that \(y \prefeq x\)}.\label{eq:MP_failure}
-\end{equation}
+    that \(y \prefeq x\)}.
+\end{equation*}
 For reasons which will be clear soon, this function is called the
 \textbf{failure function} of~\(x\). An equivalent definition is
 \begin{equation*}
@@ -431,8 +433,8 @@ induction hypothesis. We suppose \(y \prefeq x\) and prove now
 = \len{\Border{q+1}{y}},
 \end{equation*}
 where \((\smash{\doteq})\)~is a valid application of the induction
-hypothesis because \(\Border{}{y} \pref y \prefeq x\). This proves
-\(\pred{P}{q+1}\) and the induction principle entails that
+hypothesis because we have \(\Border{}{y} \pref y \prefeq x\). This
+proves \(\pred{P}{q+1}\) and the induction principle entails that
 \(\pred{P}{n}\) holds for all \(n \geqslant 0\).
 
 \end{frame}
@@ -454,9 +456,12 @@ hypothesis because \(\Border{}{y} \pref y \prefeq x\). This proves
 \right.
 \end{equation*}
 There is one part of the definition that we did not use:
-\({\Border{}{a} := \varepsilon}\). It implies \(\MPfailure{x}{}{1} =
-\MPfailure{x}{}{\len{a}} = \len{\Border{}{a}} = \len{\varepsilon} =
-0\) and, since the definition of~\(\MPfailureName\) implies
+\({\Border{}{a} := \varepsilon}\). It implies
+\begin{equation*}
+  \MPfailure{x}{}{1} = \MPfailure{x}{}{\len{a}} = \len{\Border{}{a}} =
+  \len{\varepsilon} = 0
+\end{equation*}
+and, since the definition of~\(\MPfailureName\) implies
 \(\MPfailure{x}{}{1} = 1 + \MPfailure{x}{}{0}\), so
 \(\MPfailure{x}{}{0} = -1\).
 
@@ -469,10 +474,10 @@ We can now return to the last missing bit:
 \end{equation*}
 Since \(\Border{q}{y} \pref y\), those are equivalent to the following:
 \begin{equation*}
-  \smash{\Ind{y}{\len{\Border{q}{y}}}} = a \Leftrightarrow
-\smash{\Ind{y}{\MPfailure{x}{q}{i}}} = a \Leftrightarrow
-\smash{\Ind{x}{\MPfailure{x}{q}{i}}} = \smash{\Ind{x}{\len{y}}}
-\Leftrightarrow \smash{\Ind{x}{\MPfailure{x}{q}{i}}} = \ind{x}{i}.
+  \smash{\ind{y}{\len{\Border{q}{y}}}} = a \Leftrightarrow
+\smash{\ind{y}{\MPfailure{x}{q}{i}}} = a \Leftrightarrow
+\smash{\ind{x}{\MPfailure{x}{q}{i}}} = \smash{\ind{x}{\len{y}}}
+\Leftrightarrow \smash{\ind{x}{\MPfailure{x}{q}{i}}} = \ind{x}{i}.
 \end{equation*}
 
 \end{frame}
@@ -488,7 +493,7 @@ Gathering everything:
    \left\{
      \begin{aligned}
        & 1 + \MPfailure{x}{q}{i},
-       && \text{if \(\Ind{x}{\MPfailure{x}{q}{i}} = \ind{x}{i}\)};\\
+       && \text{if \(\ind{x}{\MPfailure{x}{q}{i}} = \ind{x}{i}\)};\\
        & 0,
        && \text{otherwise;}
      \end{aligned}
@@ -506,7 +511,7 @@ This can be further simplified into
 \MPfailure{x}{}{i+1} = 1 + \MPfailure{x}{q}{i}, \,\;\text{with}\,\; i \geqslant 0,
 \end{equation*}
 and \(q>0\)~is the smallest natural such that
-\(\MPfailure{x}{q}{i} = -1\) or \(\smash{\Ind{x}{\MPfailure{x}{q}{i}}}
+\(\MPfailure{x}{q}{i} = -1\) or \(\smash{\ind{x}{\MPfailure{x}{q}{i}}}
 = \ind{x}{i}\).
 
 \end{frame}
@@ -545,17 +550,20 @@ The table of the maximum borders for the proper prefixes of the word
 Static single-assignment form, assuming \(0 \leqslant i < \len{x}\):
 \begin{codebox}
 \(\proc{Next}(x, i)\)\\
-\li \If \(i = 0\)
-\li \Then \(\proc{Next} \gets -1\)
-\li \Else \(\proc{Next} \gets 1 + \proc{Fix}(x, \proc{Next}(x, i, i-1))\)
+\li \(\proc{Next} \gets \) \kw{if} \(i = 0\) \kw{then} -1 \kw{else} \(1 + \proc{Fix}(x, \proc{Next}(x, i, i-1))\)
+%% \li \If \(i = 0\)
+%% \li \Then \(\proc{Next} \gets -1\)
+%% \li \Else \(\proc{Next} \gets 1 + \proc{Fix}(x, \proc{Next}(x, i, i-1))\)
 \End
 \end{codebox}
 
 \begin{codebox}
 \(\proc{Fix}(x, i, j)\)\\
-\li \If \(j = -1\) \LogOr \(x[j] = x[i-1]\)
-\li \Then \(\proc{Fix} \gets j\)
-\li \Else \(\proc{Fix}(x, i, \proc{Next}(x, j))\) \End
+\li \(\proc{Fix} \gets \) \kw{if} \(j = -1\) \LogOr \(x[j] = x[i-1]\)
+\kw{then} \(j\) \kw{else} \(\proc{Fix}(x, i, \proc{Next}(x, j))\)
+%% \li \If \(j = -1\) \LogOr \(x[j] = x[i-1]\)
+%% \li \Then \(\proc{Fix} \gets j\)
+%% \li \Else \(\proc{Fix} \gets \proc{Fix}(x, i, \proc{Next}(x, j))\) \End
 \end{codebox}
 
 \end{frame}

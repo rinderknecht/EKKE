@@ -36,7 +36,7 @@ end of~\(t\), then it is not a factor: the search failed.
 \end{figure}
 Naïvely matching pattern~\(p\) against text~\(t\)
   (failure in grey), where \(\ind{p}{i} \neq \ind{t}{j}\) (the letters
-`\word{a}'~and~`\word{b}' are not relevant in themselves).
+\word{a}~and~\word{b} are not relevant in themselves).
 
 \end{frame}
 
@@ -48,11 +48,11 @@ Naïvely matching pattern~\(p\) against text~\(t\)
 
 \begin{codebox}
 \(\proc{Naive}(p, t)\)\\
-\li \((i, j) \gets (0, 0)\)
+\li \(i, j \gets 0, 0\)
 \li \While \(i < \len{p}\) \LogAnd \(j < \len{t}\) \kw{do}
 \li \> \If \(p[i] = t[j]\)
-\li    \Then \((i, j) \gets (i + 1, j + 1)\)
-\li    \Else \((i, j) \gets (0, j - i + 1)\) \>\>\>\>\>\>\Comment We
+\li    \Then \(i, j \gets i + 1, j + 1\)
+\li    \Else \(i, j \gets 0, j - i + 1\) \>\>\>\>\>\>\Comment We
 slide \(p\) by 1.
        \End
 \li \(\proc{Naive} \gets i = \len{p}\)
