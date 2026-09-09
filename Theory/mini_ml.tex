@@ -131,8 +131,8 @@
 
   An \OCaml program is a sequence of sentences. A \textbf{sentence},
   or \textbf{global definition}, is defined by the following cases,
-  where~\(e\) denotes an expression, \(x\)~is a variable, and `\Xlet'
-  and~`\Xrec' are keywords:
+  where~\(e\) denotes an expression, \(x\)~is a variable, and \Xlet
+  and \Xrec are keywords:
 
   \medskip
 
@@ -152,7 +152,7 @@
 
   \bigskip
 
-  Note that the keyword `\Xrec' is necessary to enable recursion. (We
+  Note that the keyword \Xrec is necessary to enable recursion. (We
   will see later how that works precisely.)
 
   \bigskip
@@ -238,13 +238,13 @@
         & $\Xlet \; x = e_1 \; \Xin \; e_2$
       \end{tabular}
 
-    \item Note how the keywords `\Xrec' and `\Xfunction', as well as
-      the definition of multiple cases (as seen in the definition of
-      `\fun{cat}' earlier) is not found above: this is because we want
+    \item Note how the keywords \Xrec and \Xfunction, as well as the
+      definition of multiple cases (as seen in the definition of
+      \fun{cat} earlier) is not found above: this is because we want
       to focus on other aspects of \OCaml first, like
       higher\hyp{}order functions.
 
-    \item Instead, we have `\Xfun', which enables only one case made
+    \item Instead, we have \Xfun, which enables only one case made
       of a variable (more generally, irrefutable patterns).
 
   \end{itemize}
@@ -643,7 +643,7 @@
       in~\(\rho\).
 
     \item By definition, a variable is \textbf{free} in an expression
-      if it is not bound by a `\Xlet' or a `\Xfun'.
+      if it is not bound by a \Xlet or a \Xfun.
 
     \item We can understand this concept on a graphic representation
       of the abstract syntax tree.
@@ -651,11 +651,11 @@
     \item From each variable occurrence, we move up, towards the
       root.
 
-    \item If we encounter a `\Xlet' that binds that variable (in the
+    \item If we encounter a \Xlet that binds that variable (in the
       left child), we create an oriented edge from the variable to
-      that `\Xlet', and we stop: the variable is bound.
+      that \Xlet, and we stop: the variable is bound.
 
-    \item Otherwise, if we reach the root (no such `\Xlet' has been
+    \item Otherwise, if we reach the root (no such \Xlet has been
       found), then the variable is free.
 
   \end{itemize}
@@ -688,8 +688,8 @@
 %
 \begin{frame}{Free variables}
 
-  A similar situation arises with functions: `\Xfun' is a binder, just
-  like `\Xlet'.
+  A similar situation arises with functions: \Xfun is a binder, just
+  like \Xlet.
 
   \bigskip
 
@@ -1013,7 +1013,7 @@
       is performed within the environment
       $\extend{\rho_\varnothing}{\ident{x}}{0}$.
 
-    \item The value of~`\ident{id}' is then the closure
+    \item The value of~\ident{id} is then the closure
       $\clos{\ident{x}}{\ident{x}}{\extend{\rho_\varnothing}{\ident{x}}{0}}$.
 
     \item We extend the current environment and evaluate the elided
@@ -1030,7 +1030,7 @@
 
     \item We evaluate first $(\ident{id} \; \ident{x})$ within~\(\rho\).
 
-    \item In order to do so, we evaluate~`\ident{id}' and~`\ident{x}'
+    \item In order to do so, we evaluate~\ident{id} and~\ident{x}
       separately.
 
   \end{itemize}
@@ -1178,7 +1178,7 @@
    {\setlength{\abovedisplayskip}{0pt}
     \setlength{\belowdisplayskip}{2pt}
     \begin{equation*}
-      \Xlet \; \ident{fix} = \Xfun \; \ident{g} \rightarrow \Omega \;
+      \Xlet \; \fun{fix} = \Xfun \; \ident{g} \rightarrow \Omega \;
       (\Xfun\; \ident{h} \; \ident{x} \rightarrow \ident{g} \;
       (\ident{h} \; \ident{h}) \; \ident{x})
     \end{equation*}}
@@ -1186,20 +1186,20 @@
       \item For any (terminating) function~\(f\) and
         any function~\(x\),
         \begin{equation*}
-          \evalf{f \; \lpar\ident{fix} \; f\rpar{} \; x}{\rho} =
-          \evalf{\ident{fix} \; f \; x}{\rho}.
+          \evalf{f \; \lpar\fun{fix} \; f\rpar{} \; x}{\rho} =
+          \evalf{\fun{fix} \; f \; x}{\rho}.
         \end{equation*}
 
       \item In other words, we have
         \begin{equation*}
-          f \; (\ident{fix} \; f) \; x \equiv \ident{fix} \; f \; x.
+          f \; (\fun{fix} \; f) \; x \equiv \fun{fix} \; f \; x.
         \end{equation*}
 
       \item The fixed point~\(x\) of a (continuous) function~\(g\)
         satisfies \(g(x) = x\).
 
-      \item Therefore, the fixed point of `\ident{f}' (if it exists)
-        is the value of `\ident{fix} \ident{f}'.
+      \item Therefore, the fixed point of~\ident{f} (if it exists)
+        is the value of \fun{fix}(\ident{f}).
 
   \end{itemize}
 
@@ -1210,10 +1210,10 @@
 \begin{frame}{Fixed points}
 
    Just as with \Xlet \Xin, we can simplify the semantics of
-   `\ident{fix}' a bit:
+   \fun{fix} a bit:
    \begin{equation*}
-     \evalf{\ident{fix} \; e}{\rho} = \evalf{e_1}{%
-       \extend{\rho_1}{x}{\evalf{\ident{fix} \, (\Xfun \, x \rightarrow e_1)}{\rho}}},
+     \evalf{\fun{fix} \; e}{\rho} = \evalf{e_1}{%
+       \extend{\rho_1}{x}{\evalf{\fun{fix} \, (\Xfun \, x \rightarrow e_1)}{\rho}}},
    \end{equation*}
    where $\evalf{e}{\rho} = \clos{x}{e_1}{\rho_1}$.
 
@@ -1222,7 +1222,7 @@
    There is a choice:
    \begin{itemize}
 
-     \item either we define `\ident{fix}' in the functional language
+     \item either we define \fun{fix} in the functional language
        (as a built\hyp{}in constant), or
 
      \item at the meta\hyp{}language (the mathematical logic we are
@@ -1242,17 +1242,17 @@
     \Xfun \; \ident{f} \; \ident{n} \rightarrow
     \Xif\; \ident{n} = 1 \;\Xthen\; 1 \;\Xelse\;
     \ident{n} * \ident{f}(\ident{n}-1)\\
-    &\Xlet \; \ident{fact} = \ident{fix} \; \ident{pre\_fact}
+    &\Xlet \; \fun{fact} = \fun{fix} \; \ident{pre\_fact}
   \end{flalign*}
 
-  We see that `\ident{fact}' is the fixed point of
-  `\ident{pre\_fact}':
+  We see that \fun{fact} is the fixed point of
+  \fun{pre\_fact}:
   \begin{align*}
-    \evalf{\ident{fact}}{\rho} &= \evalf{\ident{fix} \; \ident{pre\_fact}}{\rho}\\
-    &= \evalf{\ident{pre\_fact}\; (\ident{fix} \; \ident{pre\_fact})}{\rho}\\
-    &= \evalf{\ident{pre\_fact} \; \ident{fact}}{\rho}\\
+    \evalf{\fun{fact}}{\rho} &= \evalf{\fun{fix} \; \ident{pre\_fact}}{\rho}\\
+    &= \evalf{\ident{pre\_fact}\; (\fun{fix} \; \ident{pre\_fact})}{\rho}\\
+    &= \evalf{\ident{pre\_fact} \; \fun{fact}}{\rho}\\
     &= \evalf{\Xfun \; \ident{n} \rightarrow \Xif \; \ident{n}
-        = 1 \; \Xthen\; 1 \; \Xelse\; \ident{n} * \ident{fact}(\ident{n}-1)}{\rho}
+        = 1 \; \Xthen\; 1 \; \Xelse\; \ident{n} * \fun{fact}(\ident{n}-1)}{\rho}
   \end{align*}
 
   A non-recursive definition of the factorial.
@@ -1291,11 +1291,11 @@
 
   \begin{itemize}
 
-    \item The function `\ident{fact}' coincides pointwise with the
+    \item The function \fun{fact} coincides pointwise with the
       factorial function.
 
     \item Let us extend mini-ML with a native recursive binder, using
-      the `\ident{fix}' function:
+      the \fun{fix} function:
       \begin{equation*}
         \evalf{\Xlet \; \Xrec \; x = e_1 \; \Xin \; e_2}{\rho} =
         \evalf{\Xlet \; x = \textsf{fix} \; (\Xfun \; x \rightarrow
@@ -1304,7 +1304,7 @@
 
     \item In practice, recursive definitions are given a built\hyp{}in
       semantics, as opposed to being defined in terms of a special
-      combinator like `\ident{fix}'.
+      combinator like \fun{fix}.
 
   \end{itemize}
 
@@ -1430,10 +1430,10 @@
         \rightarrow \ident{x} * \ident{y} \; \Xin\\
         &\Xlet \; \ident{eq} \; \ident{x} \; \ident{y} = (\ident{x} =
         \ident{y}) \; \Xin\\
-        &\Xlet \; \Xrec \; \ident{fact} \; \ident{n} = \Xif\;
+        &\Xlet \; \Xrec \; \fun{fact} \; \ident{n} = \Xif\;
         \ident{eq} \; \ident{n} \; 0 \; \Xthen\; 1 \;\Xelse\;
-        \ident{mult} \; \ident{n} \; (\ident{fact}(\ident{n}-1))\\
-        &\Xin\; \ident{fact} \; 9
+        \ident{mult} \; \ident{n} \; (\fun{fact}(\ident{n}-1))\\
+        &\Xin\; \fun{fact} \; 9
       \end{flalign*}
 
       \item Note the two different meanings of $(=)$: one is
@@ -1528,7 +1528,7 @@
       or the programmer to each subexpression of an expression (in
       particular, the whole program).
 
-    \item For example, `\type{int}' for an arithmetic expression, or
+    \item For example, \type{int} for an arithmetic expression, or
       $\type{int} \rightarrow \type{int}$ for a function from the
       integers to the integers.
 
