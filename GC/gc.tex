@@ -2,35 +2,21 @@
 
 \documentclass[compress,dvipdfmx]{beamer}
 
+\input{handout} % 2-up/page colour handouts
+
 \usepackage[T1]{fontenc}
-\usepackage[english]{babel}
+\usepackage[british]{babel}
+\usepackage{mathptmx}
 \usepackage{amssymb,amsmath}
 \usepackage{xspace}
 \usepackage{hyphenat}
 \usepackage{adjustbox}
 \usepackage[absolute,overlay]{textpos}
-\usepackage{lmodern}
-
-% Draws a bounding line box frame:
-%\usepackage[center, frame, axes]{crop}
-
-% Pseudo-code typesetting (algorithms)
 \usepackage{clrscode}
+\usepackage{microtype}
 
-\setbeamertemplate{theorems}[numbered]
 \input{beamer_cfg}
-
-\newcommand\lang[1]{\texttt{#1}\xspace}
-\newcommand\Java{\lang{Java}}
-\newcommand\C{\lang{C}}
-\newcommand\Lisp{\lang{Lisp}}
-\newcommand\Csharp{\lang{C\#}}
-\newcommand\Haskell{\lang{Haskell}}
-\newcommand\OCaml{\lang{OCaml}}
-\newcommand\Python{\lang{Python}}
-
-\newcommand\Cpp{\mbox{\textsf{C} \hspace*{-2.5mm} \raise 0.7mm \hbox
-{${\scriptscriptstyle \textsf{++}}$}}\xspace}
+\input{commands}
 
 \frenchspacing  % Follow French conventions after a period
 
@@ -95,7 +81,7 @@ perhaps more, depending on the data layout).
 %
 \begin{frame}[fragile]{Garbage Collection}
 
-  A cell can be allocated with the built-in function `\texttt{new}',
+  A cell can be allocated with the built-in function \texttt{new},
   like so:
 \begin{verbatim}
 Cell c = new Cell ();
@@ -114,7 +100,7 @@ type.
 \bigskip
 
 Then we can modify the contents of the fields, as many times as we
-wish to. Every call to `\texttt{new}' returns the \textbf{address of a
+wish to. Every call to \texttt{new} returns the \textbf{address of a
   new block} drawn from the available memory.
 
 \end{frame}
@@ -131,11 +117,11 @@ necessary for the GC to \textbf{free the memory used by useless
 
 In some programming languages, like \C, this task is entirely
 delegated to the programmers. They have a predefined procedure
-`\texttt{free}' that frees a memory block:
+\texttt{free} that frees a memory block:
 \begin{verbatim}
 free(c);
 \end{verbatim}
-After it is executed, the block pointed at by~`\texttt{c}' is
+After it is executed, the block pointed at by~\texttt{c} is
 considered available again, so its address can be reused by a future
 allocation.
 
@@ -169,7 +155,7 @@ allocation.
 %
 \begin{frame}{Garbage Collection}
 
-  In \Java, there is no equivalent to the `\texttt{free}' procedure of
+  In \Java, there is no equivalent to the \texttt{free} procedure of
   \C because the identifying and freeing of useless objects is left to
   the runtime system.
 
@@ -241,9 +227,9 @@ allocation.
   \medskip
 
   What counts as global and local variable depends on the programming
-  language. In \Java, the former are the `\texttt{static}' fields
+  language. In \Java, the former are the \texttt{static} fields
   (a.k.a. instance fields), and the latter are methods arguments
-  (including `\texttt{this}') and the variables declared in the method
+  (including \texttt{this}) and the variables declared in the method
   being executed.
 
 \end{frame}
@@ -280,12 +266,8 @@ allocation.
 
   \vspace*{-5mm}
   \begin{center}
-  \adjustbox{
-  width=\textwidth,
-  trim=5mm 0 5mm 0,
-  clip
-}{%
-  \includegraphics{memory.png}
+  \adjustbox{width=\textwidth}{%
+    \includegraphics{memory.png}
   }
   \end{center}
 
@@ -498,7 +480,7 @@ allocation.
   pointers to be traversed.
   \begin{codebox}
     \(\proc{Mark}()\)\RComment Iterative definition \\
-    \li \For \kw{each} root \(r\) \kw{do} push \(r\);
+    \li \For \kw{each} root \(r\) \kw{do} push \(r\)
     \li \While the stack is not empty \kw{do}
     \li \> pop a pointer \(o\)
     \li \>  \If \(o \neq \kw{nil}\) \kw{and} \(o\) is unmarked
@@ -1031,12 +1013,12 @@ Here are two examples of \textbf{breadth-first traversals}:
   \begin{codebox}
     \(\proc{FirstFit}(o)\)\RComment Use in stead of \proc{Allocate} in
     \proc{New}\\
-    \li \((\id{previous}, \id{current}) \gets (\kw{nil}, \kw{free})\)
+    \li \(\id{previous}, \id{current} \gets \kw{nil}, \kw{free}\)
     \li \While \(\id{current} \neq \kw{nil}
                \,\; \kw{and} \,\; \proc{Size}(current) <
                \proc{Size}(o)\) \kw{do}
-    \li \> \((\id{previous}, \id{current})
-    \gets (\id{current}, \proc{Next}(\id{current}))\)
+    \li \> \(\id{previous}, \id{current}
+    \gets \id{current}, \proc{Next}(\id{current})\)
     \End
     \li \kw{if} \(\id{current} \neq \kw{nil}\) \kw{then} \(\proc{Update}(\id{previous},
     \id{current}, o)\)
@@ -1124,18 +1106,17 @@ Here are two examples of \textbf{breadth-first traversals}:
   \textbf{Best-fit allocation} finds the first smallest free block
   that fits the object, thus not splitting large blocks that would
   otherwise fit future, larger objects.
-  \vspace*{-5mm}
   \begin{codebox}
     \(\proc{BestFit}(o)\)\\
-    \li \((\id{bestPrev}, \id{best}, \id{bestSize}, \id{previous}, \id{current})
-          \gets (\kw{nil}, \kw{nil}, \infty, \kw{nil}, \kw{free})\)
+    \li \(\id{bestPrev}, \id{best}, \id{bestSize}, \id{previous}, \id{current}
+          \gets \kw{nil}, \kw{nil}, \infty, \kw{nil}, \kw{free}\)
     \li \While \(\id{current} \neq \kw{nil}\) \kw{do}
     \li \> \If \(\proc{Size}(o) \leqslant \proc{Size}(\id{current})
                 < \id{bestSize}\)
-    \li    \Then \((\id{bestPrev}, \id{best}, \id{bestSize}) \gets
-                   (\id{previous}, \id{current}, \proc{Size}(current))\)
+    \li    \Then \(\id{bestPrev}, \id{best}, \id{bestSize} \gets
+                   \id{previous}, \id{current}, \proc{Size}(current)\)
            \End
-    \li \> \((\id{previous}, \id{current}) \gets (\id{current}, \proc{Next}(current))\)
+    \li \> \(\id{previous}, \id{current} \gets \id{current}, \proc{Next}(current)\)
     \li \If \(\id{best} = \kw{nil}\)
     \li \Then \(\proc{BestFit} \gets \kw{nil}\)
     \li \Else \(\proc{BestFit} \gets \proc{Update}(bestPrev, best, o)\)
@@ -1261,18 +1242,18 @@ struct Example {
 A value of this type does \textbf{not} occupy 6~bytes, but~12:
 \begin{itemize}
 
-  \item `\texttt{a}' starts at offset~0 (1~byte used);
+  \item \texttt{a} starts at offset~0 (1~byte used);
 
-  \item 3~bytes of padding are inserted so `\texttt{b}' starts at
+  \item 3~bytes of padding are inserted so \texttt{b} starts at
     offset~4 (the closest multiple of~4);
 
-  \item `\texttt{b}' starts at offset~4 (4 bytes uses);
+  \item \texttt{b} starts at offset~4 (4 bytes uses);
 
-  \item `\texttt{c}' starts at offset~8 (1 byte used);
+  \item \texttt{c} starts at offset~8 (1 byte used);
 
   \item 3~bytes of padding are added at the end so the whole structure
     is a multiple of 4~bytes (word size), which is needed for uniform
-    indexing of arrays of values of type `\texttt{Example}'.
+    indexing of arrays of values of type \texttt{Example}.
 
 \end{itemize}
 
@@ -1343,7 +1324,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 %
 \begin{frame}{Garbage Collection / Cheney's collector}
 
-  \includegraphics{gc-0.png}
+  \includegraphics[scale=0.8]{gc-0.png}
 
   The registers \textbf{sp} and \textbf{fp} are the \textbf{stack
     pointer} and the \textbf{frame pointer}, respectively. (Between
@@ -1361,7 +1342,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 %
 \begin{frame}{Garbage Collection / Cheney's collector}
 
-  \includegraphics[scale=0.8]{gc-1.png}
+  \includegraphics[scale=0.755]{gc-1.png}
   \begin{textblock*}{8cm}(45mm,55mm)
     After some time, we have three stack frames, containing pointers
     to heap\hyp{}allocated blocks. There are five blocks, in rounded
@@ -1378,7 +1359,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 %
 \begin{frame}{Garbage Collection / Cheney's collector}
 
-  \includegraphics[scale=0.8]{gc-2.png}
+  \includegraphics[scale=0.755]{gc-2.png}
 
 \end{frame}
 
@@ -1419,7 +1400,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 %
 \begin{frame}{Garbage Collection / Cheney's collector}
 
-  \includegraphics[scale=0.8]{gc-3.png}
+  \includegraphics[scale=0.755]{gc-3.png}
 
 \end{frame}
 
@@ -1427,7 +1408,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 %
 \begin{frame}{Garbage Collection / Cheney's collector}
 
-  \includegraphics[scale=0.8]{gc-4.png}
+  \includegraphics[scale=0.755]{gc-4.png}
 
 \end{frame}
 
@@ -1455,7 +1436,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 %
 \begin{frame}{Garbage Collection / Cheney's collector}
 
-  \includegraphics[scale=0.8]{gc-5.png}
+  \includegraphics[scale=0.755]{gc-5.png}
 
 \end{frame}
 
@@ -1488,7 +1469,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 %
 \begin{frame}{Garbage Collection / Cheney's collector}
 
-  \includegraphics[scale=0.8]{gc-6.png}
+  \includegraphics[scale=0.755]{gc-6.png}
 
 \end{frame}
 
@@ -1526,7 +1507,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 %
 \begin{frame}{Garbage Collection / Cheney's collector}
 
-  \includegraphics[scale=0.8]{gc-7.png}
+  \includegraphics[scale=0.755]{gc-7.png}
 
 \end{frame}
 
@@ -1534,7 +1515,7 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
 %
 \begin{frame}{Garbage Collection / Cheney's collector}
 
-  \includegraphics[scale=0.8]{gc-8.png}
+  \includegraphics[scale=0.755]{gc-8.png}
   \begin{textblock*}{8cm}(45mm,20mm)
     The scan pointer is now just behind the allocation pointer: we are
     done.
@@ -1585,9 +1566,9 @@ A value of this type does \textbf{not} occupy 6~bytes, but~12:
     \li \> \For \kw{each} \(p\) \kw{in} \(\proc{Children}(\id{scan})\) \kw{do}
               \(p \gets \proc{Copy}(p)\)
     \li \> \(\id{scan} \gets \id{scan} + \, \proc{Size}(\id{scan})\)
-    \li \((\id{fromSpace}, \id{toSpace}) \gets (\id{toSpace}, \id{fromSpace})\)
-    \li \((\id{topFromSpace}, \id{topToSpace}) \gets (\id{topToSpace},
-    \id{topFromSpace})\)
+    \li \(\id{fromSpace}, \id{toSpace} \gets \id{toSpace}, \id{fromSpace}\)
+    \li \(\id{topFromSpace}, \id{topToSpace} \gets \id{topToSpace},
+    \id{topFromSpace}\)
   \end{codebox}
 
 \end{frame}
