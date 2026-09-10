@@ -155,7 +155,7 @@ A single static assignment definition:
 \begin{codebox}
 \(\proc{Prefix'} (i,x, t)\)\\
 \li \If \(i < \text{min}(\len{x}, \len{t}\!)\)
-\li \Then \proc{Prefix'}(\(1 + \) \kw{if} \(x[i] = t[i]\) \kw{then} \(i\)
+\li \Then \(\proc{Prefix'} \gets \proc{Prefix'}(1 +\) \kw{if} \(x[i] = t[i]\) \kw{then} \(i\)
 \kw{else} \(\len{x}, x, t)\)
 \li \Else \(\proc{Prefix'} \gets i = \len{x}\)
     \End
