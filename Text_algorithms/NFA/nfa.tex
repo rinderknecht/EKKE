@@ -2,10 +2,12 @@
 
 \documentclass[compress,dvips,xcolor={dvipsnames},t]{beamer}
 
-\usepackage[english]{babel}
+\input{handout} % 2-up/page colour handouts
+
+\usepackage[british]{babel}
 \usepackage{xspace}
 \usepackage{hyphenat}
-\usepackage{lmodern}
+\usepackage{mathptmx}
 \usepackage{graphicx}
 \usepackage{amssymb,amsmath,stmaryrd,txfonts}
 
@@ -27,16 +29,18 @@
 % Input files
 %
 \input{beamer_cfg}
-\input{commands}
-\input{grammar}
-\input{token}
+
+% New commands
+%
+\newcommand\tokenName[1]{\textbf{\textsf{\MakeLowercase{#1}}}}
+\newcommand\term[1]{\tokenName{#1}}
 
 % Document
 %
-\title{Non-Deterministic Finite Automata}
-\author{Christian Rinderknecht}
-\institute{Eszterházy Károly Katolikus Egyetem}
-\date{September \oldstylenums{2026}}
+\title{\LARGE Non-Deterministic Finite Automata}
+\author{\Large Christian Rinderknecht}
+\institute{\normalsize Eszterházy Károly Katolikus Egyetem}
+\date{September 2026}
 
 \begin{document}
 
