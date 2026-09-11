@@ -50,11 +50,14 @@ Naïvely matching pattern~\(p\) against text~\(t\)
 \(\proc{Naive}(p, t)\)\\
 \li \(i, j \gets 0, 0\)
 \li \While \(i < \len{p}\) \LogAnd \(j < \len{t}\) \kw{do}
-\li \> \If \(p[i] = t[j]\)
-\li    \Then \(i, j \gets i + 1, j + 1\)
-\li    \Else \(i, j \gets 0, j - i + 1\) \>\>\>\>\>\>\Comment We
-slide \(p\) by 1.
-       \End
+\li \>\(i, j \gets \) \kw{if} \(p[i] = t[j]\)
+                    \kw{then} \(i + 1, j + 1\)
+                    \kw{else} \(0, j - i + 1\)
+%% \li \> \If \(p[i] = t[j]\)
+%% \li    \Then \(i, j \gets i + 1, j + 1\)
+%% \li    \Else \(i, j \gets 0, j - i + 1\) \>\>\>\>\>\>\Comment We
+%% slide \(p\) by 1.
+%%       \End
 \li \(\proc{Naive} \gets i = \len{p}\)
 \end{codebox}
 
