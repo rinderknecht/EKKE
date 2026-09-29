@@ -1,6 +1,6 @@
 import Mathlib.Order.Basic -- Importing here type class `LinearOrder`
 
-namespace MyLists
+namespace MyLists -- To avoid captures from Mathlib
 
 def cat {α : Type} (l1 : List α) (l2 : List α) : List α :=
   match l1 with
@@ -107,70 +107,5 @@ theorem EqRev {α : Type} (s : List α) : rev' s = rev s :=
       _ = rcat s [x]        := by rw [<- RevCat]
       _ = rcat (x :: s) []  := rfl -- <- rcat|2
       _ = rev (x :: s)      := rfl -- <- rev
-
--- Insertion sort
-
-def insert {α : Type} [LinearOrder α] (x : α) : List α → List α
-| []     => [x]
-| y :: s => if x ≤ y then x :: y :: s else y :: insert x s
-
-def ins_sort {α : Type} [LinearOrder α] : List α → List α
-| []     => []
-| x :: s => insert x (ins_sort s)
-
-/-- Inductive predicate for sorted lists -/
-inductive Sorted {α : Type} (r : α → α → Prop) : List α → Prop where
-| nil                         : Sorted r []
-| singleton (x : α)           : Sorted r [x]
-| cons (x y : α) (s : List α) : r x y → Sorted r (y :: s) → Sorted r (x :: y :: s)
-
-/-- Insertion preserves ordering -/
-theorem InsOrd {α : Type} [LinearOrder α] (x : α) (s : List α) :
-  Sorted (· ≤ ·) s → Sorted (· ≤ ·) (insert x s) :=
-  by induction s with
-  | nil =>
-      -- ⊢ Sorted (· ≤ ·) [] → Sorted (· ≤ ·) (insert x [])
-      -- `Sorted (· ≤ ·) []` dropped by `_`; modulo definition of `insert|1`:
-      -- ⊢ Sorted (· ≤ ·) [] → Sorted (· ≤ ·) [x]
-      exact fun _ => Sorted.singleton x
-  | cons y s ih =>
-      -- ih : Sorted (· ≤ ·) s → Sorted (· ≤ ·) (insert x s)
-      -- ⊢ Sorted (· ≤ ·) (y :: s) → Sorted (· ≤ ·) (insert x (y :: s))
-      intro hs
-      -- hs : Sorted (· ≤ ·) (y :: s)
-      by_cases hxy : x ≤ y
-      · rw [insert, ite_eq_left hxy] -- or: `simp [insert, hxy]`
-        -- ⊢ Sorted (· ≤ ·) (if x ≤ y then x :: y :: s else y :: insert x s)
-        -- ⊢ Sorted (· ≤ ·) (x :: y :: s)
-        exact Sorted.cons x y s hxy hs
-      · -- hxy : ¬ x ≤ y
-        rw [insert, ite_eq_right hxy] -- or: `simp [insert, hxy]`
-        -- ⊢ Sorted (· ≤ ·) (if x ≤ y then x :: y :: s else y :: insert x s)
-        -- ⊢ Sorted (· ≤ ·) (y :: insert x s)
-        have hyx : y ≤ x := le_of_not_ge hxy
-        cases s with
-        | nil =>
-            -- ⊢ Sorted (· ≤ ·) (y :: insert x [])
-            -- Modulo definition of `insert|1`:
-            -- ⊢ Sorted (· ≤ ·) (y :: [x])
-            exact Sorted.cons y x [] hyx (Sorted.singleton x)
-        | cons z t =>
-            cases hs with
-            | cons _ _ _ hyz hzt =>
-                -- hyz : y ≤ z
-                -- hzt : Sorted (· ≤ ·) (z :: t)
-                by_cases hxz : x ≤ z
-                · rw [insert, ite_eq_left hxz] -- or: `simp [insert, hxz]`
-                  -- ⊢ Sorted (· ≤ ·) (y :: if x ≤ z then x :: z :: t else z :: insert x t)
-                  -- ⊢ Sorted (· ≤ ·) (y :: x :: z :: t)
-                  exact Sorted.cons y x (z :: t) hyx (Sorted.cons x z t hxz hzt)
-                · rw [insert, ite_eq_right hxz]
-                  -- ⊢ Sorted (· ≤ ·) (y :: if x ≤ z then x :: z :: t else z :: insert x t)
-                  -- ⊢ Sorted (· ≤ ·) (y :: insert x (z :: t))
-                  have h := ih hzt
-                  rw [insert, ite_eq_right hxz] at h -- or: `simp [insert, hxz] at h`
-                  -- h : Sorted (· ≤ ·) (if x ≤ z then x :: z :: t else z :: insert x t)
-                  -- h : Sorted (· ≤ ·) (z :: insert x t)
-                  exact Sorted.cons y z (insert x t) hyz h
 
 end MyLists
