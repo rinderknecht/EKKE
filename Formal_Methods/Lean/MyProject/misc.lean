@@ -9,3 +9,6 @@
         let (t, u) := cut s k (by omega)
         (x :: t, u)
     | [], _ => by omega
+
+def UpSorted {α : Type} [LinearOrder α] : List α → Prop := Ordered (· ≤ ·)
+def DownSorted {α : Type} [LinearOrder α] : List α → Prop := Ordered (· ≧ ·)
