@@ -960,7 +960,7 @@ Here are two examples of \textbf{breadth-first traversals}:
     have a header
     \li    \Then \If \(o\) is marked\RComment \(o\) is alive
     \li          \Then remove the mark\RComment Write the header
-    \li          \Else \proc{Free}(a)\RComment \(o\) is dead
+    \li          \Else \(\proc{Free}(a)\)\RComment \(o\) is dead
                  \End
            \End
     \li \> \(a \gets a + n\)
@@ -969,6 +969,69 @@ Here are two examples of \textbf{breadth-first traversals}:
   \(\proc{Free}(a)\), as the latter could destroy the information
   needed by \proc{Size}, by coalescing the newly freed block with
   another.
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Garbage Collection / Freeing blocks}
+
+  One simple strategy for freeing a block is to change the header of
+  the block and insert it at the front of the free list, like so:
+  \begin{codebox}
+    \(\proc{Free}(a)\)\RComment Inserting at the front\\
+    \li \(\proc{FreeHeader}(a)\)\RComment Converting allocated header
+    to free
+    \li \(\proc{Next}(a), \kw{free} \gets \kw{free}, a\)
+  \end{codebox}
+
+  The downside is that we do not, in general, maintain a free list
+  whose blocks are sorted, and sortedness improves, in average, the
+  cost of insertion.
+  \begin{codebox}
+    \(\proc{Free}(a)\)\RComment Keeping increasing addresses\\
+    \li \(\id{previous}, \id{current} \gets \kw{nil}, \kw{free}\)
+    \li \While \(\id{current} \neq \kw{nil} \,\; \kw{and} \,\;
+                 \id{current} < a\) \kw{do}
+    \li \> \(\id{previous}, \id{current}
+    \gets \id{current}, \proc{Next}(current)\)
+        \End
+    \li \(\proc{FreeHeader}(a)\)
+    \li \(\proc{Next}(a) \gets \id{current}\)
+    \li \kw{if} \(\id{previous} = \kw{nil}\) \kw{then} \(\kw{free}
+    \gets a\)\RComment Inserting at the front
+    \li \> \kw{else} \(\proc{Next}(\id{previous}) \gets a\)
+  \end{codebox}
+
+\end{frame}
+
+% ------------------------------------------------------------------------
+%
+\begin{frame}{Garbage Collection / Coalescing free blocks}
+
+  Sortedness enables to effciently \textbf{coalesce} adjacent free
+  blocks after the new block is added:
+  \begin{codebox}
+    \(\proc{Free}(a)\)\RComment Coalescing adjacent blocks\\
+    \li \(\id{previous}, \id{current} \gets \kw{nil}, \kw{free}\)
+    \li \While \(\id{current} \neq \kw{nil} \,\; \kw{and} \,\;
+                 \id{current} < a\) \kw{do}
+    \li \> \(\id{previous}, \id{current}
+            \gets \id{current}, \proc{Next}(current)\)
+    \li \kw{if} \(\id{previous} \neq \kw{nil} \,\; \kw{and} \,\;
+                  \id{previous} + \proc{Size}(\id{previous}) = a\) \kw{then}
+    \li \> \(\proc{Size}(\id{previous}), a \gets
+             \proc{Size}(\id{previous}) + \proc{Size}(a), \id{previous}\)
+    \li \kw{else}\RComment No coalescing with previous block
+    \li \> \(\proc{FreeHeader}(a)\)
+    \li \> \(\proc{Next}(a) \gets \id{current}\)
+    \li \> (\kw{if} \(\id{previous} = \kw{nil}\) \kw{then} \kw{free}
+     \kw{else} \(\proc{Next}(\id{previous})) \gets a\)
+    \li \kw{if} \(\id{current} \neq \kw{nil} \,\; \kw{and} \,\;
+                  a + \proc{Size}(a) = \id{current}\) \kw{then}
+    \li \> \(\proc{Size}(a), \proc{Next}(a) \gets
+             \proc{Size}(a) + \proc{Size}(\id{current}), \proc{Next}(\id{current})\)
+  \end{codebox}
 
 \end{frame}
 
