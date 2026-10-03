@@ -1,5 +1,6 @@
 import Mathlib.Order.Basic -- Importing here type class `LinearOrder`
 
+/-! Redefinition of `List` for educational purposes -/
 namespace MyList -- To avoid captures from Mathlib
 
 def cat {α : Type} (l1 : List α) (l2 : List α) : List α :=

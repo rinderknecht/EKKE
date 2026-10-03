@@ -1,5 +1,6 @@
 import Mathlib.Order.Basic -- Importing here type class `LinearOrder`
 
+/-! Insertion sort -/
 namespace InsertionSort -- To avoid captures from Mathlib
 
 /-- Permutations on lists
