@@ -1,6 +1,6 @@
 import Mathlib.Order.Basic -- Importing here type class `LinearOrder`
 
-namespace MyLists -- To avoid captures from Mathlib
+namespace MyList -- To avoid captures from Mathlib
 
 def cat {α : Type} (l1 : List α) (l2 : List α) : List α :=
   match l1 with
@@ -108,4 +108,4 @@ theorem EqRev {α : Type} (s : List α) : rev' s = rev s :=
       _ = rcat (x :: s) []  := rfl -- <- rcat|2
       _ = rev (x :: s)      := rfl -- <- rev
 
-end MyLists
+end MyList
