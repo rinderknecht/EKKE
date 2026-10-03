@@ -12,3 +12,11 @@
 
 def UpSorted {α : Type} [LinearOrder α] : List α → Prop := Ordered (· ≤ ·)
 def DownSorted {α : Type} [LinearOrder α] : List α → Prop := Ordered (· ≧ ·)
+
+  def tms {α : Type} [LinearOrder α]: List α -> List α
+  | x::y::t => cut [x] (y::t) t
+  | t => t
+
+  def cut {α : Type} [LinearOrder α] : List α -> List α -> List α -> List α
+  | s, y::t, _::_::u => cut (y::s) t u
+  | s, t, u => merge (tms s) (tms t)
