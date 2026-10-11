@@ -33,21 +33,42 @@ def insert {α : Type} [LinearOrder α] (x : α) : List α → List α
 | []     => [x]
 | y :: s => if x ≤ y then x :: y :: s else y :: insert x s
 
+theorem insert.nil {α : Type} [LinearOrder α] (x : α) : insert x [] = [x] := rfl
+
+theorem insert.cons {α : Type} [LinearOrder α] (x y : α) (s : List α)
+  : insert x (y :: s) = if x ≤ y then x :: y :: s else y :: insert x s := rfl
+
+attribute [irreducible] insert
+
 lemma Insert.extends {α : Type} [LinearOrder α] (x : α) (s : List α) :
   Perm (insert x s) (x :: s) :=
 by induction s with
    | nil =>
-       -- ⊢ Perm (insert x []) [x]
-       -- Implicit unfolding of `insert|1` by `exact`:
-       -- ⊢ Perm [x] [x]
-       exact Perm.reflexivity [x]
+      -- ⊢ Perm (insert x []) [x]
+      conv => enter [1]; exact insert.nil x
+      -- ⊢ Perm [x] [x]
+      exact Perm.reflexivity [x]
+--    -- Alternative for the whole case:
+--    -- ⊢ Perm (insert x []) [x]
+--    -- insert.nil x : insert x [] = [x]
+--    -- Perm.reflexivity [x] : Perm [x] [x]
+--    -- insert.nil x ▸ Perm.reflexivity [x] : Perm (insert x []) [x]
+--    exact insert.nil x ▸ Perm.reflexivity [x]
    | cons y s ih =>
+       -- ih : Perm (insert x s) (x :: s)
        by_cases hxy : x ≤ y
-       · rw [insert, ite_eq_left hxy] -- or: `simp [insert, hxy]`
+       · -- ite_eq_left hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = x :: y :: s
+         -- ⊢ Perm (insert x (y :: s)) (x :: y :: s)
+         conv =>
+           enter [1] -- | insert x (y :: s)
+           exact Eq.trans (insert.cons x y s) (ite_eq_left hxy)
          -- ⊢ Perm (x :: y :: s) (x :: y :: s)
          exact Perm.reflexivity (x :: y :: s)
        · -- hxy : ¬ x ≤ y
-         rw [insert, ite_eq_right hxy] -- or: `simp [insert, hxy]`
+         -- ite_eq_right hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = y :: insert x s
+         conv =>
+           enter [1] -- | insert x (y :: s)
+           exact Eq.trans (insert.cons x y s) (ite_eq_right hxy)
          -- ⊢ Perm (y :: insert x s) (x :: y :: s)
          have h : Perm (y :: insert x s) (y :: x :: s) :=
            Perm.push y (insert x s) (x :: s) ih
@@ -63,33 +84,52 @@ inductive Ordered {α : Type} (r : α → α → Prop) : List α → Prop where
 
 def Sorted {α : Type} [LinearOrder α] : List α → Prop := Ordered (· ≤ ·)
 
+example {α : Type} [LinearOrder α] (x : α) : Sorted [x] := by
+  -- `Sorted [x]` is implicitly unfolded into `Ordered (· ≤ ·) [x]`
+  -- (because it is not an inductive definition)
+  -- which is unified with `Ordered ?r [x]`, which matches iff `?r := (· ≤ ·)`.
+  exact Ordered.singleton x
+
 lemma Insert.preserves_order {α : Type} [LinearOrder α] (x : α) (s : List α) :
   Sorted s → Sorted (insert x s) :=
 by induction s with
    | nil =>
        -- ⊢ Sorted [] → Sorted (insert x [])
-       -- `Sorted []` dropped by `_`; implicit unfolding of `insert|1` by `exact`:
-       -- ⊢ Sorted [] → Sorted [x]
-       exact fun _ => Ordered.singleton x
+       intro _
+       -- ⊢ Sorted (insert x [])
+       conv => enter [1]; exact insert.nil x
+       -- ⊢ Sorted [x]
+       exact Ordered.singleton x
+--     -- Alternative for the whole case:
+--     -- insert.nil x : insert x [] = [x]
+--     -- Ordered.singleton x : Ordered (· ≤ ·) [x] = Sorted [x]
+--     -- insert.nil x ▸ Ordered.singleton x : Sorted (insert x [])
+--     exact fun _ => insert.nil x ▸ Ordered.singleton x
    | cons y s ih =>
        -- ih : Sorted s → Sorted (insert x s)
        -- ⊢ Sorted (y :: s) → Sorted (insert x (y :: s))
        intro hs
        -- hs : Sorted (y :: s)
        by_cases hxy : x ≤ y
-       · rw [insert, ite_eq_left hxy] -- or: `simp [insert, hxy]`
-         -- ⊢ Sorted (if x ≤ y then x :: y :: s else y :: insert x s)
+       · -- ite_eq_left hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = x :: y :: s
+         -- ⊢ Sorted (insert x (y :: s))
+         conv =>
+           enter [1] -- | insert x (y :: s)
+           exact Eq.trans (insert.cons x y s) (ite_eq_left hxy)
          -- ⊢ Sorted (x :: y :: s)
          exact Ordered.cons x y s hxy hs
+--       --- Alternative
+--       have then_branch : insert x (y :: s) = x :: y :: s :=
+--         Eq.trans (insert.cons x y s) (ite_eq_left hxy)
+--       exact then_branch ▸ Ordered.cons x y s hxy hs
        · -- hxy : ¬ x ≤ y
-         rw [insert, ite_eq_right hxy] -- or: `simp [insert, hxy]`
-          -- ⊢ Sorted (if x ≤ y then x :: y :: s else y :: insert x s)
+         conv => enter [1]; exact Eq.trans (insert.cons x y s) (ite_eq_right hxy)
          -- ⊢ Sorted (y :: insert x s)
          have hyx : y ≤ x := le_of_not_ge hxy
          cases s with
          | nil =>
              -- ⊢ Sorted (y :: insert x [])
-             -- Implicit unfolding of `insert|1` by `exact`:
+             conv => enter [1,2]; exact insert.nil x
              -- ⊢ Sorted (y :: [x])
              exact Ordered.cons y x [] hyx (Ordered.singleton x)
          | cons z t =>
@@ -98,17 +138,21 @@ by induction s with
                  -- hyz : y ≤ z
                  -- hzt : Sorted (z :: t)
                  by_cases hxz : x ≤ z
-                 · rw [insert, ite_eq_left hxz] -- or: `simp [insert, hxz]`
-                   -- ⊢ Sorted (y :: if x ≤ z then x :: z :: t else z :: insert x t)
+                 · conv =>
+                     enter [1,2] -- | insert x (z :: t)
+                     exact Eq.trans (insert.cons x z t) (ite_eq_left hxz)
                    -- ⊢ Sorted (y :: x :: z :: t)
                    exact Ordered.cons y x (z :: t) hyx (Ordered.cons x z t hxz hzt)
-                 · rw [insert, ite_eq_right hxz]
-                   -- ⊢ Sorted (y :: if x ≤ z then x :: z :: t else z :: insert x t)
-                   -- ⊢ Sorted (y :: insert x (z :: t))
+                 · conv =>
+                     enter [1,2] -- | insert x (z :: t)
+                     exact Eq.trans (insert.cons x z t) (ite_eq_right hxz)
+                   -- ⊢ Sorted (y :: z :: insert x t)
                    have h : Sorted (insert x (z :: t)) := ih hzt
-                   rw [insert, ite_eq_right hxz] at h -- or: `simp [insert, hxz] at h`
-                   -- h : Sorted (if x ≤ z then x :: z :: t else z :: insert x t)
+                   conv at h =>
+                     enter [1] -- | insert x (z :: t)
+                     exact Eq.trans (insert.cons x z t) (ite_eq_right hxz)
                    -- h : Sorted (z :: insert x t)
+                   -- ⊢ Sorted (y :: z :: insert x t)
                    exact Ordered.cons y z (insert x t) hyz h
 
 /-- Sorting -/
@@ -116,35 +160,43 @@ def sort {α : Type} [LinearOrder α] : List α → List α
 | []     => []
 | x :: s => insert x (sort s)
 
+theorem sort.nil {α : Type} [LinearOrder α] :
+  sort (α := α) ([] : List α) = [] := rfl
+
+theorem sort.cons {α : Type} [LinearOrder α] (x : α) (s : List α) :
+  sort (x :: s) = insert x (sort s) := rfl
+
+attribute [irreducible] sort
+
 theorem Sort.soundness {α : Type} [LinearOrder α] (s : List α) :
   Sorted (sort s) ∧ Perm (sort s) s :=
 by induction s with
    | nil =>
        -- ⊢ Sorted (sort []) ∧ Perm (sort []) []
-       -- constructor
-       -- · -- ⊢ Sorted (sort [])
-       --   -- Implicit unfolding of `sort|1` by `exact`:
-       --   -- ⊢ Sorted []
-       --   exact Ordered.nil
-       -- · -- ⊢ Perm (sort []) []
-       --   -- Implicit unfolding of `sort|1` by `exact`:
-       --   -- ⊢ Perm [] []
-       --   exact Perm.empty
-       exact ⟨Ordered.nil, Perm.empty⟩
+       constructor
+       · -- ⊢ Sorted (sort [])
+         conv => enter [1]; exact sort.nil
+         -- ⊢ Sorted []
+         exact Ordered.nil
+       · -- ⊢ Perm (sort []) []
+         conv => enter [1]; exact sort.nil
+         -- ⊢ Perm [] []
+         exact Perm.empty
    | cons x s ih =>
        -- ih : Sorted (sort s) ∧ Perm (sort s) s
+       -- ⊢ Sorted (sort (x :: s)) ∧ Perm (sort (x :: s)) (x :: s)
        constructor
        · -- ⊢ Sorted (sort (x :: s))
-         -- Implicit unfolding of `sort|2` by `exact`:
+         conv => enter [1]; exact sort.cons x s
          -- ⊢ Sorted (insert x (sort s))
          exact Insert.preserves_order x (sort s) ih.1
        · -- ⊢ Perm (sort (x :: s)) (x :: s)
+         conv => enter [1]; exact sort.cons x s
+         -- ⊢ Perm (insert x (sort s)) (x :: s)
          have h : Perm (insert x (sort s)) (x :: sort s) :=
            Insert.extends x (sort s)
          have h' : Perm (x :: sort s) (x :: s) :=
            Perm.push x (sort s) s ih.2
-         -- Implicit unfolding of `sort|2` by `exact`:
-         -- ⊢ Perm (insert x (sort s)) (x :: s)
          exact Perm.trans _ _ _ h h'
 
 end InsertionSort

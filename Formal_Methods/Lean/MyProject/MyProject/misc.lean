@@ -20,3 +20,13 @@ def DownSorted {α : Type} [LinearOrder α] : List α → Prop := Ordered (· �
   def cut {α : Type} [LinearOrder α] : List α -> List α -> List α -> List α
   | s, y::t, _::_::u => cut (y::s) t u
   | s, t, u => merge (tms s) (tms t)
+
+lemma Insert.extends {α : Type} [LinearOrder α] (x : α) (s : List α) :
+  Perm (insert x s) (x :: s) :=
+by induction s with
+   | nil =>
+      -- ⊢ Perm (insert x []) [x]
+      -- insert.nil x : insert x [] = [x]
+      -- Perm.reflexivity [x] : Perm [x] [x]
+      -- insert.nil x ▸ Perm.reflexivity [x] : Perm (insert x []) [x]
+      exact insert.nil x ▸ Perm.reflexivity [x]
