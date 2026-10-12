@@ -1,10 +1,11 @@
-import MyProject.MyList
-
-/-! Our lists -/
-open MyList
+import MyProject.MyList -- Imports transitively `Mathlib.Order.Basic`
 
 /-! Binary trees -/
 namespace BTree
+
+
+/-! Our lists -/
+open MyList
 
 inductive Tree (α : Type) where
 | ext
@@ -22,6 +23,8 @@ theorem pre0.ext {α : Type} : pre0 (.ext : Tree α) = [] := rfl
 theorem pre0.int {α : Type} (x : α) (t1 t2 : Tree α) :
   pre0 (.int x t1 t2) = x :: cat (pre0 t1) (pre0 t2) := rfl
 
+attribute [irreducible] pre0
+
 /- Worst case linear cost -/
 def pre' {α : Type} (s : List α) : Tree α -> List α
 | .ext         => s
@@ -34,40 +37,50 @@ theorem pre'.int {α : Type} (s : List α) (x : α) (t1 t2 : Tree α) :
 
 def pre {α : Type} (t : Tree α) : List α := pre' [] t
 
+theorem pre.def {α : Type} (t : Tree α) : pre t = pre' [] t := rfl
+
+attribute [irreducible] pre' pre
+
 lemma PreCat {α : Type} (t : Tree α) (s : List α) :
-  cat (pre' [] t) s = pre' s t :=
-  by induction t generalizing s with
+  cat (pre' [] t) s = pre' s t := by
+  induction t generalizing s with
   | ext => calc
       cat (pre' [] .ext) s
-        = cat [] s         := by conv => lhs; rw [pre'.ext]
-      _ = s                := by conv => lhs; rw [cat.nil]
-      _ = pre' s .ext      := by conv => rhs; rw [pre'.ext]
+        = cat [] s         := at [1,1] use pre'.ext []
+      _ = s                := cat.nil s
+      _ = pre' s .ext      := at [2] use pre'.ext s
   | int x t1 t2 ih1 ih2 => calc
+      -- ih1 : ∀ (s : List α), cat (pre' [] t1) s = pre' s t1
+      -- ih2 : ∀ (s : List α), cat (pre' [] t2) s = pre' s t2
+      -- ⊢ cat (pre' [] (Tree.int x t1 t2)) s = pre' s (Tree.int x t1 t2)
      cat (pre' [] (.int x t1 t2)) s
-       = cat (x :: pre' (pre' [] t2) t1) s          := by conv => lhs; rw [pre'.int]
-     _ = x :: cat (pre' (pre' [] t2) t1) s          := by conv => lhs; rw [cat.cons]
-     _ = x :: cat (cat (pre' [] t1) (pre' [] t2)) s := by conv => rhs; rw [ih1]
-     _ = x :: cat (pre' [] t1) (cat (pre' [] t2) s) := by conv => rhs; rw [CatAssoc]
-     _ = x :: cat (pre' [] t1) (pre' s t2)          := by conv => lhs; rw [ih2]
-     _ = x :: pre' (pre' s t2) t1                   := by conv => lhs; rw [ih1]
-     _ = pre' s (.int x t1 t2)                      := by conv => rhs; rw [pre'.int]
+       = cat (x :: pre' (pre' [] t2) t1) s          := at [1,1] use pre'.int [] x t1 t2
+     _ = x :: cat (pre' (pre' [] t2) t1) s          := cat.cons x (pre' (pre' [] t2) t1) s
+     _ = x :: cat (cat (pre' [] t1) (pre' [] t2)) s := at [2,2,1] use ih1 (pre' [] t2)
+     _ = x :: cat (pre' [] t1) (cat (pre' [] t2) s) := at [2,2]
+                                                       use CatAssoc (pre' [] t1) (pre' [] t2) s
+     _ = x :: cat (pre' [] t1) (pre' s t2)          := at [1,2,2] use ih2 s
+     _ = x :: pre' (pre' s t2) t1                   := at [1,2] use ih1 (pre' s t2)
+     _ = pre' s (.int x t1 t2)                      := at [2] use pre'.int s x t1 t2
 
 /-! The two preorder traversals are equivalent -/
-theorem PreEquiv {α : Type} (t : Tree α) : pre0 t = pre t :=
-  by induction t with
+theorem PreEquiv {α : Type} (t : Tree α) : pre0 t = pre t := by
+  induction t with
   | ext => calc
       pre0 .ext
-        = []           := by conv => lhs; rw [pre0.ext]
-      _ = pre' [] .ext := by conv => rhs; rw [pre'.ext]
-      _ = pre .ext     := by conv => rhs; rw [pre]
+        = []           := pre0.ext
+      _ = pre' [] .ext := at [2] use pre'.ext []
+      _ = pre .ext     := at [2] use pre.def .ext
   | int x t1 t2 h1 h2 => calc
       pre0 (.int x t1 t2)
-        = x :: cat (pre0 t1) (pre0 t2)       := by conv => lhs; rw [pre0.int]
-      _ = x :: cat (pre t1) (pre t2)         := by conv => lhs; rw [h1, h2]
-      _ = x :: cat (pre' [] t1) (pre' [] t2) := by conv => lhs; rw [pre, pre]
-      _ = x :: pre' (pre' [] t2) t1          := by conv => lhs; rw [PreCat]
-      _ = pre' [] (.int x t1 t2)             := by conv => rhs; rw [pre'.int]
-      _ = pre (.int x t1 t2)                 := by conv => rhs; rw [pre]
+        = x :: cat (pre0 t1) (pre0 t2)       := pre0.int x t1 t2
+      _ = x :: cat (pre t1) (pre0 t2)        := at [1,2,1] use h1
+      _ = x :: cat (pre t1) (pre t2)         := at [1,2,2] use h2
+      _ = x :: cat (pre' [] t1) (pre t2)     := at [1,2,1] use pre.def t1
+      _ = x :: cat (pre' [] t1) (pre' [] t2) := at [1,2,2] use pre.def t2
+      _ = x :: pre' (pre' [] t2) t1          := at [1,2] use PreCat t1 (pre' [] t2)
+      _ = pre' [] (.int x t1 t2)             := at [2] use pre'.int [] x t1 t2
+      _ = pre (.int x t1 t2)                 := at [2] use pre.def (.int x t1 t2)
 
 -- Mirroring
 
@@ -79,6 +92,8 @@ theorem mirror.ext {α : Type} : mirror (.ext : Tree α) = .ext := rfl
 
 theorem mirror.int {α : Type} (x : α) (t1 t2 : Tree α) :
   mirror (.int x t1 t2) = .int x (mirror t2) (mirror t1) := rfl
+
+attribute [irreducible] mirror
 
 -- Inorder traversal
 
@@ -93,23 +108,32 @@ theorem inorder'.int {α : Type} (s : List α) (x : α) (t1 t2 : Tree α) :
 
 def inorder {α : Type} (t : Tree α) : List α := inorder' [] t
 
-theorem InMir {α : Type} (t : Tree α) : inorder (mirror t) = rev (inorder t) :=
-  by induction t with
+theorem inorder.def {α : Type} (t : Tree α) : inorder t = inorder' [] t := rfl
+
+attribute [irreducible] inorder
+
+theorem InMir {α : Type} (t : Tree α) : inorder (mirror t) = rev (inorder t) := by
+  induction t with
   | ext => calc
       inorder (mirror .ext)
-        = inorder .ext           := by conv => lhs; rw [mirror.ext]
-      _ = inorder' [] .ext       := by conv => lhs; rw [inorder]
-      _ = []                     := by conv => lhs; rw [inorder'.ext]
-      _ = rcat [] []             := by conv => rhs; rw [rcat.nil]
-      _ = rev []                 := by conv => rhs; rw [rev]
-      _ = rev (inorder' [] .ext) := by conv => rhs; rw [inorder'.ext]
-      _ = rev (inorder .ext)     := by conv => rhs; rw [inorder]
-  | int x t1 t2 ih1 ih2 => calc
+        = inorder .ext           := at [1,1] use mirror.ext
+      _ = inorder' [] .ext       := inorder.def .ext
+      _ = []                     := inorder'.ext []
+      _ = rcat [] []             := at [2] use rcat.nil []
+      _ = rev []                 := at [2] use rev.def []
+      _ = rev (inorder' [] .ext) := at [2,1] use inorder'.ext []
+      _ = rev (inorder .ext)     := at [2,1] use inorder.def .ext
+  | int x t1 t2 ih1 ih2 =>
+     -- ih1 : inorder (mirror t1) = rev (inorder t1)
+     -- ih2 : inorder (mirror t2) = rev (inorder t2)
+     -- ⊢ inorder (mirror (.int x t1 t2)) = rev (inorder (.int x t1 t2))
+      let mt1 := mirror t1
+      let mt2 := mirror t2
+      calc
       inorder (mirror (.int x t1 t2))
-        = inorder (.int x (mirror t2) (mirror t1)) := by conv => lhs; rw [mirror.int]
-      _ = inorder' [] (.int x (mirror t2) (mirror t1)) := by conv => lhs; rw [inorder]
-      _ = inorder' (x :: inorder' [] (mirror t1)) (mirror t2) := by conv => lhs; rw [inorder'.int]
-
-      _ = rev (inorder (.int x t1 t2)) := by sorry
+        = inorder (.int x mt2 mt1)            := at [1,1] use mirror.int x t1 t2
+      _ = inorder' [] (.int x mt2 mt1)        := inorder.def (.int x mt2 mt1)
+      _ = inorder' (x :: inorder' [] mt1) mt2 := inorder'.int [] x mt2 mt1
+      _ = rev (inorder (.int x t1 t2))        := by sorry
 
 end BTree
