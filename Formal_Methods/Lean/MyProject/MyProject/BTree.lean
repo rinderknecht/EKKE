@@ -1,13 +1,12 @@
 import MyProject.MyList -- Imports transitively `Mathlib.Order.Basic`
 
-/-! Binary trees -/
-namespace BTree
-
-
 /-! Our lists -/
 open MyList
 
-inductive Tree (α : Type) where
+/-! Binary trees -/
+namespace BTree
+
+inductive Tree (α : Type) : Type where
 | ext
 | int (x : α) (left right : Tree α)
 
