@@ -11,18 +11,19 @@ namespace InsertionSort -- To avoid captures from Mathlib
   permutation of `t`.
 -/
 inductive Perm {α : Type} : List α -> List α → Prop where
-| nil                              : Perm [] []
-| cons (x : α) (s t : List α)      : Perm s t -> Perm (x :: s) (x :: t)
-| transpose (x y : α) (s : List α) : Perm (x :: y :: s) (y :: x :: s)
-| trans (s t u : List α)           : Perm s t -> Perm t u -> Perm s u
+| nil                         : Perm [] []
+| cons (x : α) (s t : List α) : Perm s t -> Perm (x :: s) (x :: t)
+| swap (x y : α) (s : List α) : Perm (x :: y :: s) (y :: x :: s)
+| trans (s t u : List α)      : Perm s t -> Perm t u -> Perm s u
 
 lemma Perm.symmetry {α : Type} (s t : List α) : Perm s t -> Perm t s := by
   intro h -- h : Perm s t
+  -- ⊢ Perm t s
   induction h with
-  | nil                       => exact Perm.nil
-  | cons x s t _ ih           => exact Perm.cons x t s ih
-  | transpose x y s           => exact Perm.transpose y x s
-  | trans s t u h1 h2 ih1 ih2 => exact Perm.trans u t s ih2 ih1
+  | nil                     => exact Perm.nil
+  | cons x s t _ ih         => exact Perm.cons x t s ih
+  | swap x y s              => exact Perm.swap y x s
+  | trans s t u _ _ ih1 ih2 => exact Perm.trans u t s ih2 ih1
 
 lemma Perm.reflexivity {α : Type} (s : List α) : Perm s s := by
   induction s with
@@ -56,18 +57,20 @@ lemma Insert.extends {α : Type} [LinearOrder α] (x : α) (s : List α) :
 --   exact insert.nil x ▸ Perm.reflexivity [x]
   | cons y s ih =>
       -- ih : Perm (insert x s) (x :: s)
+      -- ⊢ Perm (insert x (y :: s)) (x :: y :: s)
       by_cases hxy : x ≤ y
-      · -- ite_eq_left hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = x :: y :: s
-        -- ⊢ Perm (insert x (y :: s)) (x :: y :: s)
+      · -- ite_eq_left (h : p) : (if p then a else b) = a --- `h` is a proof and `p` a proposition
+        -- ite_eq_left hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = x :: y :: s
         at [1] use Eq.trans (insert.cons x y s) (ite_eq_left hxy)
         -- ⊢ Perm (x :: y :: s) (x :: y :: s)
         exact Perm.reflexivity (x :: y :: s)
       · -- hxy : ¬ x ≤ y
+        -- ite_eq_right (h : p) : (if p then a else b) = b --- `h` is a proof and `p` a proposition
         -- ite_eq_right hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = y :: insert x s
         at [1] use Eq.trans (insert.cons x y s) (ite_eq_right hxy)
         -- ⊢ Perm (y :: insert x s) (x :: y :: s)
         have h : Perm (y :: insert x s) (y :: x :: s) := Perm.cons y (insert x s) (x :: s) ih
-        have h' : Perm (y :: x :: s) (x :: y :: s) := Perm.symmetry _ _ (Perm.transpose x y s)
+        have h' : Perm (y :: x :: s) (x :: y :: s) := Perm.symmetry _ _ (Perm.swap x y s)
         exact Perm.trans _ _ _ h h'
 
 /-- Inductive predicate for sorted lists -/
