@@ -100,7 +100,7 @@ def inorder' {α : Type} (s : List α) : Tree α -> List α
 | .ext         => s
 | .int x t1 t2 => inorder' (x :: inorder' s t2) t1
 
-theorem inorder'.ext {α : Type} (s : List α) : inorder' s (.ext) = s := rfl
+theorem inorder'.ext {α : Type} (s : List α) : inorder' s .ext = s := rfl
 
 theorem inorder'.int {α : Type} (s : List α) (x : α) (t1 t2 : Tree α) :
   inorder' s (.int x t1 t2) = inorder' (x :: inorder' s t2) t1 := rfl
@@ -111,7 +111,33 @@ theorem inorder.def {α : Type} (t : Tree α) : inorder t = inorder' [] t := rfl
 
 attribute [irreducible] inorder
 
-theorem InMir {α : Type} (t : Tree α) : inorder (mirror t) = rev (inorder t) := by
+theorem CatIn {α : Type} (t : Tree α) (s : List α) :
+  cat (inorder' [] t) s = inorder' s t := by
+  induction t generalizing s with
+  | ext => calc
+      cat (inorder' [] .ext) s
+        = cat [] s        := at [1,1] use inorder'.ext []
+      _ = s               := cat.nil s
+      _ = inorder' s .ext := at [2] use inorder'.ext s
+  | int x t1 t2 ih1 ih2 => calc
+      -- ih1 : ∀ (s : List α), cat (inorder' [] t1) s = inorder' s t1
+      -- ih2 : ∀ (s : List α), cat (inorder' [] t2) s = inorder' s t2
+      -- ⊢ cat (inorder' [] (.int x t1 t2)) s = inorder' s (.int x t1 t2)
+      cat (inorder' [] (.int x t1 t2)) s
+        = cat (inorder' (x :: inorder' [] t2) t1) s          := at [1,1] use inorder'.int [] x t1 t2
+      _ = cat (cat (inorder' [] t1) (x :: inorder' [] t2)) s := at [2,1]
+                                                                use ih1 (x :: inorder' [] t2)
+      _ = cat (inorder' [] t1) (cat (x :: inorder' [] t2) s) := at [2]
+                                                                use CatAssoc (inorder' [] t1)
+                                                                             (x :: inorder' [] t2) s
+      _ = cat (inorder' [] t1) (x :: cat (inorder' [] t2) s) := at [1,2]
+                                                                use cat.cons x (inorder' [] t2) s
+      _ = cat (inorder' [] t1) (x :: inorder' s t2)          := at [1,2,2] use ih2 s
+      _ = inorder' (x :: inorder' s t2) t1                   := ih1 (x :: inorder' s t2)
+      _ = inorder' s (.int x t1 t2)                          := at [2] use inorder'.int s x t1 t2
+
+theorem InMir {α : Type} (t : Tree α) :
+  inorder (mirror t) = rev (inorder t) := by
   induction t with
   | ext => calc
       inorder (mirror .ext)
@@ -130,9 +156,11 @@ theorem InMir {α : Type} (t : Tree α) : inorder (mirror t) = rev (inorder t) :
       let mt2 := mirror t2
       calc
       inorder (mirror (.int x t1 t2))
-        = inorder (.int x mt2 mt1)            := at [1,1] use mirror.int x t1 t2
-      _ = inorder' [] (.int x mt2 mt1)        := inorder.def (.int x mt2 mt1)
-      _ = inorder' (x :: inorder' [] mt1) mt2 := inorder'.int [] x mt2 mt1
-      _ = rev (inorder (.int x t1 t2))        := by sorry
+        = inorder (.int x mt2 mt1)             := at [1,1] use mirror.int x t1 t2
+      _ = inorder' [] (.int x mt2 mt1)         := inorder.def (.int x mt2 mt1)
+      _ = inorder' (x :: inorder' [] mt1) mt2  := inorder'.int [] x mt2 mt1
+      _ = inorder' (x :: inorder mt1) mt2      := at [2,1,2] use inorder.def mt1
+      _ = inorder' (x :: rev (inorder t1)) mt2 := at [1,1,2] use ih1
+      _ = rev (inorder (.int x t1 t2))         := by sorry
 
 end BTree
