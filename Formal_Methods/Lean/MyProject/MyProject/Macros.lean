@@ -1,4 +1,3 @@
-import Mathlib.Order.Basic
 import Lean
 
 /-! Macros -/
@@ -12,11 +11,11 @@ syntax "at" "[" withoutPosition(enterArg,+) "]" ("in" ident)? "use" term : tacti
 macro_rules
   | `(term| at [$args,*] $[in $h:ident]? use $proof) =>
       match h with
-      | some h => `(term| by conv at $h => enter [$args,*]; exact $proof)
-      | none => `(term| by conv => enter [$args,*]; exact $proof)
+      | some h => `(term| by conv at $h => enter [$args,*]; tactic => exact $proof)
+      | none => `(term| by conv => enter [$args,*]; tactic=> exact $proof)
   | `(tactic| at [$args,*] $[in $h:ident]? use $proof) =>
       match h with
-      | some h => `(tactic| conv at $h => enter [$args,*]; exact $proof)
-      | none => `(tactic| conv => enter [$args,*]; exact $proof)
+      | some h => `(tactic| conv at $h => enter [$args,*]; tactic => exact $proof)
+      | none => `(tactic| conv => enter [$args,*]; tactic => exact $proof)
 
 end Macros
