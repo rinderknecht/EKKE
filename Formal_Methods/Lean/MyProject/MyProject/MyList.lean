@@ -1,14 +1,14 @@
-import MyProject.Macros -- Imports transitively `Mathlib.Order.Basic`
+import MyProject.Macros
 
 /-! Redefinition of `List` for educational purposes -/
 namespace MyList -- To avoid captures from Mathlib
 
-def cat {α : Type} (s : List α) (t : List α) : List α :=
+def cat {α : Type} (s t : List α) : List α :=
   match s with
   | []     => t
   | x :: s => x :: cat s t
 
-theorem cat.nil {α : Type} (l : List α) : cat [] l = l := rfl
+theorem cat.nil {α : Type} (t : List α) : cat [] t = t := rfl
 
 theorem cat.cons {α : Type} (x : α) (s t : List α) :
   cat (x :: s) t = x :: cat s t := rfl

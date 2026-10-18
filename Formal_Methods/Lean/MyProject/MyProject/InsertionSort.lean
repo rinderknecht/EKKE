@@ -1,3 +1,4 @@
+import Mathlib.Order.Basic
 import MyProject.Macros -- Imports transitively `Mathlib.Order.Basic`
 
 /-! Insertion sort -/
