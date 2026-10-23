@@ -12,7 +12,7 @@ macro_rules
   | `(term| at [$args,*] $[in $h:ident]? use $proof) =>
       match h with
       | some h => `(term| by conv at $h => enter [$args,*]; tactic => exact $proof)
-      | none => `(term| by conv => enter [$args,*]; tactic=> exact $proof)
+      | none => `(term| by conv => enter [$args,*]; tactic => exact $proof)
   | `(tactic| at [$args,*] $[in $h:ident]? use $proof) =>
       match h with
       | some h => `(tactic| conv at $h => enter [$args,*]; tactic => exact $proof)

@@ -1,5 +1,5 @@
 import Mathlib.Order.Basic
-import MyProject.Macros -- Imports transitively `Mathlib.Order.Basic`
+import MyProject.Macros
 
 /-! Insertion sort -/
 namespace InsertionSort -- To avoid captures from Mathlib
@@ -17,19 +17,24 @@ inductive Perm {α : Type} : List α -> List α → Prop where
 | swap (x y : α) (s : List α) : Perm (x :: y :: s) (y :: x :: s)
 | trans (s t u : List α)      : Perm s t -> Perm t u -> Perm s u
 
+set_option linter.style.show false in
 lemma Perm.symmetry {α : Type} (s t : List α) : Perm s t -> Perm t s := by
-  intro h -- h : Perm s t
-  -- ⊢ Perm t s
+  intro h
+  guard_hyp h : Perm s t
   induction h with
-  | nil                     => exact Perm.nil
-  | cons x s t _ ih         => exact Perm.cons x t s ih
-  | swap x y s              => exact Perm.swap y x s
-  | trans s t u _ _ ih1 ih2 => exact Perm.trans u t s ih2 ih1
+  | nil =>
+      show Perm [] []; exact Perm.nil
+  | cons x s t _ ih =>
+      show Perm (x :: t) (x :: s); exact Perm.cons x t s ih
+  | swap x y s =>
+      show Perm (y :: x :: s) (x :: y :: s); exact Perm.swap y x s
+  | trans s t u _ _ ih1 ih2 =>
+      show Perm u s; exact Perm.trans u t s ih2 ih1
 
 lemma Perm.reflexivity {α : Type} (s : List α) : Perm s s := by
   induction s with
-  | nil         => exact Perm.nil
-  | cons x s ih => exact Perm.cons x s s ih
+  | nil         => show Perm [] []; exact Perm.nil
+  | cons x s ih => show Perm (x :: s) (x :: s); exact Perm.cons x s s ih
 
 /-- Insertion in non-decreasing order -/
 def insert {α : Type} [LinearOrder α] (x : α) : List α → List α
@@ -38,8 +43,8 @@ def insert {α : Type} [LinearOrder α] (x : α) : List α → List α
 
 theorem insert.nil {α : Type} [LinearOrder α] (x : α) : insert x [] = [x] := rfl
 
-theorem insert.cons {α : Type} [LinearOrder α] (x y : α) (s : List α)
-  : insert x (y :: s) = if x ≤ y then x :: y :: s else y :: insert x s := rfl
+theorem insert.cons {α : Type} [LinearOrder α] (x y : α) (s : List α) :
+  insert x (y :: s) = if x ≤ y then x :: y :: s else y :: insert x s := rfl
 
 attribute [irreducible] insert
 
@@ -47,29 +52,24 @@ lemma Insert.extends {α : Type} [LinearOrder α] (x : α) (s : List α) :
   Perm (insert x s) (x :: s) := by
   induction s with
   | nil =>
-     -- ⊢ Perm (insert x []) [x]
+     show Perm (insert x []) [x]
      at [1] use insert.nil x
-     -- ⊢ Perm [x] [x]
+     show Perm [x] [x]
      exact Perm.reflexivity [x]
---   -- Alternative for the whole case:
---   -- insert.nil x : insert x [] = [x]
---   -- Perm.reflexivity [x] : Perm [x] [x]
---   -- insert.nil x ▸ Perm.reflexivity [x] : Perm (insert x []) [x]
---   exact insert.nil x ▸ Perm.reflexivity [x]
   | cons y s ih =>
-      -- ih : Perm (insert x s) (x :: s)
-      -- ⊢ Perm (insert x (y :: s)) (x :: y :: s)
+      guard_hyp ih : Perm (insert x s) (x :: s)
+      show Perm (insert x (y :: s)) (x :: y :: s)
       by_cases hxy : x ≤ y
       · -- ite_eq_left (h : p) : (if p then a else b) = a --- `h` is a proof and `p` a proposition
         -- ite_eq_left hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = x :: y :: s
         at [1] use Eq.trans (insert.cons x y s) (ite_eq_left hxy)
-        -- ⊢ Perm (x :: y :: s) (x :: y :: s)
+        show Perm (x :: y :: s) (x :: y :: s)
         exact Perm.reflexivity (x :: y :: s)
-      · -- hxy : ¬ x ≤ y
+      · guard_hyp hxy : ¬ x ≤ y
         -- ite_eq_right (h : p) : (if p then a else b) = b --- `h` is a proof and `p` a proposition
         -- ite_eq_right hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = y :: insert x s
         at [1] use Eq.trans (insert.cons x y s) (ite_eq_right hxy)
-        -- ⊢ Perm (y :: insert x s) (x :: y :: s)
+        show Perm (y :: insert x s) (x :: y :: s)
         have h : Perm (y :: insert x s) (y :: x :: s) := Perm.cons y (insert x s) (x :: s) ih
         have h' : Perm (y :: x :: s) (x :: y :: s) := Perm.symmetry _ _ (Perm.swap x y s)
         exact Perm.trans _ _ _ h h'
@@ -88,63 +88,55 @@ example {α : Type} [LinearOrder α] (x : α) : Sorted [x] := by
   -- which is unified with `Ordered ?r [x]`, which matches iff `?r := (· ≤ ·)`.
   exact Ordered.singleton x
 
+set_option linter.style.show false in
 lemma Insert.preserves_order {α : Type} [LinearOrder α] (x : α) (s : List α) :
   Sorted s → Sorted (insert x s) := by
   induction s with
   | nil =>
-      -- ⊢ Sorted [] → Sorted (insert x [])
+      show Sorted [] → Sorted (insert x [])
       intro _
-      -- ⊢ Sorted (insert x [])
+      show Sorted (insert x [])
       at [1] use insert.nil x
-      -- ⊢ Sorted [x]
+      show Sorted [x]
       exact Ordered.singleton x
---    -- Alternative for the whole case:
---    -- insert.nil x : insert x [] = [x]
---    -- Ordered.singleton x : Ordered (· ≤ ·) [x] = Sorted [x]
---    -- insert.nil x ▸ Ordered.singleton x : Sorted (insert x [])
---    exact fun _ => insert.nil x ▸ Ordered.singleton x
   | cons y s ih =>
-      -- ih : Sorted s → Sorted (insert x s)
-      -- ⊢ Sorted (y :: s) → Sorted (insert x (y :: s))
+      guard_hyp ih : Sorted s → Sorted (insert x s)
+      show Sorted (y :: s) → Sorted (insert x (y :: s))
       intro hs
-      -- hs : Sorted (y :: s)
+      guard_hyp hs : Sorted (y :: s)
+      show Sorted (insert x (y :: s))
       by_cases hxy : x ≤ y
       · -- ite_eq_left hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = x :: y :: s
-        -- ⊢ Sorted (insert x (y :: s))
         at [1] use Eq.trans (insert.cons x y s) (ite_eq_left hxy)
-        -- ⊢ Sorted (x :: y :: s)
+        show Sorted (x :: y :: s)
         exact Ordered.cons x y s hxy hs
---      --- Alternative
---      have then_branch : insert x (y :: s) = x :: y :: s :=
---        Eq.trans (insert.cons x y s) (ite_eq_left hxy)
---      exact then_branch ▸ Ordered.cons x y s hxy hs
-      · -- hxy : ¬ x ≤ y
+      · guard_hyp hxy : ¬ x ≤ y
         at [1] use Eq.trans (insert.cons x y s) (ite_eq_right hxy)
-        -- ⊢ Sorted (y :: insert x s)
+        show Sorted (y :: insert x s)
         have hyx : y ≤ x := le_of_not_ge hxy
         cases s with
         | nil =>
-            -- ⊢ Sorted (y :: insert x [])
+            show Sorted (y :: insert x [])
             at [1,2] use insert.nil x
-            -- ⊢ Sorted (y :: [x])
+            show Sorted (y :: [x])
             exact Ordered.cons y x [] hyx (Ordered.singleton x)
         | cons z t =>
-            -- ⊢ Sorted (y :: insert x (z :: t))
-            -- hs : Sorted (y :: z :: t)
+            show Sorted (y :: insert x (z :: t))
+            guard_hyp hs : Sorted (y :: z :: t)
             cases hs with
             | cons _ _ _ hyz hzt =>
-                -- hyz : y ≤ z
-                -- hzt : Sorted (z :: t)
+                guard_hyp hyz : y ≤ z
+                guard_hyp hzt : Ordered (· ≤ ·) (z :: t) -- `Ordered` due `cases hs with`.
                 by_cases hxz : x ≤ z
                 · at [1,2] use Eq.trans (insert.cons x z t) (ite_eq_left hxz)
-                  -- ⊢ Sorted (y :: x :: z :: t)
+                  show Sorted (y :: x :: z :: t)
                   exact Ordered.cons y x (z :: t) hyx (Ordered.cons x z t hxz hzt)
                 · at [1,2] use Eq.trans (insert.cons x z t) (ite_eq_right hxz)
-                   -- ⊢ Sorted (y :: z :: insert x t)
+                  show Sorted (y :: z :: insert x t)
                   have h : Sorted (insert x (z :: t)) := ih hzt
                   at [1] in h use Eq.trans (insert.cons x z t) (ite_eq_right hxz)
-                  -- h : Sorted (z :: insert x t)
-                  -- ⊢ Sorted (y :: z :: insert x t)
+                  guard_hyp h : Sorted (z :: insert x t)
+                  show Sorted (y :: z :: insert x t)
                   exact Ordered.cons y z (insert x t) hyz h
 
 /-- Sorting -/
@@ -164,27 +156,27 @@ theorem Sort.soundness {α : Type} [LinearOrder α] (s : List α) :
   Sorted (sort s) ∧ Perm (sort s) s := by
   induction s with
   | nil =>
-      -- ⊢ Sorted (sort []) ∧ Perm (sort []) []
+      show Sorted (sort []) ∧ Perm (sort []) []
       constructor
-      · -- ⊢ Sorted (sort [])
+      · show Sorted (sort [])
         at [1] use sort.nil
-        -- ⊢ Sorted []
+        show Sorted []
         exact Ordered.nil
-      · -- ⊢ Perm (sort []) []
+      · show Perm (sort []) []
         at [1] use sort.nil
-        -- ⊢ Perm [] []
+        show Perm [] []
         exact Perm.nil
   | cons x s ih =>
-      -- ih : Sorted (sort s) ∧ Perm (sort s) s
-      -- ⊢ Sorted (sort (x :: s)) ∧ Perm (sort (x :: s)) (x :: s)
+      guard_hyp ih : Sorted (sort s) ∧ Perm (sort s) s
+      show Sorted (sort (x :: s)) ∧ Perm (sort (x :: s)) (x :: s)
       constructor
-      · -- ⊢ Sorted (sort (x :: s))
+      · show Sorted (sort (x :: s))
         at [1] use sort.cons x s
-        -- ⊢ Sorted (insert x (sort s))
+        show Sorted (insert x (sort s))
         exact Insert.preserves_order x (sort s) ih.1
-      · -- ⊢ Perm (sort (x :: s)) (x :: s)
+      · show Perm (sort (x :: s)) (x :: s)
         at [1] use sort.cons x s
-        -- ⊢ Perm (insert x (sort s)) (x :: s)
+        show Perm (insert x (sort s)) (x :: s)
         have h : Perm (insert x (sort s)) (x :: sort s) := Insert.extends x (sort s)
         have h' : Perm (x :: sort s) (x :: s) := Perm.cons x (sort s) s ih.2
         exact Perm.trans _ _ _ h h'
