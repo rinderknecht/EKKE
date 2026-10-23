@@ -126,7 +126,7 @@ lemma Insert.preserves_order {α : Type} [LinearOrder α] (x : α) (s : List α)
             cases hs with
             | cons _ _ _ hyz hzt =>
                 guard_hyp hyz : y ≤ z
-                guard_hyp hzt : Ordered (· ≤ ·) (z :: t) -- `Ordered` due `cases hs with`.
+                guard_hyp hzt : Ordered (· ≤ ·) (z :: t) -- `Ordered` due to `cases hs with`.
                 by_cases hxz : x ≤ z
                 · at [1,2] use Eq.trans (insert.cons x z t) (ite_eq_left hxz)
                   show Sorted (y :: x :: z :: t)
