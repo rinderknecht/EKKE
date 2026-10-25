@@ -96,7 +96,7 @@ theorem Inv {α : Type} (s : List α) : rev' (rev' s) = s := by
 
 /-! Reverse and concatenate -/
 def rcat {α : Type} : List α -> List α -> List α
-| [], t     => t
+| [],    t  => t
 | x :: s, t => rcat s (x :: t)
 
 theorem rcat.nil {α : Type} (t : List α) : rcat [] t = t := rfl
@@ -104,14 +104,14 @@ theorem rcat.nil {α : Type} (t : List α) : rcat [] t = t := rfl
 theorem rcat.cons {α : Type} (x : α) (s t : List α) :
   rcat (x :: s) t = rcat s (x :: t) := rfl
 
-/-! Worst-case linear costs reveral -/
+/-! Reversal with linear worst-case -/
 def rev {α : Type} (s : List α) : List α := rcat s []
 
 theorem rev.def {α : Type} (s : List α) : rev s = rcat s [] := rfl
 
 attribute [irreducible] rcat rev
 
-/-! Reverse and concatenate it is -/
+/-! Reverse and concatenate -/
 theorem RevCat {α : Type} (s t : List α) : rcat s t = cat (rev s) t := by
   induction s generalizing t with
   | nil => calc

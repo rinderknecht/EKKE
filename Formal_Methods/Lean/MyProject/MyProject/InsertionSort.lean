@@ -60,14 +60,18 @@ lemma Insert.extends {α : Type} [LinearOrder α] (x : α) (s : List α) :
       guard_hyp ih : Perm (insert x s) (x :: s)
       show Perm (insert x (y :: s)) (x :: y :: s)
       by_cases hxy : x ≤ y
-      · -- ite_eq_left (h : p) : (if p then a else b) = a --- `h` is a proof and `p` a proposition
-        -- ite_eq_left hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = x :: y :: s
+      · -- ite_eq_left (h : p) :
+        --   (if p then a else b) = a --- `h` is a proof and `p` a proposition
+        -- ite_eq_left hxy :
+        --   (if x ≤ y then x :: y :: s else y :: insert x s) = x :: y :: s
         at [1] use Eq.trans (insert.cons x y s) (ite_eq_left hxy)
         show Perm (x :: y :: s) (x :: y :: s)
         exact Perm.reflexivity (x :: y :: s)
       · guard_hyp hxy : ¬ x ≤ y
-        -- ite_eq_right (h : p) : (if p then a else b) = b --- `h` is a proof and `p` a proposition
-        -- ite_eq_right hxy : (if x ≤ y then x :: y :: s else y :: insert x s) = y :: insert x s
+        -- ite_eq_right (h : p) :
+        --   (if p then a else b) = b --- `h` is a proof and `p` a proposition
+        -- ite_eq_right hxy :
+        --   (if x ≤ y then x :: y :: s else y :: insert x s) = y :: insert x s
         at [1] use Eq.trans (insert.cons x y s) (ite_eq_right hxy)
         show Perm (y :: insert x s) (x :: y :: s)
         have h : Perm (y :: insert x s) (y :: x :: s) := Perm.cons y (insert x s) (x :: s) ih
