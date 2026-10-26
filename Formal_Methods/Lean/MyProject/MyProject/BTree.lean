@@ -195,23 +195,33 @@ theorem post.def {α : Type} (t : Tree α) : post t = post.f t [] := rfl
 
 attribute [irreducible] post post.f
 
+lemma CatPostGen {α : Type} (t : Tree α) (s1 s2 : List α) :
+  cat (post.f t s1) s2 = post.f t (cat s1 s2) := by
+  induction t generalizing s1 with
+  | ext => calc
+      cat (post.f .ext s1) s2
+        = cat s1 s2               := at [1,1] use post.ext s1
+      _ = post.f .ext (cat s1 s2) := at [2] use post.ext _
+  | int x t1 t2 ih1 ih2 =>
+      guard_hyp ih1 : ∀ (s1 : List α), cat (post.f t1 s1) s2 = post.f t1 (cat s1 s2)
+      guard_hyp ih2 : ∀ (s1 : List α), cat (post.f t2 s1) s2 = post.f t2 (cat s1 s2)
+      show cat (post.f (.int x t1 t2) s1) s2 = post.f (.int x t1 t2) (cat s1 s2)
+      calc
+        cat (post.f (.int x t1 t2) s1) s2
+          = cat (post.f t1 (post.f t2 (x :: s1))) s2 := at [1,1] use post.int x t1 t2 s1
+        _ = post.f t1 (cat (post.f t2 (x :: s1)) s2) := ih1 (post.f t2 (x :: s1))
+        _ = post.f t1 (post.f t2 (cat (x :: s1) s2)) := at [1,2] use ih2 (x :: s1)
+        _ = post.f t1 (post.f t2 (x :: cat s1 s2))   := at [1,2,2] use cat.cons _ _ _
+        _ = post.f (.int x t1 t2) (cat s1 s2)        := at [2] use post.int x t1 t2 _
+
 lemma CatPost {α : Type} (t : Tree α) (s : List α) :
   cat (post.f t []) s = post.f t s  := by
-  induction t with
-  | ext => calc
-      cat (post.f .ext []) s
-        = cat [] s           := at [1,1] use post.ext []
-      _ = s                  := cat.nil s
-      _ = post.f .ext s      := at [2] use post.ext s
-  | int x t1 t2 ih1 ih2 =>
-      guard_hyp ih1 : cat (post.f t1 []) s = post.f t1 s
-      guard_hyp ih2 : cat (post.f t2 []) s = post.f t2 s
-      show cat (post.f (.int x t1 t2) []) s = post.f (.int x t1 t2) s
-      calc
-        cat (post.f (.int x t1 t2) []) s
-          = post.f (.int x t1 t2) s := sorry
+  calc
+    cat (post.f t []) s
+      = post.f t (cat [] s) := CatPostGen t [] s
+    _ = post.f t s          := at [1,2] use cat.nil s
 
-theorem PreMir' {α : Type} (t : Tree α) (s : List α) :
+theorem PreMirGen {α : Type} (t : Tree α) (s : List α) :
   pre.f (mir t) s = rcat (post.f t []) s := by
   induction t generalizing s with
   | ext => calc
@@ -228,15 +238,26 @@ theorem PreMir' {α : Type} (t : Tree α) (s : List α) :
       show pre.f (mir (.int x t1 t2)) s = rcat (post.f (.int x t1 t2) []) s
       calc
         pre.f (mir (.int x t1 t2)) s
-          = pre.f (.int x mt2 mt1) s                         := at [1,1] use mir.int _ _ _
-        _ = x :: pre.f mt2 (pre.f mt1 s)                     := pre.int s x mt2 mt1
-        _ = x :: pre.f mt2 (rcat (post.f t1 []) s)           := at [1,2,2] use ih1 s
-        _ = x :: rcat (post.f t2 []) (rcat (post.f t1 []) s) := at [1,2] use ih2 _
-        _ = x :: rcat (cat (post.f t1 []) (post.f t2 [])) s  := at [1,2] use Rcat _ _ _
+          = pre.f (.int x mt2 mt1) s                                  := at [1,1] use mir.int _ _ _
+        _ = x :: pre.f mt2 (pre.f mt1 s)                              := pre.int s x mt2 mt1
+        _ = x :: pre.f mt2 (rcat (post.f t1 []) s)                    := at [1,2,2] use ih1 s
+        _ = x :: rcat (post.f t2 []) (rcat (post.f t1 []) s)          := at [1,2] use ih2 _
+        _ = x :: rcat (cat (post.f t1 []) (post.f t2 [])) s           := at [1,2] use Rcat _ _ _
         _ = rcat [] (x :: rcat (cat (post.f t1 []) (post.f t2 [])) s) := at [2] use rcat.nil _
-        _ = rcat [x] (rcat (cat (post.f t1 []) (post.f t2 [])) s) := at [2] use rcat.cons x [] _
-        _ = rcat (cat (cat (post.f t1 []) (post.f t2 [])) [x]) s  := Rcat [x] _ s
-        _ = rcat (cat (post.f t1 []) (cat (post.f t2 []) [x])) s  := at [2,1] use CatAssoc _ _ _
-        _ = sorry
+        _ = rcat [x] (rcat (cat (post.f t1 []) (post.f t2 [])) s)     := at [2] use rcat.cons x [] _
+        _ = rcat (cat (cat (post.f t1 []) (post.f t2 [])) [x]) s      := Rcat [x] _ s
+        _ = rcat (cat (post.f t1 []) (cat (post.f t2 []) [x])) s      := at [2,1] use CatAssoc _ _ _
+        _ = rcat (post.f t1 (cat (post.f t2 []) [x])) s               := at [1,1] use CatPost t1 _
+        _ = rcat (post.f t1 (post.f t2 [x])) s                        := at [1,1,2] use CatPost t2 _
+        _ = rcat (post.f (.int x t1 t2) []) s                         := at [2,1] use post.int x t1 t2 []
+
+theorem PreMir {α : Type} (t : Tree α) (s : List α) :
+  pre (mir t) = rev (post t) := by
+  calc
+    pre (mir t)
+      = pre.f (mir t) []      := pre.def (mir t)
+    _ = rcat (post.f t []) [] := PreMirGen t []
+    _ = rcat (post t) []      := at [2,1] use post.def t
+    _ = rev (post t)          := at [2] use rev.def (post t)
 
 end BTree
