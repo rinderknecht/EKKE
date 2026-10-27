@@ -33,12 +33,12 @@ where
   | .ext,         s => s
   | .int x t1 t2, s => x :: f t1 (f t2 s)
 
-theorem pre.ext {α : Type} (s : List α) : pre.f .ext s = s := rfl
+lemma pre.ext {α : Type} (s : List α) : pre.f .ext s = s := rfl
 
-theorem pre.int {α : Type} (s : List α) (x : α) (t1 t2 : Tree α) :
+lemma pre.int {α : Type} (s : List α) (x : α) (t1 t2 : Tree α) :
   pre.f (.int x t1 t2) s = x :: pre.f t1 (pre.f t2 s) := rfl
 
-theorem pre.def {α : Type} (t : Tree α) : pre t = pre.f t [] := rfl
+lemma pre.def {α : Type} (t : Tree α) : pre t = pre.f t [] := rfl
 
 attribute [irreducible] pre pre.f
 
@@ -100,6 +100,25 @@ theorem mir.int {α : Type} (x : α) (t1 t2 : Tree α) :
 
 attribute [irreducible] mir
 
+/-! Involution of mirroring -/
+theorem InvMir {α : Type} (t : Tree α) : mir (mir t) = t := by
+  induction t with
+  | ext =>
+      calc
+        mir (mir .ext)
+          = mir .ext := at [1,1] use mir.ext
+        _ = .ext     := mir.ext
+  | int x t1 t2 ih1 ih2 =>
+      guard_hyp ih1 : mir (mir t1) = t1
+      guard_hyp ih2 : mir (mir t2) = t2
+      show mir (mir (.int x t1 t2)) = .int x t1 t2
+      calc
+        mir (mir (.int x t1 t2))
+          = mir (.int x (mir t2) (mir t1))       := at [1,1] use mir.int x t1 t2
+        _ = .int x (mir (mir t1)) (mir (mir t2)) := mir.int x _ _
+        _ = .int x t1 (mir (mir t2))             := at [1,2] use ih1
+        _ = .int x t1 t2                         := at [1,3] use ih2
+
 -- Inorder traversal
 
 def «in» {α : Type} (t : Tree α) : List α := f t []
@@ -108,12 +127,12 @@ where
   | .ext,         s => s
   | .int x t1 t2, s => f t1 (x :: f t2 s)
 
-theorem «in».ext {α : Type} (s : List α) : «in».f .ext s = s := rfl
+lemma «in».ext {α : Type} (s : List α) : «in».f .ext s = s := rfl
 
-theorem «in».int {α : Type} (s : List α) (x : α) (t1 t2 : Tree α) :
+lemma «in».int {α : Type} (s : List α) (x : α) (t1 t2 : Tree α) :
   «in».f (.int x t1 t2) s = «in».f t1 (x :: «in».f t2 s) := rfl
 
-theorem «in».def {α : Type} (t : Tree α) :
+lemma «in».def {α : Type} (t : Tree α) :
   «in» t = «in».f t [] := rfl
 
 attribute [irreducible] «in» «in».f
@@ -185,13 +204,13 @@ where
   | .ext,         s => s
   | .int x t1 t2, s => f t1 (f t2 (x :: s))
 
-theorem post.ext {α : Type} (s : List α) :
+lemma post.ext {α : Type} (s : List α) :
   post.f (.ext : Tree α) s = s := rfl
 
-theorem post.int {α : Type} (x : α) (t1 t2 : Tree α) (s : List α) :
+lemma post.int {α : Type} (x : α) (t1 t2 : Tree α) (s : List α) :
   post.f (.int x t1 t2) s = post.f t1 (post.f t2 (x :: s)) := rfl
 
-theorem post.def {α : Type} (t : Tree α) : post t = post.f t [] := rfl
+lemma post.def {α : Type} (t : Tree α) : post t = post.f t [] := rfl
 
 attribute [irreducible] post post.f
 
@@ -221,7 +240,7 @@ lemma CatPost {α : Type} (t : Tree α) (s : List α) :
       = post.f t (cat [] s) := CatPostGen t [] s
     _ = post.f t s          := at [1,2] use cat.nil s
 
-theorem PreMirGen {α : Type} (t : Tree α) (s : List α) :
+lemma PreMirGen {α : Type} (t : Tree α) (s : List α) :
   pre.f (mir t) s = rcat (post.f t []) s := by
   induction t generalizing s with
   | ext => calc
@@ -251,7 +270,7 @@ theorem PreMirGen {α : Type} (t : Tree α) (s : List α) :
         _ = rcat (post.f t1 (post.f t2 [x])) s                        := at [1,1,2] use CatPost t2 _
         _ = rcat (post.f (.int x t1 t2) []) s                         := at [2,1] use post.int x t1 t2 []
 
-theorem PreMir {α : Type} (t : Tree α) (s : List α) :
+theorem PreMir {α : Type} (t : Tree α) :
   pre (mir t) = rev (post t) := by
   calc
     pre (mir t)
@@ -259,5 +278,72 @@ theorem PreMir {α : Type} (t : Tree α) (s : List α) :
     _ = rcat (post.f t []) [] := PreMirGen t []
     _ = rcat (post t) []      := at [2,1] use post.def t
     _ = rev (post t)          := at [2] use rev.def (post t)
+
+theorem PostMir {α : Type} (t : Tree α) :
+  post (mir t) = rev (pre t) := by
+  calc
+    post (mir t)
+      = rev (rev (post (mir t))) := at [2] use InvRev (post (mir t))
+    _ = rev (pre (mir (mir t)))  := at [2,1] use PreMir (mir t)
+    _ = rev (pre t)              := at [1,1,1] use InvMir t
+
+/-! Postorder encoding (compare with `post`) -/
+def epost {α : Type} (t : Tree α) : List (Option α) := f t []
+where
+  f {α : Type} : Tree α -> List (Option α) -> List (Option α)
+  | .ext, s         => none :: s
+  | .int x t1 t2, s => f t1 (f t2 (some x :: s))
+
+lemma epost.ext {α : Type} (s : List (Option α)) :
+  epost.f .ext s = none :: s := rfl
+
+lemma epost.int {α : Type} (x : α) (t1 t2 : Tree α) (s : List (Option α)) :
+  epost.f (.int x t1 t2) s = epost.f t1 (epost.f t2 (some x :: s)) := rfl
+
+lemma epost.def {α : Type} (t : Tree α) : epost t = epost.f t [] := rfl
+
+attribute [irreducible] epost epost.f
+
+/-! Postorder decoding -/
+def post2b {α : Type} (s : List (Option α)) : Option (Tree α) := f [] s
+where
+  f {α : Type} : List (Tree α) -> List (Option α) -> Option (Tree α)
+  | [tree], []                      => some tree
+  | forest, none :: s               => f (.ext :: forest) s
+  | t2 :: t1 :: forest, some x :: s => f (.int x t1 t2 :: forest) s
+  | _, _                            => none
+
+lemma post2b.nil {α : Type} (t : Tree α) : post2b.f [t] [] = some t := rfl
+
+lemma post2b.none {α : Type} (forest : List (Tree α)) (s : List (Option α)) :
+  post2b.f forest (Option.none :: s) = post2b.f (.ext :: forest) s := by rw [post2b.f]
+
+lemma post2b.some {α : Type} (t1 t2 : Tree α) (forest : List (Tree α)) (x : α) (s : List (Option α)) :
+  post2b.f (t2 :: t1 :: forest) (Option.some x :: s) = post2b.f (.int x t1 t2 :: forest) s := rfl
+
+lemma post2b.def {α : Type} (s : List (Option α)) : post2b s = post2b.f [] s := rfl
+
+attribute [irreducible] post2b post2b.f
+
+/-! Correctness of postorder encoding -/
+
+theorem PostEnc {α : Type} (t : Tree α) : post2b (epost t) = some t := by
+  induction t with
+  | ext => calc
+      post2b (epost .ext)
+        = post2b (epost.f .ext []) := at [1,1] use epost.def .ext
+      _ = post2b [none]            := at [1,1] use epost.ext []
+      _ = post2b.f [] [none]       := post2b.def [none]
+      _ = post2b.f [.ext] []       := post2b.none [] []
+      _ = some .ext                := post2b.nil .ext
+  | int x t1 t2 ih1 ih2 =>
+     guard_hyp ih1 : post2b (epost t1) = some t1
+     guard_hyp ih2 : post2b (epost t2) = some t2
+     show post2b (epost (.int x t1 t2)) = some (.int x t1 t2)
+     calc
+       post2b (epost (.int x t1 t2))
+         = post2b (epost.f (.int x t1 t2) []) := at [1,1] use epost.def _
+       _ = post2b (epost.f t1 (epost.f t2 [some x])) := at [1,1] use epost.int _ _ _ []
+       _ =  some (.int x t1 t2) := sorry
 
 end BTree
