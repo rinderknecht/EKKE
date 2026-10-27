@@ -7,9 +7,9 @@ def cat {α : Type} : List α -> List α -> List α
 | [],     t => t
 | x :: s, t => x :: cat s t
 
-theorem cat.nil {α : Type} (t : List α) : cat [] t = t := rfl
+lemma cat.nil {α : Type} (t : List α) : cat [] t = t := rfl
 
-theorem cat.cons {α : Type} (x : α) (s t : List α) :
+lemma cat.cons {α : Type} (x : α) (s t : List α) :
   cat (x :: s) t = x :: cat s t := rfl
 
 attribute [irreducible] cat
@@ -43,53 +43,53 @@ theorem CatAssoc {α : Type} (s t u : List α) :
         _ = cat (cat (x :: s) t) u := at [2,1] use cat.cons x s t
 
 /-! Worst-case quadratic reversal -/
-def rev' {α : Type} : List α -> List α
+def rev₀ {α : Type} : List α -> List α
 | []     => []
-| x :: s => cat (rev' s) [x]
+| x :: s => cat (rev₀ s) [x]
 
-theorem rev'.nil {α : Type} : rev' ([] : List α) = [] := rfl
+lemma rev₀.nil {α : Type} : rev₀ ([] : List α) = [] := rfl
 
-theorem rev'.cons {α : Type} (x : α) (s : List α) :
-  rev' (x :: s) = cat (rev' s) [x] := rfl
+lemma rev₀.cons {α : Type} (x : α) (s : List α) :
+  rev₀ (x :: s) = cat (rev₀ s) [x] := rfl
 
-attribute [irreducible] rev'
+attribute [irreducible] rev₀
 
 theorem CatRev {α : Type} (s t : List α) :
-  cat (rev' t) (rev' s) = rev' (cat s t) := by
+  cat (rev₀ t) (rev₀ s) = rev₀ (cat s t) := by
   induction s with
   | nil => calc
-      cat (rev' t) (rev' [])
-        = cat (rev' t) []    := at [1,2] use rev'.nil
-      _ = rev' t             := CatNil (rev' t)
-      _ = rev' (cat [] t)    := at [2,1] use cat.nil t
+      cat (rev₀ t) (rev₀ [])
+        = cat (rev₀ t) []    := at [1,2] use rev₀.nil
+      _ = rev₀ t             := CatNil (rev₀ t)
+      _ = rev₀ (cat [] t)    := at [2,1] use cat.nil t
   | cons x s ih =>
-      guard_hyp ih : cat (rev' t) (rev' s) = rev' (cat s t)
-      show cat (rev' t) (rev' (x :: s)) = rev' (cat (x :: s) t)
+      guard_hyp ih : cat (rev₀ t) (rev₀ s) = rev₀ (cat s t)
+      show cat (rev₀ t) (rev₀ (x :: s)) = rev₀ (cat (x :: s) t)
       calc
-        cat (rev' t) (rev' (x :: s))
-          = cat (rev' t) (cat (rev' s) [x]) := at [1,2] use rev'.cons x s
-        _ = cat (cat (rev' t) (rev' s)) [x] := CatAssoc (rev' t) (rev' s) [x]
-        _ = cat (rev' (cat s t)) [x]        := at [1,1] use ih
-        _ = rev' (x :: cat s t)             := at [2] use rev'.cons x (cat s t)
-        _ = rev' (cat (x :: s) t)           := at [2,1] use cat.cons x s t
+        cat (rev₀ t) (rev₀ (x :: s))
+          = cat (rev₀ t) (cat (rev₀ s) [x]) := at [1,2] use rev₀.cons x s
+        _ = cat (cat (rev₀ t) (rev₀ s)) [x] := CatAssoc (rev₀ t) (rev₀ s) [x]
+        _ = cat (rev₀ (cat s t)) [x]        := at [1,1] use ih
+        _ = rev₀ (x :: cat s t)             := at [2] use rev₀.cons x (cat s t)
+        _ = rev₀ (cat (x :: s) t)           := at [2,1] use cat.cons x s t
 
 /-! Involution -/
-theorem Inv {α : Type} (s : List α) : rev' (rev' s) = s := by
+theorem Inv {α : Type} (s : List α) : rev₀ (rev₀ s) = s := by
   induction s with
   | nil => calc
-      rev' (rev' [])
-        = rev' [] := at [1,1] use rev'.nil
-      _ = []      := rev'.nil
+      rev₀ (rev₀ [])
+        = rev₀ [] := at [1,1] use rev₀.nil
+      _ = []      := rev₀.nil
   | cons x s ih =>
-      guard_hyp ih : rev' (rev' s) = s
-      show rev' (rev' (x :: s)) = x :: s
+      guard_hyp ih : rev₀ (rev₀ s) = s
+      show rev₀ (rev₀ (x :: s)) = x :: s
       calc
-        rev' (rev' (x :: s))
-          = rev' (cat (rev' s) [x])        := at [1,1] use rev'.cons x s
-        _ = cat (rev' [x]) (rev' (rev' s)) := at [2] use CatRev (rev' s) [x]
-        _ = cat (rev' [x]) s               := at [1,2] use ih
-        _ = cat (cat (rev' []) [x]) s      := at [1,1] use rev'.cons x []
-        _ = cat (cat [] [x]) s             := at [1,1,1] use rev'.nil
+        rev₀ (rev₀ (x :: s))
+          = rev₀ (cat (rev₀ s) [x])        := at [1,1] use rev₀.cons x s
+        _ = cat (rev₀ [x]) (rev₀ (rev₀ s)) := at [2] use CatRev (rev₀ s) [x]
+        _ = cat (rev₀ [x]) s               := at [1,2] use ih
+        _ = cat (cat (rev₀ []) [x]) s      := at [1,1] use rev₀.cons x []
+        _ = cat (cat [] [x]) s             := at [1,1,1] use rev₀.nil
         _ = cat [x] s                      := at [1,1] use cat.nil [x]
         _ = x :: cat [] s                  := cat.cons x [] s
         _ = x :: s                         := at [1,2] use cat.nil s
@@ -99,15 +99,15 @@ def rcat {α : Type} : List α -> List α -> List α
 | [],    t  => t
 | x :: s, t => rcat s (x :: t)
 
-theorem rcat.nil {α : Type} (t : List α) : rcat [] t = t := rfl
+lemma rcat.nil {α : Type} (t : List α) : rcat [] t = t := rfl
 
-theorem rcat.cons {α : Type} (x : α) (s t : List α) :
+lemma rcat.cons {α : Type} (x : α) (s t : List α) :
   rcat (x :: s) t = rcat s (x :: t) := rfl
 
 /-! Reversal with linear worst-case -/
 def rev {α : Type} (s : List α) : List α := rcat s []
 
-theorem rev.def {α : Type} (s : List α) : rev s = rcat s [] := rfl
+lemma rev.def {α : Type} (s : List α) : rev s = rcat s [] := rfl
 
 attribute [irreducible] rcat rev
 
@@ -134,34 +134,41 @@ theorem RevCat {α : Type} (s t : List α) : rcat s t = cat (rev s) t := by
         _ = cat (rcat (x :: s) []) t    := at [2,1] use rcat.cons x s []
         _ = cat (rev (x :: s)) t        := at [2,1] use rev.def (x :: s)
 
-theorem EqRev {α : Type} (s : List α) : rev' s = rev s := by
+theorem EqRev {α : Type} (s : List α) : rev₀ s = rev s := by
   induction s with
   | nil => calc
-      rev' []
-        = []         := rev'.nil
+      rev₀ []
+        = []         := rev₀.nil
       _ = rcat [] [] := at [2] use rcat.nil []
       _ = rev []     := at [2] use rev.def []
   | cons x s ih =>
-      guard_hyp ih : rev' s = rev s
-      show rev' (x :: s) = rev (x :: s)
+      guard_hyp ih : rev₀ s = rev s
+      show rev₀ (x :: s) = rev (x :: s)
       calc
-        rev' (x :: s)
-          = cat (rev' s) [x]  := rev'.cons x s
+        rev₀ (x :: s)
+          = cat (rev₀ s) [x]  := rev₀.cons x s
         _ = cat (rev s) [x]   := at [1,1] use ih
         _ = rcat s [x]        := at [2] use RevCat s [x]
         _ = rcat (x :: s) []  := at [2] use rcat.cons x s []
         _ = rev (x :: s)      := at [2] use rev.def (x :: s)
+
+theorem InvRev {α : Type} (s : List α) : rev (rev s) = s := by
+  calc
+    rev (rev s)
+      = rev (rev₀ s)  := at [2,1] use EqRev s
+    _ = rev₀ (rev₀ s) := at [2] use EqRev (rev₀ s)
+    _ = s             := Inv s
 
 theorem Rcat {α : Type} (s t u : List α) :
   rcat s (rcat t u) = rcat (cat t s) u :=
   calc
     rcat s (rcat t u)
       = rcat s (cat (rev t) u)        := at [1,2] use RevCat t u
-    _ = rcat s (cat (rev' t) u)       := at [2,2,1] use EqRev t
-    _ = cat (rev s) (cat (rev' t) u)  := RevCat s (cat (rev' t) u)
-    _ = cat (rev' s) (cat (rev' t) u) := at [2,1] use EqRev s
-    _ = cat (cat (rev' s) (rev' t)) u := CatAssoc (rev' s) (rev' t) u
-    _ = cat (rev' (cat t s)) u        := at [1,1] use CatRev t s
+    _ = rcat s (cat (rev₀ t) u)       := at [2,2,1] use EqRev t
+    _ = cat (rev s) (cat (rev₀ t) u)  := RevCat s (cat (rev₀ t) u)
+    _ = cat (rev₀ s) (cat (rev₀ t) u) := at [2,1] use EqRev s
+    _ = cat (cat (rev₀ s) (rev₀ t)) u := CatAssoc (rev₀ s) (rev₀ t) u
+    _ = cat (rev₀ (cat t s)) u        := at [1,1] use CatRev t s
     _ = cat (rev (cat t s)) u         := at [1,1] use EqRev (cat t s)
     _ = rcat (cat t s) u              := at [2] use RevCat (cat t s) u
 
