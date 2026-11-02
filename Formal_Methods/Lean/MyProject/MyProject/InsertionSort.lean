@@ -28,8 +28,8 @@ lemma Perm.symmetry {α : Type} (s t : List α) : Perm s t -> Perm t s := by
       show Perm (x :: t) (x :: s); exact Perm.cons x t s ih
   | swap x y s =>
       show Perm (y :: x :: s) (x :: y :: s); exact Perm.swap y x s
-  | trans s t u _ _ ih1 ih2 =>
-      show Perm u s; exact Perm.trans u t s ih2 ih1
+  | trans s t u _ _ ih₁ ih₂ =>
+      show Perm u s; exact Perm.trans u t s ih₂ ih₁
 
 lemma Perm.reflexivity {α : Type} (s : List α) : Perm s s := by
   induction s with

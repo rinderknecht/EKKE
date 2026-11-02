@@ -1,4 +1,5 @@
 import MyProject.Macros
+import Mathlib.Order.Basic
 
 /-! Redefinition of `List` for educational purposes -/
 namespace MyList -- To avoid captures from Mathlib
@@ -146,11 +147,11 @@ theorem EqRev {α : Type} (s : List α) : rev₀ s = rev s := by
       show rev₀ (x :: s) = rev (x :: s)
       calc
         rev₀ (x :: s)
-          = cat (rev₀ s) [x]  := rev₀.cons x s
-        _ = cat (rev s) [x]   := at [1,1] use ih
-        _ = rcat s [x]        := at [2] use RevCat s [x]
-        _ = rcat (x :: s) []  := at [2] use rcat.cons x s []
-        _ = rev (x :: s)      := at [2] use rev.def (x :: s)
+          = cat (rev₀ s) [x] := rev₀.cons x s
+        _ = cat (rev s) [x]  := at [1,1] use ih
+        _ = rcat s [x]       := at [2] use RevCat s [x]
+        _ = rcat (x :: s) [] := at [2] use rcat.cons x s []
+        _ = rev (x :: s)     := at [2] use rev.def (x :: s)
 
 theorem InvRev {α : Type} (s : List α) : rev (rev s) = s := by
   calc

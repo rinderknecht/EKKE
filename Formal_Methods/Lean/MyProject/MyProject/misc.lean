@@ -30,3 +30,30 @@ by induction s with
       -- Perm.reflexivity [x] : Perm [x] [x]
       -- insert.nil x ▸ Perm.reflexivity [x] : Perm (insert x []) [x]
       exact insert.nil x ▸ Perm.reflexivity [x]
+
+def post2b.f {α : Type} (forest : List (Tree α)) (enc : List (Option α)) :
+  Option (Tree α) × List (Option α) :=
+  match forest with
+  | [] =>
+      match enc with
+      | none :: enc  => post2b.f [Tree.ext] enc
+      | some _ :: _  => (none, enc)
+      | []           => (none, enc)
+  | [tree] => (some tree, enc)
+  | t2 :: t1 :: forest =>
+      match enc with
+      | none :: enc   => post2b.f (Tree.ext :: t2 :: t1 :: forest) enc
+      | some x :: enc => post2b.f (Tree.int x t1 t2 :: forest) enc
+      | []            => (none, enc)
+termination_by structural enc
+
+def post2b {α : Type} (s : List (Option α)) : Option (Tree α) × List (Option α) := post2b.f [] s
+
+lemma post2b.none {α : Type}
+  (forest : List (Tree α)) (enc : List (Option α))
+  (_ : match forest with | [_] => False | _ => True) :
+  post2b.f forest (none :: enc) = post2b.f (Tree.ext :: forest) enc := by
+  match forest with
+  | []          => rfl
+  | [_]         => contradiction
+  | _ :: _ :: _ => rfl
