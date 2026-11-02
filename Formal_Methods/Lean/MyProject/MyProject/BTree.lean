@@ -1,5 +1,3 @@
-import Mathlib.Order.Basic
-
 import MyProject.MyList
 
 /-! Our lists -/
@@ -11,6 +9,8 @@ namespace BTree
 inductive Tree (α : Type) : Type where
 | ext                                  -- External node
 | int (root : α) (left right : Tree α) -- Internal node
+
+abbrev Forest (α : Type) := List (Tree α)
 
 -- Preorder (a.k.a. prefix) traversals
 
@@ -161,7 +161,7 @@ lemma CatIn {α : Type} (t : Tree α) (s : List α) :
         _ = «in».f (.int x t₁ t₂) s                        := at [2] use «in».int s x t₁ t₂
 
 set_option linter.style.show false
-lemma InMir' {α : Type} (t : Tree α) (s : List α) :
+lemma InMirGen {α : Type} (t : Tree α) (s : List α) :
   «in».f (mir t) s = rcat («in».f t []) s := by
   induction t generalizing s with
   | ext => calc
@@ -192,7 +192,7 @@ theorem InMir {α : Type} (t : Tree α) :
   calc
     «in» (mir t)
       = «in».f (mir t) []     := «in».def (mir t)
-    _ = rcat («in».f t []) [] := InMir' t []
+    _ = rcat («in».f t []) [] := InMirGen t []
     _ = rev  («in».f t [])    := at [2] use rev.def («in».f t [])
     _ = rev («in» t)          := at [2,1] use «in».def t
 
@@ -305,26 +305,25 @@ lemma epost.def {α : Type} (t : Tree α) : epost t = epost.f t [] := rfl
 attribute [irreducible] epost epost.f
 
 /-! Postorder decoding -/
-def post2b.f {α : Type} : List (Tree α) -> List (Option α) -> Option (Tree α)
-| [tree], []                        => some tree
-| forest, none :: enc               => post2b.f (.ext :: forest) enc
-| t₂ :: t₁ :: forest, some x :: enc => post2b.f (.int x t₁ t₂ :: forest) enc
-| _, _                              => none
+def post2b.f {α : Type} : Forest α -> List (Option α) -> Option (Tree α)
+| [tree], []                   => some tree
+| f, none :: enc               => post2b.f (.ext :: f) enc
+| t₂ :: t₁ :: f, some x :: enc => post2b.f (.int x t₁ t₂ :: f) enc
+| _, _                         => none
 
 def post2b {α : Type} (enc : List (Option α)) : Option (Tree α) := post2b.f [] enc
 
 lemma post2b.tree {α : Type} (tree : Tree α) :
   post2b.f [tree] [] = Option.some tree := by unfold post2b.f; rfl
 
-lemma post2b.none {α : Type} (forest : List (Tree α)) (enc : List (Option α)) :
-  post2b.f forest (Option.none :: enc) =
-    post2b.f (Tree.ext :: forest) enc := by
-  cases forest with | nil => rfl | cons _ f => cases f <;> rfl
+lemma post2b.none {α : Type} (f : Forest α) (enc : List (Option α)) :
+  post2b.f f (Option.none :: enc) = post2b.f (Tree.ext :: f) enc := by
+  cases f with | nil => rfl | cons _ f => cases f <;> rfl
 
 lemma post2b.some {α : Type}
-  (t₁ t₂ : Tree α) (forest : List (Tree α)) (x : α) (enc : List (Option α)) :
-  post2b.f (t₂ :: t₁ :: forest) (Option.some x :: enc) =
-    post2b.f (.int x t₁ t₂ :: forest) enc := rfl
+  (t₁ t₂ : Tree α) (f : Forest α) (x : α) (enc : List (Option α)) :
+  post2b.f (t₂ :: t₁ :: f) (Option.some x :: enc) =
+    post2b.f (.int x t₁ t₂ :: f) enc := rfl
 
 lemma post2b.nil_some {α : Type} (x : α) (enc : List (Option α)) :
   post2b.f [] (Option.some x :: enc) = Option.none := rfl
@@ -332,8 +331,8 @@ lemma post2b.nil_some {α : Type} (x : α) (enc : List (Option α)) :
 lemma post2b.nil_nil {α : Type} :
   post2b.f [] ([] : List (Option α)) = Option.none := rfl
 
-lemma post2b.cons₂_nil {α : Type} (t₂ t₁ : Tree α) (forest : List (Tree α)) :
-  post2b.f (t₂ :: t₁ :: forest) [] = Option.none := rfl
+lemma post2b.cons₂_nil {α : Type} (t₂ t₁ : Tree α) (f : Forest α) :
+  post2b.f (t₂ :: t₁ :: f) [] = Option.none := rfl
 
 lemma post2b.def {α : Type} (enc : List (Option α)) :
   post2b enc = post2b.f [] enc := rfl
@@ -342,27 +341,27 @@ attribute [irreducible] post2b post2b.f
 
 /-! Correctness of postorder encoding -/
 
-lemma PostEncGen {α : Type} (t : Tree α) (forest : List (Tree α)) (enc : List (Option α)) :
-  post2b.f forest (epost.f t enc) = post2b.f (t :: forest) enc := by
-  induction t generalizing forest enc with
+lemma PostEncGen {α : Type} (t : Tree α) (f : Forest α) (enc : List (Option α)) :
+  post2b.f f (epost.f t enc) = post2b.f (t :: f) enc := by
+  induction t generalizing f enc with
   | ext =>
-      show post2b.f forest (epost.f Tree.ext enc) = post2b.f (Tree.ext :: forest) enc
+      show post2b.f f (epost.f Tree.ext enc) = post2b.f (Tree.ext :: f) enc
       calc
-        post2b.f forest (epost.f .ext enc)
-          = post2b.f forest (none :: enc) := at [1,2] use epost.ext enc
-        _ = post2b.f (.ext :: forest) enc := post2b.none forest enc
+        post2b.f f (epost.f .ext enc)
+          = post2b.f f (none :: enc) := at [1,2] use epost.ext enc
+        _ = post2b.f (.ext :: f) enc := post2b.none f enc
   | int x t₁ t₂ ih₁ ih₂ =>
-      guard_hyp ih₁ : ∀ (forest : List (Tree α)) (enc : List (Option α)),
-                      post2b.f forest (epost.f t₁ enc) = post2b.f (t₁ :: forest) enc
-      guard_hyp ih₂ : ∀ (forest : List (Tree α)) (enc : List (Option α)),
-                      post2b.f forest (epost.f t₂ enc) = post2b.f (t₂ :: forest) enc
-      show post2b.f forest (epost.f (.int x t₁ t₂) enc) = post2b.f (.int x t₁ t₂ :: forest) enc
+      guard_hyp ih₁ : ∀ (f : Forest α) (enc : List (Option α)),
+                      post2b.f f (epost.f t₁ enc) = post2b.f (t₁ :: f) enc
+      guard_hyp ih₂ : ∀ (f : Forest α) (enc : List (Option α)),
+                      post2b.f f (epost.f t₂ enc) = post2b.f (t₂ :: f) enc
+      show post2b.f f (epost.f (.int x t₁ t₂) enc) = post2b.f (.int x t₁ t₂ :: f) enc
       calc
-        post2b.f forest (epost.f (.int x t₁ t₂) enc)
-          = post2b.f forest (epost.f t₁ (epost.f t₂ (some x :: enc))) := at [1,2] use epost.int _ _ _ _
-        _ = post2b.f (t₁ :: forest) (epost.f t₂ (some x :: enc))      := ih₁ forest _
-        _ = post2b.f (t₂ :: t₁ :: forest) (some x :: enc)             := ih₂ _ _
-        _ = post2b.f ((.int x t₁ t₂) :: forest) enc                   := post2b.some _ _ _ _ _
+        post2b.f f (epost.f (.int x t₁ t₂) enc)
+          = post2b.f f (epost.f t₁ (epost.f t₂ (some x :: enc))) := at [1,2] use epost.int _ _ _ _
+        _ = post2b.f (t₁ :: f) (epost.f t₂ (some x :: enc))      := ih₁ f _
+        _ = post2b.f (t₂ :: t₁ :: f) (some x :: enc)             := ih₂ _ _
+        _ = post2b.f ((.int x t₁ t₂) :: f) enc                   := post2b.some _ _ _ _ _
 
 theorem PostEnc {α : Type} (t : Tree α) : post2b (epost t) = some t := by
   induction t with
@@ -386,5 +385,41 @@ theorem PostEnc {α : Type} (t : Tree α) : post2b (epost t) = some t := by
         _ = post2b.f [t₂, t₁] [some x]                     := PostEncGen t₂ _ _
         _ = post2b.f [.int x t₁ t₂] []                     := post2b.some _ _ _ _ _
         _ = some (.int x t₁ t₂)                            := post2b.tree _
+
+/-! Preorder decoding -/
+def pre2b.f {α : Type} : Forest α -> List (Option α) -> Option (Tree α)
+| [tree], []                   => some tree
+| f, none :: enc               => pre2b.f (.ext :: f) enc
+| t₁ :: t₂ :: f, some x :: enc => pre2b.f (.int x t₁ t₂ :: f) enc
+| _, _                         => none
+
+def pre2b {α : Type} (enc : List (Option α)) : Option (Tree α) :=
+  pre2b.f [] (rev enc) -- Compare to `post2b`
+
+lemma pre2b.tree {α : Type} (tree : Tree α) :
+  pre2b.f [tree] [] = Option.some tree := by unfold pre2b.f; rfl
+
+lemma pre2b.none {α : Type} (f : Forest α) (enc : List (Option α)) :
+  pre2b.f f (Option.none :: enc) = pre2b.f (Tree.ext :: f) enc := by
+  cases f with | nil => rfl | cons _ f => cases f <;> rfl
+
+lemma pre2b.some {α : Type}
+  (t₁ t₂ : Tree α) (f : Forest α) (x : α) (enc : List (Option α)) :
+  pre2b.f (t₁ :: t₂ :: f) (Option.some x :: enc) =
+    pre2b.f (.int x t₁ t₂ :: f) enc := rfl
+
+lemma pre2b.nil_some {α : Type} (x : α) (enc : List (Option α)) :
+  pre2b.f [] (Option.some x :: enc) = Option.none := rfl
+
+lemma pre2b.nil_nil {α : Type} :
+  pre2b.f [] ([] : List (Option α)) = Option.none := rfl
+
+lemma pre2b.cons₂_nil {α : Type} (t₂ t₁ : Tree α) (f : Forest α) :
+  pre2b.f (t₂ :: t₁ :: f) [] = Option.none := rfl
+
+lemma pre2b.def {α : Type} (enc : List (Option α)) :
+  pre2b enc = pre2b.f [] enc := rfl
+
+attribute [irreducible] pre2b pre2b.f
 
 end BTree
